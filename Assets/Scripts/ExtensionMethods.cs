@@ -16,4 +16,12 @@ public static class ExtensionMethods {
 		GameObject instance = (GameObject)Object.Instantiate (obj, position, rotation);
 		instance.transform.SetParent (parent);
 	}
+
+	public static int[] Zip(this int[] a, int[] b, int alpha = 1, int beta = 1){
+		int[] c = new int[a.Length];
+		for (int i = 0; i < a.Length; i++) {
+			c[i] = alpha * a[i] + beta * b[i];	
+		}
+		return c;
+	}
 }

@@ -1,15 +1,27 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class TileScript : MonoBehaviour {
+public class TileScript : ClickableObject {
 
-	public Material[] materials;
+	public int[] tileCost;
+	public bool currentTile = false;
 
-	private MeshRenderer meshRenderer;
+	private GameObject player;
+	private PlayerScript playerScript;
+	private GameObject manaHand;
+	private ManaPayment manaPayment;
 
-	// Use this for initialization
-	void Start () {
-		meshRenderer = GetComponent<MeshRenderer> ();
-		meshRenderer.sharedMaterial = materials [Random.Range (0, materials.Length)];
+	void Awake(){
+		player = GameObject.Find ("PlayerObject");
+		playerScript = player.GetComponent<PlayerScript> ();
+		manaHand = GameObject.Find ("ManaHand");
+		manaPayment = manaHand.GetComponent<ManaPayment> ();
 	}
+
+	public override void MouseClick(){
+		manaPayment.SetCost (tileCost, new int[3]{ 0, 0, 0 });
+
+		StartCoroutine (playerScript.SmoothMovement (transform.parent.position, transform.parent.gameObject));
+	}
+
 }
