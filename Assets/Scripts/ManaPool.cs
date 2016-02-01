@@ -30,7 +30,6 @@ public class ManaPool : ObjectPool {
 			Vector2 screenPoint = new Vector2 ((i+0.75f)*35f, 100f);
 			Vector3 localPoint = new Vector3();
 			RectTransformUtility.ScreenPointToWorldPointInRectangle(rTransform, screenPoint, uiCamera, out localPoint);
-			Debug.Log (localPoint);
 			mana.transform.position = localPoint;
 			RandomColour (mana);
 			mana.SetActive (true);

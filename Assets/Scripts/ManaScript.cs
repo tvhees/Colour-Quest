@@ -1,13 +1,27 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ManaScript : MonoBehaviour {
+public class ManaScript : ClickableObject {
 
-	public Material[] materials;
+	private bool clicked;
+	private GameObject manaHand;
+	private ManaPayment manaPayment;
 
 	void Awake(){
-		materials.Randomise ();
+		manaHand = GameObject.Find ("ManaHand");
+		manaPayment = manaHand.GetComponent<ManaPayment> ();
 
-		GetComponent<MeshRenderer> ().material = materials [0];
+		clicked = false;
+	}
+
+	public override void MouseClick ()
+	{
+		if (clicked) {
+			manaPayment.CheckPayment (new int[3]{ -1, 0, 0 });
+		} else {
+			manaPayment.CheckPayment (new int[3]{1, 0, 0});
+		}
+
+		clicked = !clicked;
 	}
 }
