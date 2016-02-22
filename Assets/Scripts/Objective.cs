@@ -3,7 +3,7 @@ using System.Collections;
 
 public abstract class Objective : MonoBehaviour {
 
-    public int[] objectiveCost;
+    public int[] cost;
 
     protected abstract void Bonus();
 }

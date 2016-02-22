@@ -10,8 +10,8 @@ public class BoardScript : MonoBehaviour {
 	void Awake(){
 		baseHexes.Randomise ();
 
-		transform.InstantiateChild (baseHexes [0], new Vector3 (2f, 0f, 4f * zF), Quaternion.identity);
-		transform.InstantiateChild (baseHexes [1], new Vector3 (3f, 0f, -1f * zF), Quaternion.identity);
-		transform.InstantiateChild (baseHexes [2], new Vector3 (5f, 0f, 3f * zF), Quaternion.identity);
+		transform.InstantiateChild (baseHexes [0], new Vector3 (2f, 0f, 4f * zF), Quaternion.Euler(0f, Random.Range(0, 6) * 60f, 0));
+		transform.InstantiateChild (baseHexes [1], new Vector3 (3f, 0f, -1f * zF), Quaternion.Euler(0f, Random.Range(0, 6) * 60f, 0));
+		transform.InstantiateChild (baseHexes [2], new Vector3 (5f, 0f, 3f * zF), Quaternion.Euler(0f, Random.Range(0, 6) * 60f, 0));
 	}
 }

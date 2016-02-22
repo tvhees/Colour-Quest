@@ -26,7 +26,14 @@ public class TileScript : ClickableObject {
                     Game.Instance.state = Game.State.PAYING;
                     selectionMarker.transform.position = transform.position;
                     selectionMarker.SetActive(true);
-                    manaPayment.SetCost(tileCost, new int[3] { 0, 0, 0 }, gameObject);
+
+                    // If there's an objective on the tile we add its cost
+                    int[] objectiveCost = new int[3] { 0, 0, 0 };
+                    Objective objective = transform.parent.GetComponentInChildren<Objective>();
+                    if (objective != null)
+                        objectiveCost = objective.cost;
+
+                    manaPayment.SetCost(tileCost, objectiveCost, gameObject);
                     currentTile = true;
                 }
                 break;
