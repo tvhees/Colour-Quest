@@ -5,34 +5,25 @@ using System.Collections.Generic;
 
 public class ManaPool : ObjectPool {
 
-	public GameObject manaSphere;
-	public int handSize;
+    // Variables
+    public GameObject manaSphere;
 	public Camera uiCamera;
 	public Material[] materials;
 
-	private List<GameObject> handList;
 	private int materialIndex = 0;
-	private RectTransform rTransform;
 
-
-	// Use this for initialization
+    // Methods
 	void Start () {
 		CreatePool (40, manaSphere);
-		handList = new List<GameObject> ();
 		materials.Randomise();
-		rTransform = GetComponent<RectTransform> ();
 
 
-		for (int i = 0; i < handSize; i++) {
+		for (int i = 0; i < HandManager.Instance.maxHandSize; i++) {
 			GameObject mana = GetObject ();
-			handList.Add (mana);
 			mana.transform.SetParent (transform);
-			Vector2 screenPoint = new Vector2 ((i+0.75f)*35f, 100f);
-			Vector3 localPoint = new Vector3();
-			RectTransformUtility.ScreenPointToWorldPointInRectangle(rTransform, screenPoint, uiCamera, out localPoint);
-			mana.transform.position = localPoint;
-			RandomColour (mana);
-			mana.SetActive (true);
+            RandomColour(mana);
+            mana.SetActive(true);
+            HandManager.Instance.MoveToHand(mana);
 		}
 	}
 
@@ -43,6 +34,17 @@ public class ManaPool : ObjectPool {
 		}
 
 		mana.GetComponent<MeshRenderer> ().material = materials[materialIndex];
+        switch (materials[materialIndex].name) {
+            case "Blue":
+                mana.GetComponent<ManaScript>().value = new int[3] { 1, 0, 0 };
+                break;
+            case "Red":
+                mana.GetComponent<ManaScript>().value = new int[3] { 0, 1, 0 };
+                break;
+            case "Yellow":
+                mana.GetComponent<ManaScript>().value = new int[3] { 0, 0, 1 };
+                break;
+        }
 		materialIndex++;
 	}
 }

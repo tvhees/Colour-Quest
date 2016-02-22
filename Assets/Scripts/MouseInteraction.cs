@@ -12,6 +12,5 @@ public class MouseInteraction : MonoBehaviour {
 
 	void OnMouseUpAsButton(){
 		objectScript.MouseClick();
-		Debug.Log ("Clicked");
 	}
 }
