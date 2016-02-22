@@ -5,15 +5,11 @@ using System.Collections.Generic;
 public class HandManager : Singleton<HandManager> {
 
     public Camera mainCamera;
+    public RectTransform rTransform;
     public List<GameObject> selectedMana, discardMana, handMana;
     public int maxHandSize = 5;
-    
-    private RectTransform rTransform;
+        
     private int handSize = 0, discardSize = 0;
-
-    void Start() {
-        rTransform = GetComponent<RectTransform>();
-    }
 
     public void MoveToHand(GameObject mana) {
         // Remove from discard pile
