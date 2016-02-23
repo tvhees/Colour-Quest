@@ -3,5 +3,5 @@ using System.Collections;
 
 public abstract class ClickableObject : MonoBehaviour {
 
-	public abstract void MouseClick ();
+	public abstract void OnMouseDown ();
 }
