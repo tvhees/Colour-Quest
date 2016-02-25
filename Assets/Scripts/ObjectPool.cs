@@ -21,15 +21,18 @@ public abstract class ObjectPool : MonoBehaviour {
 			GameObject obj = pool [0];
 			pool.RemoveAt(0);
 
-			return obj;
+            return obj;
 		}
 
 		return null;
 	}
 
-	protected void SendToPool(GameObject obj){
+	public void SendToPool(GameObject obj){
 		pool.Add(obj);
-		obj.SetActive(false);
+        obj.transform.SetParent(null);
+        obj.transform.position = Vector3.zero;
+        obj.transform.localScale = Vector3.one;
+        obj.SetActive(false);
 	}
 
 }

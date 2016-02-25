@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class HandManager : Singleton<HandManager> {
 
-    public Camera mainCamera;
+    public Camera uiCamera;
     public RectTransform rTransform;
     public List<GameObject> selectedMana, discardMana, handMana;
     public int maxHandSize = 5;
@@ -23,9 +23,9 @@ public class HandManager : Singleton<HandManager> {
         handMana.Add(mana);
 
         // Assign world space position to the right of existing hand mana
-        Vector2 screenPoint = new Vector2((handSize + 0.75f) * 55f, 150f);
+        Vector2 screenPoint = new Vector2((handSize + 0.75f) * 55f, 165f);
         Vector3 localPoint = new Vector3();
-        RectTransformUtility.ScreenPointToWorldPointInRectangle(rTransform, screenPoint, mainCamera, out localPoint);
+        RectTransformUtility.ScreenPointToWorldPointInRectangle(rTransform, screenPoint, uiCamera, out localPoint);
         mana.transform.position = localPoint;
 
         // Track mana in hand
@@ -46,9 +46,9 @@ public class HandManager : Singleton<HandManager> {
         discardMana.Add(mana);
 
         // Assign world space position to the right of existing discarded mana
-        Vector2 screenPoint = new Vector2((handSize + 0.75f) * 55f, 100f);
+        Vector2 screenPoint = new Vector2((discardSize + 0.75f) * 55f, 110f);
         Vector3 localPoint = new Vector3();
-        RectTransformUtility.ScreenPointToWorldPointInRectangle(rTransform, screenPoint, mainCamera, out localPoint);
+        RectTransformUtility.ScreenPointToWorldPointInRectangle(rTransform, screenPoint, uiCamera, out localPoint);
         mana.transform.position = localPoint;
 
         // Track mana in discard pile

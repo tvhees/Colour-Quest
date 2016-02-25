@@ -6,7 +6,6 @@ public class ManaPayment : MonoBehaviour {
 
     public Player playerScript;
 
-    private int totalCost;
 	private int[] colourCost = new int[3];
 	private int[] payment;
     private GameObject target;
