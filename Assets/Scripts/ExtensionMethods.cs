@@ -24,4 +24,13 @@ public static class ExtensionMethods {
 		}
 		return c;
 	}
+
+    public static int Sum(this int[] input) {
+        int total = 0;
+        for (int i = 0; i < input.Length; i++) {
+            total += input[i];
+        }
+
+        return total;
+    }
 }

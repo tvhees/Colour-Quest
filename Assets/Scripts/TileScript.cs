@@ -16,7 +16,7 @@ public class TileScript : ClickableObject {
         selectionMarker = GameObject.Find("SelectionMarker");
 	}
 
-	public override void MouseClick(){
+	public override void OnMouseDown(){
 
         switch (Game.Instance.state) {
             case Game.State.IDLE:
