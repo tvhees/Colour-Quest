@@ -6,6 +6,8 @@ public class ManaPayment : MonoBehaviour {
 
     public Player playerScript;
 	public GameObject selectionMarker;
+    public ParticleSystem playerParticles;
+    public bool payed = false;
 
 	private int[] colourCost = new int[3];
 	private int[] payment;
@@ -32,15 +34,24 @@ public class ManaPayment : MonoBehaviour {
 
         int[] remainder = payment.Zip (colourCost, -1);
 
-        for (int i = 0; i < remainder.Length; i++) {
+        // Check if all required costs have been payed, if so highlight the player object
+        payed = true;
+        for (int i = 0; i < remainder.Length; i++)
+        {
             if (remainder[i] > 0)
-                return;
+            {
+                payed = false;
+                playerParticles.Stop();
+            }
         }
+        if (payed)
+            playerParticles.Play();
 
+    }
+
+    public void ConfirmPayment() {
         HandManager.Instance.PaySelected();
-
         StartCoroutine(playerScript.SmoothMovement(target.transform.parent.position, target.transform.parent.gameObject));
-
         ResetCost();
     }
 
@@ -48,6 +59,7 @@ public class ManaPayment : MonoBehaviour {
         Game.Instance.state = Game.State.IDLE;
 
 		selectionMarker.SetActive (false);
+        playerParticles.Stop();
 
         payment = new int[3] { 0, 0, 0 };
         target = null;
