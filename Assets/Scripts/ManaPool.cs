@@ -22,7 +22,7 @@ public class ManaPool : ObjectPool {
 			mana.transform.SetParent (transform);
             RandomColour(mana);
             mana.SetActive(true);
-            HandManager.Instance.MoveToHand(mana);
+            HandManager.Instance.SendToHand(mana);
 		}
 	}
 
@@ -44,6 +44,9 @@ public class ManaPool : ObjectPool {
                 mana.GetComponent<ManaScript>().value = new int[3] { 0, 0, 1 };
                 break;
         }
+
+		mana.GetComponent<ManaScript> ().SaveState();
+
 		materialIndex++;
 	}
 
@@ -78,6 +81,8 @@ public class ManaPool : ObjectPool {
         }
 
         SpecificColour(mana, newValue);
+
+		mana.GetComponent<ManaScript> ().SaveState();
 
         return mana;
     }

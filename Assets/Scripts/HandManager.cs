@@ -8,10 +8,10 @@ public class HandManager : Singleton<HandManager> {
     public RectTransform rTransform;
     public List<GameObject> selectedMana, discardMana, handMana;
     public int maxHandSize = 5;
-        
-    private int handSize = 0, discardSize = 0;
+	public float horizGap, verticalPos;
+    public int handSize = 0, discardSize = 0;
 
-    public void MoveToHand(GameObject mana) {
+    public void SendToHand(GameObject mana) {
         // Remove from discard pile
         if (discardMana.Contains(mana))
         {
@@ -23,16 +23,18 @@ public class HandManager : Singleton<HandManager> {
         handMana.Add(mana);
 
         // Assign world space position to the right of existing hand mana
-        Vector2 screenPoint = new Vector2((handSize + 0.75f) * 55f, 165f);
+        Vector2 screenPoint = new Vector2((handSize + 0.75f) * horizGap, verticalPos);
         Vector3 localPoint = new Vector3();
         RectTransformUtility.ScreenPointToWorldPointInRectangle(rTransform, screenPoint, uiCamera, out localPoint);
         mana.transform.position = localPoint;
+		mana.transform.parent = transform;
+		mana.transform.localScale = new Vector3 (0.5f, 0.5f, 0.5f);
 
         // Track mana in hand
         handSize++;
     }
 
-    public void MoveToDiscard(GameObject mana) {
+    public void SendToDiscard(GameObject mana) {
         // Remove from other lists
         if (selectedMana.Contains(mana))
             selectedMana.Remove(mana);
@@ -42,11 +44,14 @@ public class HandManager : Singleton<HandManager> {
             handSize--;
         }
 
+		// Reset any colour change or particles
+		mana.GetComponent<ManaScript>().Reset();
+
         // Add to discard pile
         discardMana.Add(mana);
 
         // Assign world space position to the right of existing discarded mana
-        Vector2 screenPoint = new Vector2((discardSize + 0.75f) * 55f, 110f);
+		Vector2 screenPoint = new Vector2((discardSize + 0.75f) * horizGap, verticalPos - horizGap);
         Vector3 localPoint = new Vector3();
         RectTransformUtility.ScreenPointToWorldPointInRectangle(rTransform, screenPoint, uiCamera, out localPoint);
         mana.transform.position = localPoint;
@@ -60,7 +65,7 @@ public class HandManager : Singleton<HandManager> {
         // Move spent mana to discard
         while(selectedMana.Count > 0)
         {
-            MoveToDiscard(selectedMana[0]);
+            SendToDiscard(selectedMana[0]);
         }
 
         // Draw new mana if hand is now empty
@@ -71,7 +76,7 @@ public class HandManager : Singleton<HandManager> {
     void RefillHand() {
         // Take mana from discard pile until hand is at current mana limit
         while (handSize < maxHandSize) {
-            MoveToHand(discardMana[0]);
+            SendToHand(discardMana[0]);
         }
     }
 

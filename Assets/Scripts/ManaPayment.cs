@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class ManaPayment : MonoBehaviour {
 
     public Player playerScript;
+	public GameObject selectionMarker;
 
 	private int[] colourCost = new int[3];
 	private int[] payment;
@@ -45,6 +46,8 @@ public class ManaPayment : MonoBehaviour {
 
     public void ResetCost() {
         Game.Instance.state = Game.State.IDLE;
+
+		selectionMarker.SetActive (false);
 
         payment = new int[3] { 0, 0, 0 };
         target = null;
