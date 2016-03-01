@@ -36,8 +36,10 @@ public class ManaScript : ClickableObject {
             case Game.State.ENEMY:
                 break;
 			case Game.State.PAYING:
-				clickTime = Time.time;
-				menu = true;
+				if(HandManager.Instance.handMana.Contains(gameObject)){
+					clickTime = Time.time;
+					menu = true;
+				}
                 break;
         }
 	}
@@ -68,7 +70,7 @@ public class ManaScript : ClickableObject {
 		{
             while (options.Count > 0)
             {
-                manaPool.SendToPool(options[0]);
+				HandManager.Instance.SendToPool(options[0]);
                 options.Remove(options[0]);
             }
 			transform.position = transform.position + Vector3.forward;
@@ -84,7 +86,7 @@ public class ManaScript : ClickableObject {
 			HandManager.Instance.selectedMana.Remove (gameObject);
 			manaPayment.CheckPayment (value, false);
             while (blackMana.Count > 0) {
-                manaPool.SendToPool(blackMana[0]);
+				HandManager.Instance.SendToPool(blackMana[0]);
                 blackMana.Remove(blackMana[0]);
             }
 

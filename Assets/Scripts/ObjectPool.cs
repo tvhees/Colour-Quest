@@ -27,7 +27,7 @@ public abstract class ObjectPool : MonoBehaviour {
 		return null;
 	}
 
-	public void SendToPool(GameObject obj){
+	public void ReturnObject(GameObject obj){
 		pool.Add(obj);
         obj.transform.SetParent(null);
         obj.transform.position = Vector3.zero;
