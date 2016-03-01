@@ -37,8 +37,10 @@ public class ManaScript : ClickableObject {
                 break;
 			case Game.State.PAYING:
 				if(HandManager.Instance.handMana.Contains(gameObject)){
-					clickTime = Time.time;
-					menu = true;
+					if (!HandManager.Instance.blackMana.Contains (gameObject)) {
+						clickTime = Time.time;
+						menu = true;
+					}
 				}
                 break;
         }
@@ -156,6 +158,7 @@ public class ManaScript : ClickableObject {
 			HandManager.Instance.SendToHand (newMana);
 			options.Remove (newMana);
 			blackMana.Add (newMana);
+			HandManager.Instance.blackMana.Add (newMana);
 		}
     }
 
