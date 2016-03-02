@@ -6,7 +6,7 @@ public class RotationScript : MonoBehaviour {
     private Vector3 rotation;
 
     void Start() {
-        rotation = Random.onUnitSphere;
+        rotation = new Vector3(-1f, 0f, -1f);
     }
 
 	void Update () {

@@ -10,7 +10,7 @@ public class ManaScript : ClickableObject {
     public ParticleSystem selectFX;
 
 	private List<GameObject> options = new List<GameObject>(), blackMana = new List<GameObject>();
-    private Vector3 wedgeOffset = new Vector3(0f, 0f, 0f), rotation = Vector3.up;
+    private Vector3 wedgeOffset = new Vector3(0f, 0f, 0f);
     private float clickTime;
     private bool menu;
 	private Material savedMaterial;
