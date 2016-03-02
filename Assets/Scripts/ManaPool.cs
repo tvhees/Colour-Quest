@@ -24,6 +24,8 @@ public class ManaPool : ObjectPool {
             mana.SetActive(true);
             HandManager.Instance.SendToHand(mana);
 		}
+
+		HandManager.Instance.SetGap ();
 	}
 
 	private void RandomColour(GameObject mana){
