@@ -3,40 +3,28 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
-public class HandManager : Singleton<HandManager> {
+public class Hand : ManaCollection<Hand> {
 
-	public Camera uiCamera;	
+	public Camera uiCamera;
+    public Deck deck;
+    public Discard discard;
+    public Button scrubButton;
 	public ManaPool manaPool;
-    public RectTransform rTransform;
     public List<GameObject> selectedMana, discardMana, handMana, blackMana;
     public int maxHandSize = 5;
-	public float horizGap, verticalPos;
-	public Button scrubButton;
-    
+
+    public Vector3 manaScale;
+
 	private Vector3 worldGap;
-	private int handSize = 0, discardSize = 0;
 
     public void SendToHand(GameObject mana) {
         // Remove from discard pile
-        if (discardMana.Contains(mana))
-        {
-            discardMana.Remove(mana);
-            discardSize--;
-        }
+        discard.RemoveMana(mana);
 
-        // Add to hand
-        handMana.Add(mana);
+        // Remove from deck
+        deck.RemoveMana(mana);
 
-        // Assign world space position to the right of existing hand mana
-        Vector2 screenPoint = new Vector2((handSize + 1.0f) * horizGap, verticalPos);
-        Vector3 localPoint = new Vector3();
-        RectTransformUtility.ScreenPointToWorldPointInRectangle(rTransform, screenPoint, uiCamera, out localPoint);
-        mana.transform.position = localPoint;
-		mana.transform.parent = transform;
-		mana.transform.localScale = new Vector3 (0.5f, 0.5f, 0.5f);
-
-        // Track mana in hand
-        handSize++;
+        AddMana(mana);
     }
 
     public void SendToDiscard(GameObject mana) {
@@ -49,23 +37,13 @@ public class HandManager : Singleton<HandManager> {
             handMana.Remove(mana);
 			for (int i = j; i < handMana.Count; i++)
 				handMana [i].transform.position = handMana [i].transform.position - worldGap;
-            handSize--;
+            size--;
         }
 
 		// Reset any colour change or particles
-		mana.GetComponent<ManaScript>().Reset();
+		mana.GetComponent<Mana>().Reset();
 
-        // Add to discard pile
-        discardMana.Add(mana);
-
-        // Assign world space position to the right of existing discarded mana
-		Vector2 screenPoint = new Vector2((discardSize + 1.0f) * horizGap, verticalPos - horizGap);
-        Vector3 localPoint = new Vector3();
-        RectTransformUtility.ScreenPointToWorldPointInRectangle(rTransform, screenPoint, uiCamera, out localPoint);
-        mana.transform.position = localPoint;
-
-        // Track mana in discard pile
-        discardSize++;
+        discard.AddMana(mana);
     }
 
 	public void SendToPool(GameObject mana){
@@ -73,15 +51,11 @@ public class HandManager : Singleton<HandManager> {
 			selectedMana.Remove (mana);
 		}
 
-		if (handMana.Contains (mana)) {
-			handMana.Remove (mana);
-			handSize--;
-		}
+        RemoveMana(mana);
 
-		if (discardMana.Contains (mana)) {
-			discardMana.Remove (mana);
-			discardSize--;
-		}
+        deck.RemoveMana(mana);
+
+        discard.RemoveMana(mana);
 
 		if (blackMana.Contains (mana)) {
 			blackMana.Remove (mana);
@@ -111,7 +85,7 @@ public class HandManager : Singleton<HandManager> {
 
     public void RefillHand() {
         // Take mana from discard pile until hand is at current mana limit
-        while (handSize < maxHandSize) {
+        while (size < maxHandSize) {
             SendToHand(discardMana[0]);
         }
 

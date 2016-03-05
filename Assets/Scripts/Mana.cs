@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
-public class ManaScript : ClickableObject {
+public class Mana : ClickableObject {
 
     public int[] value = new int[3] { 0, 0, 0 }, savedValue;
     public float menuDelay = 0.1f;
@@ -22,11 +22,11 @@ public class ManaScript : ClickableObject {
 	void Awake(){
 		manaHand = GameObject.Find ("ManaHand");
         wedge = GameObject.Find("Wedge");
+        uiCamera = GameObject.Find("UICamera").GetComponent<Camera>();
         wedgeUpper = wedge.transform.GetChild(1).gameObject;
         wedgeLower = wedge.transform.GetChild(0).gameObject;
 		manaPayment = manaHand.GetComponent<ManaPayment> ();
         manaPool = manaHand.GetComponent<ManaPool>();
-        uiCamera = manaHand.transform.parent.GetComponent<Camera>();
     }
 
 	public override void OnMouseDown ()
@@ -36,8 +36,8 @@ public class ManaScript : ClickableObject {
             case Game.State.ENEMY:
                 break;
 			case Game.State.PAYING:
-				if(HandManager.Instance.handMana.Contains(gameObject)){
-					if (!HandManager.Instance.blackMana.Contains (gameObject)) {
+				if(Hand.Instance.handMana.Contains(gameObject)){
+					if (!Hand.Instance.blackMana.Contains (gameObject)) {
 						clickTime = Time.time;
 						menu = true;
 					}
@@ -58,11 +58,11 @@ public class ManaScript : ClickableObject {
 			wedge.SetActive (false);
 
 			if (hit.collider == GetComponent<Collider> ())
-				Select (HandManager.Instance.selectedMana.Contains (gameObject));
+				Select (Hand.Instance.selectedMana.Contains (gameObject));
 
 			if (hit.collider == wedgeLower.GetComponent<Collider> () || hit.collider == wedgeUpper.GetComponent<Collider> ()) {
 				UseOption (hit.collider.gameObject);
-				Select (HandManager.Instance.selectedMana.Contains (gameObject));
+				Select (Hand.Instance.selectedMana.Contains (gameObject));
 			}
 		
 		}
@@ -72,7 +72,7 @@ public class ManaScript : ClickableObject {
 		{
             while (options.Count > 0)
             {
-				HandManager.Instance.SendToPool(options[0]);
+				Hand.Instance.SendToPool(options[0]);
                 options.Remove(options[0]);
             }
 			transform.position = transform.position + Vector3.forward;
@@ -81,14 +81,14 @@ public class ManaScript : ClickableObject {
 
 	private void Select(bool selected){
 		if (!selected) { // Newly selected mana - recalculate mana payment and show particles
-			HandManager.Instance.selectedMana.Add (gameObject);
+			Hand.Instance.selectedMana.Add (gameObject);
 			selectFX.Play ();
 			manaPayment.CheckPayment (value, true);
 		} else { // Deselected mana - recalculate mana payment, remove any added black mana, reset colour/particles
-			HandManager.Instance.selectedMana.Remove (gameObject);
+			Hand.Instance.selectedMana.Remove (gameObject);
 			manaPayment.CheckPayment (value, false);
             while (blackMana.Count > 0) {
-				HandManager.Instance.SendToPool(blackMana[0]);
+				Hand.Instance.SendToPool(blackMana[0]);
                 blackMana.Remove(blackMana[0]);
             }
 
@@ -108,7 +108,7 @@ public class ManaScript : ClickableObject {
         //transform.Rotate(rotation, 80 * Time.deltaTime);
         
 		if (options.Count == 0){
-			if (menu && (Time.time - clickTime) > menuDelay && !HandManager.Instance.selectedMana.Contains(gameObject)) 
+			if (menu && (Time.time - clickTime) > menuDelay && !Hand.Instance.selectedMana.Contains(gameObject)) 
             {
                 transform.position = transform.position - Vector3.forward;
                 SpawnOptions();
@@ -148,17 +148,17 @@ public class ManaScript : ClickableObject {
         savedMaterial = GetComponent<MeshRenderer> ().material;
         // Copy new value and material
         GameObject newMana = wedgeHalf.transform.GetChild(0).gameObject;
-        value = newMana.GetComponent<ManaScript>().value;
+        value = newMana.GetComponent<Mana>().value;
         GetComponent<MeshRenderer>().material = newMana.GetComponent<MeshRenderer>().material;
 
 		// Get any black mana required for this option and add it to player's hand
 		while(wedgeHalf.transform.childCount > 1){
             Debug.Log(wedgeHalf.transform.childCount);
 			newMana = wedgeHalf.transform.GetChild (1).gameObject;
-			HandManager.Instance.SendToHand (newMana);
+			Hand.Instance.SendToHand (newMana);
 			options.Remove (newMana);
 			blackMana.Add (newMana);
-			HandManager.Instance.blackMana.Add (newMana);
+			Hand.Instance.blackMana.Add (newMana);
 		}
     }
 

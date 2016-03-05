@@ -50,7 +50,7 @@ public class ManaPayment : MonoBehaviour {
     }
 
     public void ConfirmPayment() {
-        HandManager.Instance.PaySelected();
+        Hand.Instance.PaySelected();
         StartCoroutine(playerScript.SmoothMovement(target.transform.parent.position, target.transform.parent.gameObject));
         ResetCost();
     }
@@ -63,6 +63,6 @@ public class ManaPayment : MonoBehaviour {
 
         payment = new int[3] { 0, 0, 0 };
         target = null;
-        HandManager.Instance.selectedMana.Clear();
+        Hand.Instance.selectedMana.Clear();
     }
 }
