@@ -6,11 +6,11 @@ public class ManaPayment : MonoBehaviour {
 
     public Player playerScript;
 	public GameObject selectionMarker;
+	public ObjectivePool objectivePool;
     public ParticleSystem playerParticles;
     public bool payed = false;
 
-	private int[] colourCost = new int[3];
-	private int[] payment;
+	private int[] colourCost = new int[3], objectiveValue = new int[3], payment;
     private GameObject target;
 
 	void Awake(){
@@ -22,7 +22,9 @@ public class ManaPayment : MonoBehaviour {
 
         if (target != null)
             target.GetComponent<TileScript>().currentTile = false;
+		
         colourCost = tileColour.Zip(objectiveColour);
+		objectiveValue = objectiveColour;
         target = tile;
 	}
 
@@ -50,8 +52,10 @@ public class ManaPayment : MonoBehaviour {
     }
 
     public void ConfirmPayment() {
+		StartCoroutine(playerScript.SmoothMovement(target.transform.parent.position, target.transform.parent.gameObject));
+		if(objectiveValue.Sum() > 0)
+			objectivePool.UpdateTracker (objectiveValue);
         Hand.Instance.PaySelected();
-        StartCoroutine(playerScript.SmoothMovement(target.transform.parent.position, target.transform.parent.gameObject));
         ResetCost();
     }
 
@@ -62,6 +66,7 @@ public class ManaPayment : MonoBehaviour {
         playerParticles.Stop();
 
         payment = new int[3] { 0, 0, 0 };
+		objectiveValue = new int[3] { 0, 0, 0 };
         target = null;
         Hand.Instance.selectedMana.Clear();
     }

@@ -59,6 +59,8 @@
      <Compile Include="Assets\Scripts\ManaPool.cs" />
      <Compile Include="Assets\Scripts\ObjectPool.cs" />
      <Compile Include="Assets\Scripts\Objective.cs" />
+     <Compile Include="Assets\Scripts\ObjectivePool.cs" />
+     <Compile Include="Assets\Scripts\Objectives.cs" />
      <Compile Include="Assets\Scripts\PayButton.cs" />
      <Compile Include="Assets\Scripts\Player.cs" />
      <Compile Include="Assets\Scripts\RotationScript.cs" />

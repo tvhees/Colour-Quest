@@ -10,26 +10,18 @@ using System.Collections.Generic;
 /// </summary>
 public class ManaCollection<T> : MonoBehaviour where T : MonoBehaviour
 {
-
-    public RectTransform rTransform;
-    public float horizGap, scale;
+    public float manaScale, gapScale;
     public List<GameObject> contents, black;
-
-    protected Rect rect;
     protected int size;
-
-    protected void Start() {
-        rect = rTransform.rect;
-    }
 
     public void AddMana(GameObject mana) {
         // Add to container
         contents.Add(mana);
 
         // Assign local position to the right of existing mana
-        Vector3 localPoint = new Vector3(rect.x + (size + 1.0f) * horizGap, rect.center.y, 0f);
         mana.transform.parent = transform;
-        mana.transform.localScale = scale * Vector3.one;
+        mana.transform.localScale = manaScale * Vector3.one;
+		Vector3 localPoint = new Vector3((size + 0.6f) * manaScale * gapScale, 0f, 0f);
         mana.transform.localPosition = localPoint;
 
         // Track mana in container
@@ -43,8 +35,7 @@ public class ManaCollection<T> : MonoBehaviour where T : MonoBehaviour
             size--;
 
             for (int i = j; i < contents.Count; i++)
-                contents[i].transform.localPosition = contents[i].transform.localPosition - new Vector3(horizGap, 0f, 0f);
-
+                contents[i].transform.localPosition = contents[i].transform.localPosition - new Vector3(manaScale * gapScale, 0f, 0f);
         }
 
         if (black.Contains(mana)) {
