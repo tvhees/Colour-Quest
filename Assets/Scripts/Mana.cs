@@ -36,8 +36,8 @@ public class Mana : ClickableObject {
             case Game.State.ENEMY:
                 break;
 			case Game.State.PAYING:
-				if(Hand.Instance.handMana.Contains(gameObject)){
-					if (!Hand.Instance.blackMana.Contains (gameObject)) {
+				if(Hand.Instance.contents.Contains(gameObject)){
+					if (!Hand.Instance.black.Contains (gameObject)) {
 						clickTime = Time.time;
 						menu = true;
 					}
@@ -72,7 +72,7 @@ public class Mana : ClickableObject {
 		{
             while (options.Count > 0)
             {
-				Hand.Instance.SendToPool(options[0]);
+				manaPool.SendToPool(options[0]);
                 options.Remove(options[0]);
             }
 			transform.position = transform.position + Vector3.forward;
@@ -88,7 +88,7 @@ public class Mana : ClickableObject {
 			Hand.Instance.selectedMana.Remove (gameObject);
 			manaPayment.CheckPayment (value, false);
             while (blackMana.Count > 0) {
-				Hand.Instance.SendToPool(blackMana[0]);
+				manaPool.SendToPool(blackMana[0]);
                 blackMana.Remove(blackMana[0]);
             }
 

@@ -10,10 +10,8 @@ public class Hand : ManaCollection<Hand> {
     public Discard discard;
     public Button scrubButton;
 	public ManaPool manaPool;
-    public List<GameObject> selectedMana, discardMana, handMana, blackMana;
+    public List<GameObject> selectedMana, blackMana;
     public int maxHandSize = 5;
-
-    public Vector3 manaScale;
 
 	private Vector3 worldGap;
 
@@ -27,56 +25,18 @@ public class Hand : ManaCollection<Hand> {
         AddMana(mana);
     }
 
-    public void SendToDiscard(GameObject mana) {
-        // Remove from other lists
-        if (selectedMana.Contains(mana))
-            selectedMana.Remove(mana);
-        if (handMana.Contains(mana))
-        {
-			int j = handMana.IndexOf (mana);
-            handMana.Remove(mana);
-			for (int i = j; i < handMana.Count; i++)
-				handMana [i].transform.position = handMana [i].transform.position - worldGap;
-            size--;
-        }
-
-		// Reset any colour change or particles
-		mana.GetComponent<Mana>().Reset();
-
-        discard.AddMana(mana);
-    }
-
-	public void SendToPool(GameObject mana){
-		if (selectedMana.Contains (mana)) {
-			selectedMana.Remove (mana);
-		}
-
-        RemoveMana(mana);
-
-        deck.RemoveMana(mana);
-
-        discard.RemoveMana(mana);
-
-		if (blackMana.Contains (mana)) {
-			blackMana.Remove (mana);
-		}
-
-		manaPool.ReturnObject (mana);
-	}
-
-
     public void PaySelected() {
         // Move spent mana to discard
         while(selectedMana.Count > 0)
         {
-            SendToDiscard(selectedMana[0]);
+            discard.SendToDiscard(selectedMana[0]);
         }
 
 		scrubButton.interactable = false;
 
         // Draw new mana if hand is now empty
-		for (int i = 0; i < handMana.Count; i++) {
-			if (!blackMana.Contains (handMana [i]))
+		for (int i = 0; i < contents.Count; i++) {
+			if (!blackMana.Contains (contents [i]))
 				return;
 		}
             
@@ -84,21 +44,24 @@ public class Hand : ManaCollection<Hand> {
     }
 
     public void RefillHand() {
-        // Take mana from discard pile until hand is at current mana limit
+        // Take mana from deck until hand is at current mana limit
         while (size < maxHandSize) {
-            SendToHand(discardMana[0]);
+            SendToHand(deck.contents[0]);
         }
 
 		scrubButton.interactable = true;
     }
 
-	public void SetGap(){
-		worldGap = handMana [1].transform.position - handMana [0].transform.position;
-	}
-
 	public void ScrubHand(){
+        // Gets rid of an entire hand, triggering refill from deck.
 		selectedMana.Clear();
-		selectedMana.AddRange (handMana);
+		selectedMana.AddRange (contents);
 		PaySelected ();
 	}
+
+	public void SetGap(){
+		worldGap = contents [1].transform.position - contents [0].transform.position;
+	}
+
+
 }

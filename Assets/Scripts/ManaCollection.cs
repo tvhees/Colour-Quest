@@ -13,7 +13,7 @@ public class ManaCollection<T> : MonoBehaviour where T : MonoBehaviour
 
     public RectTransform rTransform;
     public float horizGap, scale;
-    public List<GameObject> manaList;
+    public List<GameObject> contents, black;
 
     protected Rect rect;
     protected int size;
@@ -24,7 +24,7 @@ public class ManaCollection<T> : MonoBehaviour where T : MonoBehaviour
 
     public void AddMana(GameObject mana) {
         // Add to container
-        manaList.Add(mana);
+        contents.Add(mana);
 
         // Assign local position to the right of existing mana
         Vector3 localPoint = new Vector3(rect.x + (size + 1.0f) * horizGap, rect.center.y, 0f);
@@ -37,9 +37,18 @@ public class ManaCollection<T> : MonoBehaviour where T : MonoBehaviour
     }
 
     public void RemoveMana(GameObject mana) {
-        if (manaList.Contains(mana)) {
-            manaList.Remove(mana);
+        if (contents.Contains(mana)) {
+            int j = contents.IndexOf(mana);
+            contents.Remove(mana);
             size--;
+
+            for (int i = j; i < contents.Count; i++)
+                contents[i].transform.localPosition = contents[i].transform.localPosition - new Vector3(horizGap, 0f, 0f);
+
+        }
+
+        if (black.Contains(mana)) {
+            black.Remove(mana);
         }
     }
 

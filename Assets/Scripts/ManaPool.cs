@@ -8,6 +8,9 @@ public class ManaPool : ObjectPool {
     // Variables
     public GameObject manaSphere;
 	public Material[] baseMaterials, advancedMaterials, nullMaterials, startMaterials;
+    public Hand hand;
+    public Discard discard;
+    public Deck deck;
 
 	private int materialIndex = 0;
 
@@ -17,18 +20,34 @@ public class ManaPool : ObjectPool {
 		startMaterials.Randomise();
 
 
-		for (int i = 0; i < Hand.Instance.maxHandSize; i++) {
+		for (int i = 0; i < hand.maxHandSize; i++) {
 			GameObject mana = GetObject ();
 			mana.transform.SetParent (transform);
             RandomColour(mana);
             mana.SetActive(true);
-            Hand.Instance.SendToHand(mana);
+            hand.SendToHand(mana);
 		}
 
-		Hand.Instance.SetGap ();
+		hand.SetGap ();
 	}
 
-	private void RandomColour(GameObject mana){
+    public void SendToPool(GameObject mana)
+    {
+        if (hand.selectedMana.Contains(mana))
+        {
+            hand.selectedMana.Remove(mana);
+        }
+
+        hand.RemoveMana(mana);
+
+        deck.RemoveMana(mana);
+
+        discard.RemoveMana(mana);
+
+        ReturnObject(mana);
+    }
+
+    private void RandomColour(GameObject mana){
 		if (materialIndex == startMaterials.Length) {
 			materialIndex = 0;
 			startMaterials.Randomise();
