@@ -8,6 +8,9 @@ public class ManaPool : ObjectPool {
     // Variables
     public GameObject manaSphere;
 	public Material[] baseMaterials, advancedMaterials, nullMaterials, startMaterials;
+    public Hand hand;
+    public Discard discard;
+    public Deck deck;
 
 	private int materialIndex = 0;
 
@@ -17,16 +20,40 @@ public class ManaPool : ObjectPool {
 		startMaterials.Randomise();
 
 
-		for (int i = 0; i < HandManager.Instance.maxHandSize; i++) {
+		for (int i = 0; i < hand.maxHandSize; i++) {
 			GameObject mana = GetObject ();
 			mana.transform.SetParent (transform);
             RandomColour(mana);
             mana.SetActive(true);
-            HandManager.Instance.SendToHand(mana);
+            hand.SendToHand(mana);
+		}
+
+		for (int i = 0; i < hand.maxHandSize * 2; i++) {
+			GameObject mana = GetObject ();
+			mana.transform.SetParent (transform);
+			RandomColour(mana);
+			mana.SetActive(true);
+			deck.SendToDeck(mana);
 		}
 	}
 
-	private void RandomColour(GameObject mana){
+    public void SendToPool(GameObject mana)
+    {
+        if (hand.selectedMana.Contains(mana))
+        {
+            hand.selectedMana.Remove(mana);
+        }
+
+        hand.RemoveMana(mana);
+
+        deck.RemoveMana(mana);
+
+        discard.RemoveMana(mana);
+
+        ReturnObject(mana);
+    }
+
+    private void RandomColour(GameObject mana){
 		if (materialIndex == startMaterials.Length) {
 			materialIndex = 0;
 			startMaterials.Randomise();
@@ -35,23 +62,23 @@ public class ManaPool : ObjectPool {
 		mana.GetComponent<MeshRenderer> ().material = startMaterials[materialIndex];
         switch (startMaterials[materialIndex].name) {
             case "Blue":
-                mana.GetComponent<ManaScript>().value = new int[3] { 1, 0, 0 };
+                mana.GetComponent<Mana>().value = new int[3] { 1, 0, 0 };
                 break;
             case "Red":
-                mana.GetComponent<ManaScript>().value = new int[3] { 0, 1, 0 };
+                mana.GetComponent<Mana>().value = new int[3] { 0, 1, 0 };
                 break;
             case "Yellow":
-                mana.GetComponent<ManaScript>().value = new int[3] { 0, 0, 1 };
+                mana.GetComponent<Mana>().value = new int[3] { 0, 0, 1 };
                 break;
         }
 
-		mana.GetComponent<ManaScript> ().SaveState();
+		mana.GetComponent<Mana> ().SaveState();
 
 		materialIndex++;
 	}
 
     private void SpecificColour(GameObject mana, int[] value) {
-        mana.GetComponent<ManaScript>().value = value;
+        mana.GetComponent<Mana>().value = value;
 
         Material material;
 
@@ -82,7 +109,7 @@ public class ManaPool : ObjectPool {
 
         SpecificColour(mana, newValue);
 
-		mana.GetComponent<ManaScript> ().SaveState();
+		mana.GetComponent<Mana> ().SaveState();
 
         return mana;
     }
