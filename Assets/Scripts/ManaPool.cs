@@ -28,7 +28,13 @@ public class ManaPool : ObjectPool {
             hand.SendToHand(mana);
 		}
 
-		hand.SetGap ();
+		for (int i = 0; i < hand.maxHandSize * 2; i++) {
+			GameObject mana = GetObject ();
+			mana.transform.SetParent (transform);
+			RandomColour(mana);
+			mana.SetActive(true);
+			deck.SendToDeck(mana);
+		}
 	}
 
     public void SendToPool(GameObject mana)

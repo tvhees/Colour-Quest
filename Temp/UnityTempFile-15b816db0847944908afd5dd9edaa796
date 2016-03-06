@@ -1,13 +1,12 @@
 -debug
 -target:library
 -nowarn:0169
--out:Temp/Assembly-CSharp.dll
--r:"C:/Program Files/Unity/Editor/Data/Managed/UnityEngine.dll"
--r:"C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll"
--r:"C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll"
--r:"C:/Program Files/Unity/Editor/Data/Managed/UnityEditor.dll"
--r:"C:/Program Files/Unity/Editor/Data/PlaybackEngines/iOSSupport\UnityEditor.iOS.Extensions.Xcode.dll"
--r:"C:/Program Files/Unity/Editor/Data/PlaybackEngines/iOSSupport\UnityEditor.iOS.Extensions.Common.dll"
+-out:'Temp/Assembly-CSharp.dll'
+-r:'/Applications/Unity/Unity.app/Contents/Frameworks/Managed/UnityEngine.dll'
+-r:'/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll'
+-r:'/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll'
+-r:'/Applications/Unity/Unity.app/Contents/Frameworks/Managed/UnityEditor.dll'
+-r:'/Applications/Unity/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.Xcode.dll'
 -define:UNITY_5_3_2
 -define:UNITY_5_3
 -define:UNITY_5
@@ -75,25 +74,25 @@
 -define:UNITY_ASSERTIONS
 -define:UNITY_EDITOR
 -define:UNITY_EDITOR_64
--define:UNITY_EDITOR_WIN
-Assets/Scripts/BlueObj.cs
-Assets/Scripts/BoardScript.cs
-Assets/Scripts/ClickableObject.cs
-Assets/Scripts/Deck.cs
-Assets/Scripts/Discard.cs
-Assets/Scripts/ExtensionMethods.cs
-Assets/Scripts/Game.cs
-Assets/Scripts/Hand.cs
-Assets/Scripts/Mana.cs
-Assets/Scripts/ManaCollection.cs
-Assets/Scripts/ManaPayment.cs
-Assets/Scripts/ManaPool.cs
-Assets/Scripts/ObjectPool.cs
-Assets/Scripts/Objective.cs
-Assets/Scripts/PayButton.cs
-Assets/Scripts/Player.cs
-Assets/Scripts/RotationScript.cs
-Assets/Scripts/Singleton.cs
-Assets/Scripts/TileScript.cs
--r:"C:\Program Files\Unity\Editor\Data\Mono\lib\mono\unity\System.Runtime.Serialization.dll"
--r:"C:\Program Files\Unity\Editor\Data\Mono\lib\mono\unity\System.Xml.Linq.dll"
+-define:UNITY_EDITOR_OSX
+'Assets/Scripts/BlueObj.cs'
+'Assets/Scripts/BoardScript.cs'
+'Assets/Scripts/ClickableObject.cs'
+'Assets/Scripts/Deck.cs'
+'Assets/Scripts/Discard.cs'
+'Assets/Scripts/ExtensionMethods.cs'
+'Assets/Scripts/Game.cs'
+'Assets/Scripts/Hand.cs'
+'Assets/Scripts/Mana.cs'
+'Assets/Scripts/ManaCollection.cs'
+'Assets/Scripts/ManaPayment.cs'
+'Assets/Scripts/ManaPool.cs'
+'Assets/Scripts/ObjectPool.cs'
+'Assets/Scripts/Objective.cs'
+'Assets/Scripts/PayButton.cs'
+'Assets/Scripts/Player.cs'
+'Assets/Scripts/RotationScript.cs'
+'Assets/Scripts/Singleton.cs'
+'Assets/Scripts/TileScript.cs'
+-r:'/Applications/Unity/Unity.app/Contents/Frameworks/Mono/lib/mono/unity/System.Runtime.Serialization.dll'
+-r:'/Applications/Unity/Unity.app/Contents/Frameworks/Mono/lib/mono/unity/System.Xml.Linq.dll'

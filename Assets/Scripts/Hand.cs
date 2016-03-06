@@ -13,8 +13,6 @@ public class Hand : ManaCollection<Hand> {
     public List<GameObject> selectedMana, blackMana;
     public int maxHandSize = 5;
 
-	private Vector3 worldGap;
-
     public void SendToHand(GameObject mana) {
         // Remove from discard pile
         discard.RemoveMana(mana);
@@ -49,6 +47,7 @@ public class Hand : ManaCollection<Hand> {
             SendToHand(deck.contents[0]);
         }
 
+		deck.RefillDeck(maxHandSize);
 		scrubButton.interactable = true;
     }
 
@@ -58,10 +57,4 @@ public class Hand : ManaCollection<Hand> {
 		selectedMana.AddRange (contents);
 		PaySelected ();
 	}
-
-	public void SetGap(){
-		worldGap = contents [1].transform.position - contents [0].transform.position;
-	}
-
-
 }
