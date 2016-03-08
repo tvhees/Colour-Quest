@@ -54,7 +54,13 @@ public class Hand : ManaCollection<Hand> {
 
 	public void ScrubHand(){
         // Gets rid of an entire hand, triggering refill from deck.
-		selectedMana.Clear();
+
+        // Clear any current selections or unnecessary black mana additions
+        while (selectedMana.Count > 0) {
+            selectedMana[0].GetComponent<Mana>().Select(true);
+        }
+
+        // Add mana to discard to selected list
 		if(scrub)
 			// Add everything
 			selectedMana.AddRange (contents);

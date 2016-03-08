@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class ManaPayment : MonoBehaviour {
 
     public Player playerScript;
+    public BoardScript boardScript;
 	public GameObject selectionMarker;
 	public ObjectivePool objectivePool;
     public ParticleSystem playerParticles;
@@ -56,6 +57,7 @@ public class ManaPayment : MonoBehaviour {
 		if(objectiveValue.Sum() > 0)
 			objectivePool.UpdateTracker (objectiveValue);
         Hand.Instance.PaySelected();
+        boardScript.FlipTiles(target.transform.parent.position);
         ResetCost();
     }
 

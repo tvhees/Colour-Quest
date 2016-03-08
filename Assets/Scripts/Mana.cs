@@ -79,7 +79,7 @@ public class Mana : ClickableObject {
 		}
     }
 
-	private void Select(bool selected){
+	public void Select(bool selected){
 		if (!selected) { // Newly selected mana - recalculate mana payment and show particles
 			Hand.Instance.selectedMana.Add (gameObject);
 			selectFX.Play ();

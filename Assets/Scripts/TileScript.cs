@@ -5,15 +5,23 @@ public class TileScript : ClickableObject {
 
 	public int[] tileCost;
 	public bool currentTile = false;
+    public Material nullMaterial, colouredMaterial;
 
-	private GameObject manaHand;
+
+	private GameObject manaHand, boardHolder, selectionMarker;
+    private BoardScript boardScript;
 	private ManaPayment manaPayment;
-    private GameObject selectionMarker;
 
 	void Awake(){
 		manaHand = GameObject.Find ("ManaHand");
 		manaPayment = manaHand.GetComponent<ManaPayment> ();
+        boardHolder = GameObject.Find("BoardHolder");
+        boardScript = boardHolder.GetComponent<BoardScript>();
         selectionMarker = GameObject.Find("SelectionMarker");
+
+        boardScript.hiddenTiles.Add(gameObject);
+        transform.parent.rotation = Quaternion.Euler(0f, 0f, -180f);
+        GetComponent<MeshRenderer>().material = nullMaterial;
 	}
 
 	public override void OnMouseDown(){
@@ -49,5 +57,14 @@ public class TileScript : ClickableObject {
                 break;
         }
 	}
+
+    public void Flip(Vector3 playerPosition, float distance) {
+        if ((transform.parent.position - playerPosition).sqrMagnitude < distance)
+        {
+            transform.parent.rotation = Quaternion.identity;
+            GetComponent<MeshRenderer>().material = colouredMaterial;
+            boardScript.hiddenTiles.Remove(gameObject);
+        }
+    }
 
 }
