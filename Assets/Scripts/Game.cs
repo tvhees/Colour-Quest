@@ -8,7 +8,7 @@ public class Game : Singleton<Game> {
     {
         IDLE,
         PAYING,
-        ENEMY
+        GOAL
     };
 
     public State state;

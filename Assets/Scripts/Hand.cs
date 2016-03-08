@@ -3,11 +3,12 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Hand : ManaCollection<Hand> {
+public class Hand : Collection<Hand> {
 
 	public Camera uiCamera;
     public Deck deck;
     public Discard discard;
+	public Goal goalScript;
 	public ManaPool manaPool;
     public List<GameObject> selectedMana, blackMana;
     public int maxHandSize = 5;
@@ -50,6 +51,8 @@ public class Hand : ManaCollection<Hand> {
 		deck.RefillDeck(maxHandSize);
 
 		scrub = true;
+
+		StartCoroutine(goalScript.MoveGoal ());
     }
 
 	public void ScrubHand(){

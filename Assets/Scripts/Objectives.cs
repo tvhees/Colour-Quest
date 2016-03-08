@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Objectives : ManaCollection<Objectives> {
+public class Objectives : Collection<Objectives> {
 
 	public ObjectivePool pool;
 

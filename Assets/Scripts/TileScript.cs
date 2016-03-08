@@ -53,7 +53,7 @@ public class TileScript : ClickableObject {
                     selectionMarker.SetActive(false);
                 }
                 break;
-            case Game.State.ENEMY:
+            case Game.State.GOAL:
                 break;
         }
 	}

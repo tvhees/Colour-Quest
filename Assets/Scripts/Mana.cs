@@ -33,7 +33,7 @@ public class Mana : ClickableObject {
 	{
         switch (Game.Instance.state) {
             case Game.State.IDLE:
-            case Game.State.ENEMY:
+            case Game.State.GOAL:
                 break;
 			case Game.State.PAYING:
 				if(Hand.Instance.contents.Contains(gameObject)){

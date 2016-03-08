@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Deck : ManaCollection<Deck> {
+public class Deck : Collection<Deck> {
     
 	public Hand hand;
 	public Discard discard;
