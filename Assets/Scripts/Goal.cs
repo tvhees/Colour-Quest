@@ -8,7 +8,7 @@ public class Goal : MovingObject<Goal> {
 	public GameObject goalMarker, player, mainCamera;
 	public Vector3 goalTarget;
 
-	private GameObject goalTile = null;
+	public GameObject goalTile = null;
 	private Vector3 leftVector = new Vector3(1f, 0f, -1f/Mathf.Sqrt(3f)), rightVector = new Vector3(1f, 0f, 1f/Mathf.Sqrt(3f));
 	private List<bool> directionList = new List<bool>();
 
@@ -32,9 +32,7 @@ public class Goal : MovingObject<Goal> {
 
 		yield return StartCoroutine(mainCamera.GetComponent<CameraScript> ().FocusCamera (transform));
 
-		Debug.Log (goalTarget);
-
-		yield return StartCoroutine(SmoothMovement(goalTarget, goalTile));
+		yield return StartCoroutine(SmoothMovement(goalTarget, goalTile.transform.parent.gameObject));
 
 		NextTile ();
 
@@ -57,14 +55,10 @@ public class Goal : MovingObject<Goal> {
 			else
 				goalTarget = transform.position - rightVector;
 
-			Debug.Log (goalTarget);
-
 			Physics.Raycast (goalTarget, Vector3.up, out hit);
 
-			Debug.Log (hit.collider.ToString ());
-
 			if(hit.collider != null){
-				goalTile = hit.collider.transform.parent.gameObject;
+				goalTile = hit.collider.gameObject;
 				goalMarker.transform.position = goalTarget;
 				directionList.RemoveAt (i);
 				break;

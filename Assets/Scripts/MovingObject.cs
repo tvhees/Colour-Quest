@@ -3,6 +3,7 @@ using System.Collections;
 
 public abstract class MovingObject<T>: Singleton<T> where T : MonoBehaviour {
 
+    public bool killsTiles;
 	public float moveTime;
 
 	public IEnumerator SmoothMovement(Vector3 target, GameObject newTile){
@@ -18,6 +19,8 @@ public abstract class MovingObject<T>: Singleton<T> where T : MonoBehaviour {
 			yield return null;
 		}
 
-			Destroy (newTile);
+
+        Debug.Log(newTile.ToString());
+        newTile.GetComponentInChildren<TileScript>().KillTile(killsTiles);
 	}
 }

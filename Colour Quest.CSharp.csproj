@@ -76,16 +76,19 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\BlueObj.cs" />
     <Compile Include="Assets\Scripts\BoardScript.cs" />
+    <Compile Include="Assets\Scripts\CameraScript.cs" />
     <Compile Include="Assets\Scripts\ClickableObject.cs" />
+    <Compile Include="Assets\Scripts\Collection.cs" />
     <Compile Include="Assets\Scripts\Deck.cs" />
     <Compile Include="Assets\Scripts\Discard.cs" />
     <Compile Include="Assets\Scripts\ExtensionMethods.cs" />
     <Compile Include="Assets\Scripts\Game.cs" />
+    <Compile Include="Assets\Scripts\Goal.cs" />
     <Compile Include="Assets\Scripts\Hand.cs" />
     <Compile Include="Assets\Scripts\Mana.cs" />
-    <Compile Include="Assets\Scripts\ManaCollection.cs" />
     <Compile Include="Assets\Scripts\ManaPayment.cs" />
     <Compile Include="Assets\Scripts\ManaPool.cs" />
+    <Compile Include="Assets\Scripts\MovingObject.cs" />
     <Compile Include="Assets\Scripts\ObjectPool.cs" />
     <Compile Include="Assets\Scripts\Objective.cs" />
     <Compile Include="Assets\Scripts\ObjectivePool.cs" />
