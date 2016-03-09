@@ -1,19 +1,25 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
 public class Hand : Collection<Hand> {
 
-	public Camera uiCamera;
     public Deck deck;
     public Discard discard;
 	public Goal goalScript;
-	public ManaPool manaPool;
     public List<GameObject> selectedMana, blackMana;
-    public int maxHandSize = 5;
+    public int maxHandSize, startHandSize = 5;
 
-	private bool scrub = true;
+	private bool scrub;
+
+    public override void Reset() {
+        scrub = true;
+        maxHandSize = startHandSize;
+
+        while (contents.Count > 0) {
+            manaPool.SendToPool(contents[0]);
+        }
+    }
 
     public void SendToHand(GameObject mana) {
         // Remove from discard pile

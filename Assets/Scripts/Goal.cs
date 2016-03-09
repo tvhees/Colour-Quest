@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class Goal : MovingObject<Goal> {
 
+    public TileScript tileScript;
 	public int leftMax, rightMax;
 	public GameObject goalMarker, player, mainCamera;
 	public Vector3 goalTarget;
@@ -12,25 +14,30 @@ public class Goal : MovingObject<Goal> {
 	private Vector3 leftVector = new Vector3(1f, 0f, -1f/Mathf.Sqrt(3f)), rightVector = new Vector3(1f, 0f, 1f/Mathf.Sqrt(3f));
 	private List<bool> directionList = new List<bool>();
 
-	void Start(){
-		bool[] temp = new bool[leftMax + rightMax];
+    public override void Reset()
+    {
+        transform.position = startLocation;
 
-		for(int i = 0; i < leftMax; i++)
-			temp[i] = true;
+        bool[] temp = new bool[leftMax + rightMax];
 
-		for(int i = leftMax; i < temp.Length; i++)
-			temp[i] = false;
-	
-		temp.Randomise();
-		directionList.AddRange(temp);
+        for (int i = 0; i < leftMax; i++)
+            temp[i] = true;
 
-		NextTile ();
-	}
+        for (int i = leftMax; i < temp.Length; i++)
+            temp[i] = false;
 
-	public IEnumerator MoveGoal(){
+        temp.Randomise();
+        directionList.AddRange(temp);
+
+        NextTile();
+    }
+
+    public IEnumerator MoveGoal(){
 		Game.Instance.state = Game.State.GOAL;
 
 		yield return StartCoroutine(mainCamera.GetComponent<CameraScript> ().FocusCamera (transform));
+
+        tileScript.tileCost = tileScript.tileCost.Zip(goalTile.GetComponent<TileScript>().tileCost);
 
 		yield return StartCoroutine(SmoothMovement(goalTarget, goalTile.transform.parent.gameObject));
 

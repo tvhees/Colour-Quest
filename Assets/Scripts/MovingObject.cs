@@ -5,6 +5,9 @@ public abstract class MovingObject<T>: Singleton<T> where T : MonoBehaviour {
 
     public bool killsTiles;
 	public float moveTime;
+    public Vector3 startLocation;
+
+    public abstract void Reset();
 
 	public IEnumerator SmoothMovement(Vector3 target, GameObject newTile){
 		float sqrDistance = (transform.position - target).sqrMagnitude;
@@ -18,9 +21,6 @@ public abstract class MovingObject<T>: Singleton<T> where T : MonoBehaviour {
 
 			yield return null;
 		}
-
-
-        Debug.Log(newTile.ToString());
         newTile.GetComponentInChildren<TileScript>().KillTile(killsTiles);
 	}
 }

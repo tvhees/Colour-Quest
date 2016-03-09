@@ -18,13 +18,6 @@ public class Deck : Collection<Deck> {
 		if (contents.Count < previewSize) {
 			while (discard.contents.Count > 0)
 				SendToDeck (discard.contents [Random.Range (0, discard.contents.Count)]);
-
-			/*GameObject[] temp = new GameObject[discard.contents.Count];
-			discard.contents.CopyTo (temp);
-			temp.Randomise ();
-			for (int i = 0; i < temp.Length; i++) {
-				SendToDeck (temp[i]);
-			}*/
 		}
 	}
 

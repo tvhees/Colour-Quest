@@ -6,6 +6,7 @@ public class TileScript : ClickableObject {
 	public int[] tileCost;
 	public bool currentTile = false;
     public Material nullMaterial, colouredMaterial, liveMaterial, deadMaterial;
+    public float startRotation = -180f;
 
     private bool alive = true;
 	private GameObject manaHand, boardHolder, selectionMarker;
@@ -13,7 +14,7 @@ public class TileScript : ClickableObject {
 	private ManaPayment manaPayment;
 
 	void Awake(){
-		manaHand = GameObject.Find ("ManaHand");
+		manaHand = GameObject.Find ("Hand");
 		manaPayment = manaHand.GetComponent<ManaPayment> ();
         boardHolder = GameObject.Find("BoardHolder");
         boardScript = boardHolder.GetComponent<BoardScript>();
@@ -21,7 +22,7 @@ public class TileScript : ClickableObject {
 
         boardScript.hiddenTiles.Add(gameObject);
 
-        transform.parent.rotation = Quaternion.Euler(0f, 0f, -180f);
+        transform.parent.rotation = Quaternion.Euler(0f, 0f, startRotation);
         GetComponent<MeshRenderer>().material = nullMaterial;
 	}
 
@@ -54,7 +55,7 @@ public class TileScript : ClickableObject {
                     {
                         Game.Instance.state = Game.State.IDLE;
                         currentTile = false;
-                        manaPayment.ResetCost();
+                        manaPayment.Reset();
                         selectionMarker.SetActive(false);
                     }
                     break;

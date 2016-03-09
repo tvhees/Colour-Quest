@@ -5,7 +5,16 @@ public abstract class Collection<T> : Singleton<T> where T : MonoBehaviour
 {
     public float manaScale, gapScale;
     public List<GameObject> contents, black;
+    public ManaPool manaPool;
+
     protected int size;
+
+    public virtual void Reset() {
+        while (contents.Count > 0)
+        {
+            manaPool.SendToPool(contents[0]);
+        }
+    }
 
     public void AddMana(GameObject mana) {
         // Add to container

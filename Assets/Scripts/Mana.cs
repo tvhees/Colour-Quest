@@ -20,7 +20,7 @@ public class Mana : ClickableObject {
     private Camera uiCamera;
 
 	void Awake(){
-		manaHand = GameObject.Find ("ManaHand");
+		manaHand = GameObject.Find ("Hand");
         wedge = GameObject.Find("Wedge");
         uiCamera = GameObject.Find("UICamera").GetComponent<Camera>();
         wedgeUpper = wedge.transform.GetChild(1).gameObject;
