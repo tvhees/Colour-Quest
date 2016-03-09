@@ -3,13 +3,10 @@ using System.Collections;
 
 public class RotationScript : MonoBehaviour {
 
-    private Vector3 rotation;
-
-    void Start() {
-        rotation = new Vector3(-1f, 0f, -1f);
-    }
+    public Vector3 rotation;
+    public float angularSpeed;
 
 	void Update () {
-        transform.Rotate(rotation, 80*Time.deltaTime );	
+        transform.Rotate(rotation, angularSpeed*Time.deltaTime );	
 	}
 }

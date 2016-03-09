@@ -5,6 +5,8 @@ using System.Collections.Generic;
 public class ManaPayment : MonoBehaviour {
 
     public Player playerScript;
+    public Hand hand;
+    public BoardScript boardScript;
 	public GameObject selectionMarker;
 	public ObjectivePool objectivePool;
     public ParticleSystem playerParticles;
@@ -13,11 +15,27 @@ public class ManaPayment : MonoBehaviour {
 	private int[] colourCost = new int[3], objectiveValue = new int[3], payment;
     private GameObject target;
 
-	void Awake(){
-		payment = new int[3]{ 0, 0, 0 }; // Blue, Red, Yellow
-	}
+    public void Reset()
+    {
+        Game.Instance.state = Game.State.IDLE;
 
-	public void SetCost(int[] tileColour, int[] objectiveColour, GameObject tile){
+        selectionMarker.transform.position = new Vector3(-10f, 10f, -10f);
+        playerParticles.Stop();
+
+        payed = false;
+        payment = new int[3] { 0, 0, 0 };
+        objectiveValue = new int[3] { 0, 0, 0 };
+        target = null;
+
+        for (int i = 0; i < hand.selectedMana.Count; i++)
+        {
+            hand.selectedMana[i].GetComponent<Mana>().selectFX.Stop();
+        }
+
+        hand.selectedMana.Clear();
+    }
+
+    public void SetCost(int[] tileColour, int[] objectiveColour, GameObject tile){
         Game.Instance.state = Game.State.PAYING;
 
         if (target != null)
@@ -55,19 +73,8 @@ public class ManaPayment : MonoBehaviour {
 		StartCoroutine(playerScript.SmoothMovement(target.transform.parent.position, target.transform.parent.gameObject));
 		if(objectiveValue.Sum() > 0)
 			objectivePool.UpdateTracker (objectiveValue);
-        Hand.Instance.PaySelected();
-        ResetCost();
-    }
-
-    public void ResetCost() {
-        Game.Instance.state = Game.State.IDLE;
-
-		selectionMarker.SetActive (false);
-        playerParticles.Stop();
-
-        payment = new int[3] { 0, 0, 0 };
-		objectiveValue = new int[3] { 0, 0, 0 };
-        target = null;
-        Hand.Instance.selectedMana.Clear();
+        hand.PaySelected();
+        boardScript.FlipTiles(target.transform.parent.position);
+        Reset();
     }
 }

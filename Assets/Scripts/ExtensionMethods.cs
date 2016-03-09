@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public static class ExtensionMethods {
 
@@ -18,7 +19,11 @@ public static class ExtensionMethods {
 	}
 
 	public static int[] Zip(this int[] a, int[] b, int alpha = 1, int beta = 1){
-		int[] c = new int[a.Length];
+        /// <summary>
+        /// Add two int arrays together index by index.
+        /// alpha is the multiplyer for the calling array, beta the multiplyer for the sent array.
+        /// </summary>
+        int[] c = new int[a.Length];
 		for (int i = 0; i < a.Length; i++) {
 			c[i] = alpha * a[i] + beta * b[i];	
 		}

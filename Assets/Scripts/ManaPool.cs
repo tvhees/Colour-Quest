@@ -15,27 +15,31 @@ public class ManaPool : ObjectPool {
 	private int materialIndex = 0;
 
     // Methods
-	void Start () {
-		CreatePool (40, manaSphere);
-		startMaterials.Randomise();
+    public void Reset() {
+        if(pool == null)
+            CreatePool(40, manaSphere);
+
+        startMaterials.Randomise();
 
 
-		for (int i = 0; i < hand.maxHandSize; i++) {
-			GameObject mana = GetObject ();
-			mana.transform.SetParent (transform);
+        for (int i = 0; i < hand.maxHandSize; i++)
+        {
+            GameObject mana = GetObject();
+            mana.transform.SetParent(transform);
             RandomColour(mana);
             mana.SetActive(true);
             hand.SendToHand(mana);
-		}
+        }
 
-		for (int i = 0; i < hand.maxHandSize * 2; i++) {
-			GameObject mana = GetObject ();
-			mana.transform.SetParent (transform);
-			RandomColour(mana);
-			mana.SetActive(true);
-			deck.SendToDeck(mana);
-		}
-	}
+        for (int i = 0; i < hand.maxHandSize * 2; i++)
+        {
+            GameObject mana = GetObject();
+            mana.transform.SetParent(transform);
+            RandomColour(mana);
+            mana.SetActive(true);
+            deck.SendToDeck(mana);
+        }
+    }
 
     public void SendToPool(GameObject mana)
     {

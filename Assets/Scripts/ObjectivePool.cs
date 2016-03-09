@@ -12,11 +12,15 @@ public class ObjectivePool : ObjectPool {
 
 	private int total = 0, threshold = 1;
 
-	// Use this for initialization
-	void Start () {
-		CreatePool (40, objCube);
-		NewTracker();
-	}
+    public void Reset() {
+        if(pool == null)
+            CreatePool(40, objCube);
+
+        objectives.Clear();
+        total = 0;
+        threshold = 1;
+        NewTracker();
+    }
 
 	void NewTracker(){
 		objectives.Clear ();

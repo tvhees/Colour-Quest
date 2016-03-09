@@ -20,7 +20,7 @@ public class Mana : ClickableObject {
     private Camera uiCamera;
 
 	void Awake(){
-		manaHand = GameObject.Find ("ManaHand");
+		manaHand = GameObject.Find ("Hand");
         wedge = GameObject.Find("Wedge");
         uiCamera = GameObject.Find("UICamera").GetComponent<Camera>();
         wedgeUpper = wedge.transform.GetChild(1).gameObject;
@@ -33,7 +33,7 @@ public class Mana : ClickableObject {
 	{
         switch (Game.Instance.state) {
             case Game.State.IDLE:
-            case Game.State.ENEMY:
+            case Game.State.GOAL:
                 break;
 			case Game.State.PAYING:
 				if(Hand.Instance.contents.Contains(gameObject)){
@@ -79,7 +79,7 @@ public class Mana : ClickableObject {
 		}
     }
 
-	private void Select(bool selected){
+	public void Select(bool selected){
 		if (!selected) { // Newly selected mana - recalculate mana payment and show particles
 			Hand.Instance.selectedMana.Add (gameObject);
 			selectFX.Play ();

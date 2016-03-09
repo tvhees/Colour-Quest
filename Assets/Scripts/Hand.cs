@@ -1,18 +1,25 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Hand : ManaCollection<Hand> {
+public class Hand : Collection<Hand> {
 
-	public Camera uiCamera;
     public Deck deck;
     public Discard discard;
-	public ManaPool manaPool;
+	public Goal goalScript;
     public List<GameObject> selectedMana, blackMana;
-    public int maxHandSize = 5;
+    public int maxHandSize, startHandSize = 5;
 
-	private bool scrub = true;
+	private bool scrub;
+
+    public override void Reset() {
+        scrub = true;
+        maxHandSize = startHandSize;
+
+        while (contents.Count > 0) {
+            manaPool.SendToPool(contents[0]);
+        }
+    }
 
     public void SendToHand(GameObject mana) {
         // Remove from discard pile
@@ -50,11 +57,19 @@ public class Hand : ManaCollection<Hand> {
 		deck.RefillDeck(maxHandSize);
 
 		scrub = true;
+
+		StartCoroutine(goalScript.MoveGoal ());
     }
 
 	public void ScrubHand(){
         // Gets rid of an entire hand, triggering refill from deck.
-		selectedMana.Clear();
+
+        // Clear any current selections or unnecessary black mana additions
+        while (selectedMana.Count > 0) {
+            selectedMana[0].GetComponent<Mana>().Select(true);
+        }
+
+        // Add mana to discard to selected list
 		if(scrub)
 			// Add everything
 			selectedMana.AddRange (contents);
