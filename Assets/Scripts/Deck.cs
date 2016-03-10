@@ -7,9 +7,9 @@ public class Deck : Collection<Deck> {
 	public Discard discard;
 
 	public void SendToDeck(GameObject mana){
-		hand.RemoveMana (mana);
+		hand.Remove (mana);
 
-		discard.RemoveMana (mana);
+		discard.Remove (mana);
 
 		AddMana (mana);
 	}

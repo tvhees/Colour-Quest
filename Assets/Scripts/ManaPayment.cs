@@ -6,6 +6,7 @@ public class ManaPayment : MonoBehaviour {
 
     public Player playerScript;
     public Hand hand;
+    public ManaPool manaPool;
     public BoardScript boardScript;
 	public GameObject selectionMarker;
 	public ObjectivePool objectivePool;
@@ -71,9 +72,16 @@ public class ManaPayment : MonoBehaviour {
 
     public void ConfirmPayment() {
 		StartCoroutine(playerScript.SmoothMovement(target.transform.parent.position, target.transform.parent.gameObject));
-		if(objectiveValue.Sum() > 0)
+
+        if (objectiveValue.Sum() > 0)
 			objectivePool.UpdateTracker (objectiveValue);
+
+        GameObject manaReward = manaPool.GetObjectiveReward(objectiveValue);
+        if(manaReward != null)
+            hand.SendToHand(manaPool.GetObjectiveReward(objectiveValue));
+
         hand.PaySelected();
+
         boardScript.FlipTiles(target.transform.parent.position);
         Reset();
     }

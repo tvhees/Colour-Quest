@@ -30,7 +30,7 @@ public abstract class Collection<T> : Singleton<T> where T : MonoBehaviour
         size++;
     }
 
-    public void RemoveMana(GameObject mana) {
+    public void Remove(GameObject mana) {
         if (contents.Contains(mana)) {
             int j = contents.IndexOf(mana);
             contents.Remove(mana);

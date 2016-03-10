@@ -23,10 +23,10 @@ public class Hand : Collection<Hand> {
 
     public void SendToHand(GameObject mana) {
         // Remove from discard pile
-        discard.RemoveMana(mana);
+        discard.Remove(mana);
 
         // Remove from deck
-        deck.RemoveMana(mana);
+        deck.Remove(mana);
 
         AddMana(mana);
     }

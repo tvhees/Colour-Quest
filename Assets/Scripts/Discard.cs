@@ -12,7 +12,7 @@ public class Discard : Collection<Discard> {
         if (hand.selectedMana.Contains(mana))
             hand.selectedMana.Remove(mana);
 
-        hand.RemoveMana(mana);
+        hand.Remove(mana);
 
         // Reset any colour change or particles
         mana.GetComponent<Mana>().Reset();

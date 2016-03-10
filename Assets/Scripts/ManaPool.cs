@@ -48,11 +48,11 @@ public class ManaPool : ObjectPool {
             hand.selectedMana.Remove(mana);
         }
 
-        hand.RemoveMana(mana);
+        hand.Remove(mana);
 
-        deck.RemoveMana(mana);
+        deck.Remove(mana);
 
-        discard.RemoveMana(mana);
+        discard.Remove(mana);
 
         ReturnObject(mana);
     }
@@ -106,6 +106,8 @@ public class ManaPool : ObjectPool {
     public GameObject GetManaOption(int[] value, int blackMana) {
         GameObject mana = GetObject();
 
+        Debug.Log(mana.ToString());
+
         int[] newValue = new int[3];
         for (int i = 0; i < value.Length; i++) {
             newValue[i] = value[(i + value.Length - blackMana) % value.Length];
@@ -114,6 +116,41 @@ public class ManaPool : ObjectPool {
         SpecificColour(mana, newValue);
 
 		mana.GetComponent<Mana> ().SaveState();
+
+        return mana;
+    }
+
+    public GameObject GetObjectiveReward(int[] value) {
+        GameObject mana = GetObject();
+        int[] newValue = new int[3];
+
+        if (value[0] == 1)
+            if (value[1] == 1)
+                newValue = new int[3] { 0, 0, 1 };
+            else if (value[2] == 1)
+                newValue = new int[3] { 1, 1, 0 };
+            else {
+                ReturnObject(mana);
+                return null;
+                }
+        else if (value[1] == 1)
+            if (value[2] == 1)
+                newValue = new int[3] { 1, 0, 1 };
+            else {
+                ReturnObject(mana);
+                return null;
+            }
+        else if (value[2] == 1)
+            newValue = new int[3] { 0, 1, 0 };
+        else {
+            ReturnObject(mana);
+            return null;
+        }
+
+        SpecificColour(mana, newValue);
+
+        mana.SetActive(true);
+        mana.GetComponent<Mana>().SaveState();
 
         return mana;
     }

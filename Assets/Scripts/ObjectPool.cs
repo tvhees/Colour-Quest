@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public abstract class ObjectPool : MonoBehaviour {
 
+    public int poolSize;
+
 	protected List<GameObject> pool;
 
 	protected void CreatePool(int size, GameObject prefab){
@@ -17,9 +19,11 @@ public abstract class ObjectPool : MonoBehaviour {
 	}
 
 	protected GameObject GetObject(){
-		if(pool.Count > 0){
+        if(pool.Count > 0){
 			GameObject obj = pool [0];
 			pool.RemoveAt(0);
+
+            poolSize = pool.Count;
 
             return obj;
 		}

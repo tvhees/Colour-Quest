@@ -13,6 +13,8 @@ public class ObjectivePool : ObjectPool {
 	private int total = 0, threshold = 1;
 
     public void Reset() {
+
+
         if(pool == null)
             CreatePool(40, objCube);
 

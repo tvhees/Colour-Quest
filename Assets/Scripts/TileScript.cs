@@ -66,7 +66,7 @@ public class TileScript : ClickableObject {
 	}
 
     public void Flip(Vector3 playerPosition, float distance) {
-        if ((transform.parent.position - playerPosition).sqrMagnitude < distance)
+        if ((transform.parent.position - playerPosition).sqrMagnitude < distance && alive)
         {
             transform.parent.rotation = Quaternion.identity;
             GetComponent<MeshRenderer>().material = colouredMaterial;
