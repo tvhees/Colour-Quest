@@ -24,6 +24,8 @@ public class Game : Singleton<Game> {
 
     public State state;
 
+    private State savedState;
+
     void Start() {
         SetUpGame();
     }
@@ -42,7 +44,32 @@ public class Game : Singleton<Game> {
 
     void Update() {
         if (Input.GetKeyDown(KeyCode.Escape)) {
-            SetUpGame();
+            if (state == State.MENU)
+            {
+                state = savedState;
+            }
+            else {
+                savedState = state;
+                state = State.MENU;
+            }
+        }
+    }
+
+    void OnGUI() {
+        if (state == State.MENU) {
+            GUI.Box(new Rect(150, 200, 300, 200), "Pause Menu");
+
+            // Make the first button. If it is pressed, Application.Loadlevel (1) will be executed
+            if (GUI.Button(new Rect(170, 240, 260, 70), "Restart Game"))
+            {
+                SetUpGame();
+            }
+
+            // Make the second button.
+            if (GUI.Button(new Rect(170, 320, 260, 70), "Quit Game"))
+            {
+                Application.Quit();
+            }
         }
     }
 

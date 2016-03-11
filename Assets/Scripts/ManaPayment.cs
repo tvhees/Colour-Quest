@@ -78,7 +78,7 @@ public class ManaPayment : MonoBehaviour {
 
         GameObject manaReward = manaPool.GetObjectiveReward(objectiveValue);
         if(manaReward != null)
-            hand.SendToHand(manaPool.GetObjectiveReward(objectiveValue));
+            hand.SendToHand(manaReward);
 
         hand.PaySelected();
 

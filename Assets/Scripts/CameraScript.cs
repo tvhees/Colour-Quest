@@ -15,7 +15,11 @@ public class CameraScript : MonoBehaviour {
 		float sqrDistance = (transform.position - target).sqrMagnitude;
 
 		while (sqrDistance > Mathf.Epsilon) {
-			Vector3 newPosition = Vector3.MoveTowards (transform.position, target, Time.deltaTime / moveTime);
+
+            while (Game.Instance.state == Game.State.MENU)
+                yield return new WaitForSeconds(0.1f);
+
+            Vector3 newPosition = Vector3.MoveTowards (transform.position, target, Time.deltaTime / moveTime);
 
 			transform.position = newPosition;
 
