@@ -29,7 +29,7 @@ public class Mana : ClickableObject {
         manaPool = manaHand.GetComponent<ManaPool>();
     }
 
-	public override void OnMouseDown ()
+	public override void ClickAction ()
 	{
         switch (Game.Instance.state) {
             case Game.State.IDLE:
@@ -46,7 +46,13 @@ public class Mana : ClickableObject {
         }
 	}
 
+#if UNITY_STANDALONE || UNITY_EDITOR
     private void OnMouseUp() {
+        ReleaseAction();
+    }
+#endif
+
+    public void ReleaseAction() {
              
 		if (menu) {
 			menu = false;

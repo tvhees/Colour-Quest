@@ -13,6 +13,9 @@ public class Game : Singleton<Game> {
     public Deck deck;
     public Discard discard;
     public ManaPool manaPool;
+    public Camera mainCamera;
+    public Camera uiCamera;
+    public RaycastHit hit;
 
     public enum State
     {
@@ -42,18 +45,44 @@ public class Game : Singleton<Game> {
         manaPool.Reset();
     }
 
-    void Update() {
-        if (Input.GetKeyDown(KeyCode.Escape)) {
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
             if (state == State.MENU)
             {
                 state = savedState;
             }
-            else {
+            else
+            {
                 savedState = state;
                 state = State.MENU;
             }
         }
+
+#if UNITY_ANDROID || UNITY_IOS
+        if (Input.touchCount > 0) {
+            Touch touch = Input.GetTouch(0);
+
+            switch (touch.phase) {
+                case TouchPhase.Began:
+                    if (Physics.Raycast(uiCamera.ScreenPointToRay(Input.GetTouch(0).position), out hit))
+                        hit.transform.SendMessage("ClickAction");
+                    else if (Physics.Raycast(mainCamera.ScreenPointToRay(Input.GetTouch(0).position), out hit))
+                        hit.transform.SendMessage("ClickAction");
+                    break;
+                case TouchPhase.Ended:
+                    if (hit.transform != null) {
+                        hit.transform.SendMessage("ReleaseAction");
+                    }
+                    break;
+            }
+        }
+#endif
+
+
     }
+
 
     void OnGUI() {
         if (state == State.MENU) {

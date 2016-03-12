@@ -19,6 +19,9 @@ public class Goal : MovingObject<Goal> {
     {
         transform.position = startLocation;
 
+        tileScript.tileCost = new int[3] { 0, 0, 0 };
+        UpdateValue(tileScript.tileCost);
+
         bool[] temp = new bool[leftMax + rightMax];
 
         for (int i = 0; i < leftMax; i++)

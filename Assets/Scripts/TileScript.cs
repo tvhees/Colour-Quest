@@ -26,7 +26,7 @@ public class TileScript : ClickableObject {
         GetComponent<MeshRenderer>().material = nullMaterial;
 	}
 
-	public override void OnMouseDown(){
+	public override void ClickAction(){
 
         if (alive)
         {
@@ -76,13 +76,15 @@ public class TileScript : ClickableObject {
 
     public void KillTile(bool dead)
     {
-        alive = false;
+
+        if (transform.parent.childCount > 1)
+            Destroy(transform.parent.GetChild(1).gameObject);
+
         if (dead)
         {
+            alive = false;
             GetComponent<MeshRenderer>().material = deadMaterial;
         }
-        else
-            GetComponent<MeshRenderer>().material = liveMaterial;
     }
 
 }

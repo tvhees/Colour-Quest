@@ -41,6 +41,10 @@ public class ObjectivePool : ObjectPool {
 
 	public void UpdateTracker(int[] value){
 		int sum = value.Sum();
+
+        if (sum == 1 && value[1] == 1)
+            sum++;
+
 		for(int i = 0; i < sum; i++){
 			objectives.contents [total].GetComponent<MeshRenderer> ().material = baseMaterials[i];
 			total++;

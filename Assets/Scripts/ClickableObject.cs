@@ -3,5 +3,11 @@ using System.Collections;
 
 public abstract class ClickableObject : MonoBehaviour {
 
-	public abstract void OnMouseDown ();
+#if UNITY_STANDALONE || UNITY_EDITOR
+    public void OnMouseDown() {
+        ClickAction();
+    }
+#endif
+
+    public abstract void ClickAction();
 }
