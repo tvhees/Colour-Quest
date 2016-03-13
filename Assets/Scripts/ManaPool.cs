@@ -17,7 +17,7 @@ public class ManaPool : ObjectPool {
     // Methods
     public void Reset() {
         if(pool == null)
-            CreatePool(40, manaSphere);
+            CreatePool(80, manaSphere);
 
         startMaterials.Randomise();
 

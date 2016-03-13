@@ -10,4 +10,8 @@ public abstract class ClickableObject : MonoBehaviour {
 #endif
 
     public abstract void ClickAction();
+
+    public virtual void KillTile(bool dead) {
+
+    }
 }

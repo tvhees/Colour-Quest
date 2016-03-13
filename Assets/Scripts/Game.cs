@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class Game : Singleton<Game> {
 
+    public float[] guiBox, guiButton;
     public ManaPayment manaPayment;
     public BoardScript boardScript;
     public Player player;
@@ -16,13 +17,16 @@ public class Game : Singleton<Game> {
     public Camera mainCamera;
     public Camera uiCamera;
     public RaycastHit hit;
+    public GUISkin menuSkin;
 
     public enum State
     {
         IDLE,
         PAYING,
         GOAL,
-        MENU
+        MENU,
+        WON,
+        LOST
     };
 
     public State state;
@@ -53,7 +57,7 @@ public class Game : Singleton<Game> {
             {
                 state = savedState;
             }
-            else
+            else if(state != State.WON || state != State.LOST)
             {
                 savedState = state;
                 state = State.MENU;
@@ -85,17 +89,51 @@ public class Game : Singleton<Game> {
 
 
     void OnGUI() {
+        GUI.skin = menuSkin;
+
         if (state == State.MENU) {
-            GUI.Box(new Rect(150, 200, 300, 200), "Pause Menu");
+            GUI.Box(new Rect(Screen.width * guiBox[0], Screen.height*guiBox[1], Screen.width * guiBox[2], Screen.height * guiBox[3]), "MENU");
 
             // Make the first button. If it is pressed, Application.Loadlevel (1) will be executed
-            if (GUI.Button(new Rect(170, 240, 260, 70), "Restart Game"))
+            if (GUI.Button(new Rect(Screen.width * guiButton[0], Screen.height * guiButton[1], Screen.width * guiButton[2], Screen.height * guiButton[3]), "RESTART"))
             {
                 SetUpGame();
             }
 
             // Make the second button.
-            if (GUI.Button(new Rect(170, 320, 260, 70), "Quit Game"))
+            if (GUI.Button(new Rect(Screen.width * guiButton[0], Screen.height * (guiButton[1] + 1.1f*guiButton[3]), Screen.width * guiButton[2], Screen.height * guiButton[3]), "QUIT"))
+            {
+                Application.Quit();
+            }
+        }
+
+        if (state == State.WON) {
+            GUI.Box(new Rect(Screen.width * guiBox[0], Screen.height * guiBox[1], Screen.width * guiBox[2], Screen.height * guiBox[3]), "VICTORY");
+
+            // Make the first button. If it is pressed, Application.Loadlevel (1) will be executed
+            if (GUI.Button(new Rect(Screen.width * guiButton[0], Screen.height * guiButton[1], Screen.width * guiButton[2], Screen.height * guiButton[3]), "RESTART"))
+            {
+                SetUpGame();
+            }
+
+            // Make the second button.
+            if (GUI.Button(new Rect(Screen.width * guiButton[0], Screen.height * (guiButton[1] + 1.1f * guiButton[3]), Screen.width * guiButton[2], Screen.height * guiButton[3]), "QUIT"))
+            {
+                Application.Quit();
+            }
+        }
+
+        if (state == State.LOST) {
+            GUI.Box(new Rect(Screen.width * guiBox[0], Screen.height * guiBox[1], Screen.width * guiBox[2], Screen.height * guiBox[3]), "DEFEAT");
+
+            // Make the first button. If it is pressed, Application.Loadlevel (1) will be executed
+            if (GUI.Button(new Rect(Screen.width * guiButton[0], Screen.height * guiButton[1], Screen.width * guiButton[2], Screen.height * guiButton[3]), "RESTART"))
+            {
+                SetUpGame();
+            }
+
+            // Make the second button.
+            if (GUI.Button(new Rect(Screen.width * guiButton[0], Screen.height * (guiButton[1] + 1.1f * guiButton[3]), Screen.width * guiButton[2], Screen.height * guiButton[3]), "QUIT"))
             {
                 Application.Quit();
             }

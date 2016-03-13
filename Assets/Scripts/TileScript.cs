@@ -6,7 +6,7 @@ public class TileScript : ClickableObject {
 	public int[] tileCost;
 	public bool currentTile = false;
     public Material nullMaterial, colouredMaterial, liveMaterial, deadMaterial;
-    public float startRotation = -180f;
+    public float startRotation = -180f, rotationSpeed = 0.18f;
 
     private bool alive = true;
 	private GameObject manaHand, boardHolder, selectionMarker;
@@ -60,21 +60,38 @@ public class TileScript : ClickableObject {
                     }
                     break;
                 case Game.State.GOAL:
+                case Game.State.MENU:
+                case Game.State.WON:
+                case Game.State.LOST:
                     break;
             }
         }
 	}
 
-    public void Flip(Vector3 playerPosition, float distance) {
+    public IEnumerator Flip(Vector3 playerPosition, float distance) {
+
+
         if ((transform.parent.position - playerPosition).sqrMagnitude < distance && alive)
         {
+            int i = 0;
+            float step = 0;
+            while(step < 180f){
+                step += rotationSpeed * Time.deltaTime;
+                transform.parent.rotation = Quaternion.Euler(0f, 0f, startRotation + step);
+                i++;
+                if (i > 300)
+                    break;
+                yield return null;
+            }
+
             transform.parent.rotation = Quaternion.identity;
+
             GetComponent<MeshRenderer>().material = colouredMaterial;
             boardScript.hiddenTiles.Remove(gameObject);
         }
     }
 
-    public void KillTile(bool dead)
+    public override void KillTile(bool dead)
     {
 
         if (transform.parent.childCount > 1)

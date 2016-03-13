@@ -44,7 +44,7 @@ public class BoardScript : MonoBehaviour {
 
     public void FlipTiles(Vector3 pos) {
         for (int i = hiddenTiles.Count - 1; i >= 0; i--) {
-            hiddenTiles[i].GetComponent<TileScript>().Flip(pos, sightDistance);
+            StartCoroutine(hiddenTiles[i].GetComponent<TileScript>().Flip(pos, sightDistance));
         }
     }
 }

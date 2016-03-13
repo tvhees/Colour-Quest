@@ -25,6 +25,6 @@ public abstract class MovingObject<T>: Singleton<T> where T : MonoBehaviour {
 
 			yield return null;
 		}
-        newTile.GetComponentInChildren<TileScript>().KillTile(killsTiles);
+        newTile.GetComponentInChildren<ClickableObject>().KillTile(killsTiles);
 	}
 }

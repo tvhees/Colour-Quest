@@ -5,7 +5,7 @@ using System;
 
 public class Goal : MovingObject<Goal> {
 
-    public TileScript tileScript;
+    public GoalObject goalObject;
 	public int leftMax, rightMax;
 	public GameObject goalMarker, player, mainCamera;
 	public Vector3 goalTarget;
@@ -19,8 +19,8 @@ public class Goal : MovingObject<Goal> {
     {
         transform.position = startLocation;
 
-        tileScript.tileCost = new int[3] { 0, 0, 0 };
-        UpdateValue(tileScript.tileCost);
+        goalObject.goalCost = new int[3] { 0, 0, 0 };
+        UpdateValue(goalObject.goalCost);
 
         bool[] temp = new bool[leftMax + rightMax];
 
@@ -41,9 +41,9 @@ public class Goal : MovingObject<Goal> {
 
 		yield return StartCoroutine(mainCamera.GetComponent<CameraScript> ().FocusCamera (transform));
 
-        tileScript.tileCost = tileScript.tileCost.Zip(goalTile.GetComponent<TileScript>().tileCost);
+        goalObject.goalCost = goalObject.goalCost.Zip(goalTile.GetComponent<TileScript>().tileCost);
 
-        UpdateValue(tileScript.tileCost);
+        UpdateValue(goalObject.goalCost);
 
 		yield return StartCoroutine(SmoothMovement(goalTarget, goalTile.transform.parent.gameObject));
 
