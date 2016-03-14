@@ -6,8 +6,9 @@ public class TileScript : ClickableObject {
 	public int[] tileCost;
 	public bool currentTile = false;
     public Material nullMaterial, colouredMaterial, liveMaterial, deadMaterial;
-    public float startRotation = -180f, rotationSpeed = 0.18f;
+    public float startRotation = -180f;
 
+	private float rotationSpeed = 180f;
     private bool alive = true;
 	private GameObject manaHand, boardHolder, selectionMarker;
     private BoardScript boardScript;
@@ -77,6 +78,8 @@ public class TileScript : ClickableObject {
             float step = 0;
             while(step < 180f){
                 step += rotationSpeed * Time.deltaTime;
+
+				Debug.Log (step.ToString ());
                 transform.parent.rotation = Quaternion.Euler(0f, 0f, startRotation + step);
                 i++;
                 if (i > 300)
