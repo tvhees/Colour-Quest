@@ -11,16 +11,22 @@ public class Goal : MovingObject<Goal> {
 	public Vector3 goalTarget;
     public TextMesh[] goalValue;
 
-	public GameObject goalTile = null;
+	private GameObject goalTile = null;
+    private bool canMove, gameStarted;
 	private Vector3 leftVector = new Vector3(1f, 0f, -1f/Mathf.Sqrt(3f)), rightVector = new Vector3(1f, 0f, 1f/Mathf.Sqrt(3f)), raycastOffset = new Vector3(0f, 1f, 0f);
 	private List<bool> directionList = new List<bool>();
 
     public override void Reset()
     {
         transform.position = startLocation;
+        goalMarker.SetActive(true);
+        canMove = true;
 
+        gameStarted = false;
         goalObject.goalCost = new int[3] { 0, 0, 0 };
         UpdateValue(goalObject.goalCost);
+
+        gameStarted = true;
 
         bool[] temp = new bool[leftMax + rightMax];
 
@@ -41,24 +47,39 @@ public class Goal : MovingObject<Goal> {
 
 		yield return StartCoroutine(mainCamera.GetComponent<CameraScript> ().FocusCamera (transform));
 
-        goalObject.goalCost = goalObject.goalCost.Zip(goalTile.GetComponent<TileScript>().tileCost);
+        // If there's still tiles to move to, continue. If not, end the game as a loss
+        if (canMove)
+        {
+            // Grab value of the next tile to be consumed and add it to the goal value
+            UpdateValue(goalTile.GetComponent<TileScript>().tileCost);
 
-        UpdateValue(goalObject.goalCost);
+            // Move on to the tile and destroy it
+            yield return StartCoroutine(SmoothMovement(goalTarget, goalTile.transform.parent.gameObject));
 
-		yield return StartCoroutine(SmoothMovement(goalTarget, goalTile.transform.parent.gameObject));
+            // If we've moved on top of the player, end the game as a loss
+            if ((transform.position - player.transform.position).sqrMagnitude < 0.1f)
+            {
+                Game.Instance.state = Game.State.LOST;
+                player.GetComponent<Player>().childRenderer.enabled = false;
+            }
+            else
+            {
+                canMove = NextTile();
 
-		NextTile ();
+                yield return new WaitForSeconds(1.0f);
 
-		yield return new WaitForSeconds (1.0f);
+                yield return StartCoroutine(mainCamera.GetComponent<CameraScript>().FocusCamera(player.transform));
 
-		yield return StartCoroutine(mainCamera.GetComponent<CameraScript> ().FocusCamera (player.transform));
-
-		Game.Instance.state = Game.State.IDLE;
+                Game.Instance.state = Game.State.IDLE;
+            }
+        }
+        else
+            Game.Instance.state = Game.State.LOST;
 
 		yield return null;
 	}
 
-	private void NextTile(){
+	private bool NextTile(){
 		RaycastHit hit;
 		goalTarget = Vector3.zero;
 
@@ -75,14 +96,32 @@ public class Goal : MovingObject<Goal> {
                 goalTarget = goalTarget + raycastOffset;
 				goalMarker.transform.position = goalTarget;
 				directionList.RemoveAt (i);
-				break;
+				return true;
 			}
 		}
+
+        goalMarker.SetActive(false);
+
+        return false;
 	}
 
-    private void UpdateValue(int[] value) {
+    public void UpdateValue(int[] value, int alpha = 1, int beta = 1) {
+        goalObject.goalCost = goalObject.goalCost.Zip(value, alpha, beta);
+
+        bool defeated = true;
+
         for (int i = 0; i < 3; i++) {
-            goalValue[i].text = value[i].ToString();
+            if (goalObject.goalCost[i] > 0)
+                defeated = false;
+            else if (goalObject.goalCost[i] < 0)
+                goalObject.goalCost[i] = 0;
+
+            goalValue[i].text = goalObject.goalCost[i].ToString();
+        }
+
+        if (defeated && gameStarted)
+        {
+            Game.Instance.state = Game.State.WON;
         }
     }
 

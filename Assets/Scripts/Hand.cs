@@ -63,25 +63,29 @@ public class Hand : Collection<Hand> {
 
 	public void ScrubHand(){
         // Gets rid of an entire hand, triggering refill from deck.
+        if (Game.Instance.state == Game.State.IDLE || Game.Instance.state == Game.State.PAYING)
+        {
+            // Clear any current selections or unnecessary black mana additions
+            while (selectedMana.Count > 0)
+            {
+                selectedMana[0].GetComponent<Mana>().Select(true);
+            }
 
-        // Clear any current selections or unnecessary black mana additions
-        while (selectedMana.Count > 0) {
-            selectedMana[0].GetComponent<Mana>().Select(true);
+            // Add mana to discard to selected list
+            if (scrub)
+                // Add everything
+                selectedMana.AddRange(contents);
+            else
+                // Add only coloured mana
+                for (int i = 0; i < contents.Count; i++)
+                {
+                    if (!blackMana.Contains(contents[i]))
+                        selectedMana.Add(contents[i]);
+                }
+
+
+            PaySelected();
         }
-
-        // Add mana to discard to selected list
-		if(scrub)
-			// Add everything
-			selectedMana.AddRange (contents);
-		else
-			// Add only coloured mana
-			for (int i = 0; i < contents.Count; i++) {
-				if (!blackMana.Contains (contents [i]))
-					selectedMana.Add (contents [i]);
-			}
-			
-			
-		PaySelected ();
 	}
 
 	public void IncreaseLimit(int increase){

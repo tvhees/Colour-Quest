@@ -56,10 +56,4 @@ public class GoalObject : ClickableObject {
             }
         }
     }
-
-    public override void KillTile(bool dead)
-    {
-        Game.Instance.state = Game.State.WON;
-    }
-
 }

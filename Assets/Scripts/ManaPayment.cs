@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class ManaPayment : MonoBehaviour {
 
     public Player playerScript;
+    public Goal goal;
     public Hand hand;
     public ManaPool manaPool;
     public BoardScript boardScript;
@@ -57,32 +58,48 @@ public class ManaPayment : MonoBehaviour {
 
         // Check if all required costs have been payed, if so highlight the player object
         payed = true;
-        for (int i = 0; i < remainder.Length; i++)
+
+        // If we're targetting the goal object, always allow 'partial' payment
+        if (target.tag != "Goal")
         {
-            if (remainder[i] > 0)
+            for (int i = 0; i < remainder.Length; i++)
             {
-                payed = false;
-                playerParticles.Stop();
+                if (remainder[i] > 0)
+                {
+                    payed = false;
+                    playerParticles.Stop();
+                }
             }
         }
+
         if (payed)
             playerParticles.Play();
 
     }
 
     public void ConfirmPayment() {
-		StartCoroutine(playerScript.SmoothMovement(target.transform.parent.position, target.transform.parent.gameObject));
+        if (target.tag == "Goal")
+        {
+            goal.UpdateValue(payment, 1, -1);
+        }
+        else
+        {
 
-        if (objectiveValue.Sum() > 0)
-			objectivePool.UpdateTracker (objectiveValue);
+            StartCoroutine(playerScript.SmoothMovement(target.transform.parent.position, target.transform.parent.gameObject));
 
-        GameObject manaReward = manaPool.GetObjectiveReward(objectiveValue);
-        if(manaReward != null)
-            hand.SendToHand(manaReward);
+            if (objectiveValue.Sum() > 0)
+                objectivePool.UpdateTracker(objectiveValue);
+
+            GameObject manaReward = manaPool.GetObjectiveReward(objectiveValue);
+            if (manaReward != null)
+                hand.SendToHand(manaReward);
+
+            boardScript.FlipTiles(target.transform.parent.position);
+        }
 
         hand.PaySelected();
-
-        boardScript.FlipTiles(target.transform.parent.position);
-        Reset();
+        
+        if(Game.Instance.state != Game.State.WON)        
+            Reset();
     }
 }

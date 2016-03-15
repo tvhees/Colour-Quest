@@ -106,8 +106,6 @@ public class ManaPool : ObjectPool {
     public GameObject GetManaOption(int[] value, int blackMana) {
         GameObject mana = GetObject();
 
-        Debug.Log(mana.ToString());
-
         int[] newValue = new int[3];
         for (int i = 0; i < value.Length; i++) {
             newValue[i] = value[(i + value.Length - blackMana) % value.Length];

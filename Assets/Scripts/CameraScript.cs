@@ -3,8 +3,9 @@ using System.Collections;
 
 public class CameraScript : MonoBehaviour {
 
+    public Camera thisCamera;
 	public Vector3 cameraOffset;
-	public float moveTime;
+	public float moveTime, zoomSpeed, targetSize;
 
 	public IEnumerator FocusCamera(Transform parentTransform){
 
@@ -28,4 +29,16 @@ public class CameraScript : MonoBehaviour {
 			yield return null;
 		}
 	}
+
+    public void Reset(Transform player) {
+        transform.SetParent(player);
+        thisCamera.orthographicSize = 10f;
+        targetSize = 5f;
+    }
+
+    void Update() {
+        if (thisCamera.orthographicSize > targetSize) {
+            thisCamera.orthographicSize = Mathf.Clamp(Mathf.Lerp(thisCamera.orthographicSize, targetSize - 1f, zoomSpeed * Time.deltaTime), targetSize, Mathf.Infinity);
+        }
+    }
 }

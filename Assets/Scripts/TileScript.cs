@@ -79,7 +79,6 @@ public class TileScript : ClickableObject {
             while(step < 180f){
                 step += rotationSpeed * Time.deltaTime;
 
-				Debug.Log (step.ToString ());
                 transform.parent.rotation = Quaternion.Euler(0f, 0f, startRotation + step);
                 i++;
                 if (i > 300)
