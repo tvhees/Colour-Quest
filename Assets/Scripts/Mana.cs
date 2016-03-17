@@ -37,7 +37,7 @@ public class Mana : ClickableObject {
                 break;
 			case Game.State.PAYING:
 				if(Hand.Instance.contents.Contains(gameObject)){
-					if (!Hand.Instance.black.Contains (gameObject)) {
+					if (!Hand.Instance.blackMana.Contains (gameObject)) {
 						clickTime = Time.time;
 						menu = true;
 					}
@@ -163,7 +163,6 @@ public class Mana : ClickableObject {
 			Hand.Instance.SendToHand (newMana);
 			options.Remove (newMana);
 			blackMana.Add (newMana);
-			Hand.Instance.blackMana.Add (newMana);
 		}
     }
 

@@ -7,7 +7,7 @@ public class Hand : Collection<Hand> {
     public Deck deck;
     public Discard discard;
 	public Goal goalScript;
-    public List<GameObject> selectedMana, blackMana;
+    public List<GameObject> selectedMana;
     public int maxHandSize, startHandSize = 5;
 
 	private bool scrub;
