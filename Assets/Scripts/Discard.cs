@@ -6,16 +6,13 @@ public class Discard : Collection<Discard> {
     public Hand hand;
     public Deck deck;
     public GameObject discardContainer;
+	public Display discardDisplay;
 
     public override void Reset()
     {
-		Debug.Log (Screen.width);
-		discardContainer.transform.localPosition = new Vector3 ((Screen.width * 0.45f) - transform.localScale.x / 2f, 0f, 0f);
+		discardContainer.transform.localPosition = new Vector3 ((Screen.width * 0.49f) - discardContainer.transform.localScale.x / 2f, 0f, 0f);
 
-        while (contents.Count > 0)
-        {
-            manaPool.SendToPool(contents[0]);
-        }
+		SharedSetup ();
     }
 
     public void SendToDiscard(GameObject mana)
@@ -29,7 +26,10 @@ public class Discard : Collection<Discard> {
         // Reset any colour change or particles
         mana.GetComponent<Mana>().Reset();
 
-        AddMana(mana);
+        AddObj(mana);
     }
 
+	public void SendToDisplay(){
+		discardDisplay.UpdateDisplay (manaList);
+	}
 }

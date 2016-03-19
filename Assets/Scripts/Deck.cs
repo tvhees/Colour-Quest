@@ -6,15 +6,13 @@ public class Deck : Collection<Deck> {
 	public Hand hand;
 	public Discard discard;
     public GameObject deckContainer;
+	public Display deckDisplay;
 
     public override void Reset()
     {
-		deckContainer.transform.localPosition = new Vector3 (-(Screen.width * 0.45f) + transform.localScale.x / 2f, 0f, 0f);
+		deckContainer.transform.localPosition = new Vector3 (-(Screen.width * 0.49f) + deckContainer.transform.localScale.x / 2f, 0f, 0f);
 
-        while (contents.Count > 0)
-        {
-            manaPool.SendToPool(contents[0]);
-        }
+		SharedSetup ();
     }
 
     public void SendToDeck(GameObject mana){
@@ -22,7 +20,7 @@ public class Deck : Collection<Deck> {
 
 		discard.Remove (mana);
 
-		AddMana (mana);
+		AddObj (mana);
 	}
 
 	public void RefillDeck(int previewSize){
@@ -30,6 +28,19 @@ public class Deck : Collection<Deck> {
 			while (discard.contents.Count > 0)
 				SendToDeck (discard.contents [Random.Range (0, discard.contents.Count)]);
 		}
+	}
+
+	public void HideMana(){
+		for (int i = 0; i < contents.Count; i++) {
+			if (i < hand.maxHandSize)
+				contents [i].transform.localScale = new Vector3 (objScale, objScale, objScale);
+			else
+				contents [i].transform.localScale = Vector3.zero;
+		}
+	}
+
+	public void SendToDisplay(){
+		deckDisplay.UpdateDisplay (manaList);
 	}
 
 }

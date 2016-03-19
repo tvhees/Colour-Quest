@@ -39,4 +39,17 @@ public abstract class ObjectPool : MonoBehaviour {
         obj.SetActive(false);
 	}
 
+	public int GetValueIndex(int[] value){
+		int index = 0;
+		int incrementer = 1;
+		for (int i = 0; i < value.Length; i++) {
+			if (value [i] > 0) {
+				index += i + incrementer;
+				incrementer++;
+			}
+		}
+		return index;
+	}
+
+	public abstract void SendToPool(GameObject obj);
 }

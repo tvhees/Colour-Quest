@@ -50,8 +50,10 @@
      <Compile Include="Assets\Scripts\CameraScript.cs" />
      <Compile Include="Assets\Scripts\ClickableObject.cs" />
      <Compile Include="Assets\Scripts\Collection.cs" />
+     <Compile Include="Assets\Scripts\Container.cs" />
      <Compile Include="Assets\Scripts\Deck.cs" />
      <Compile Include="Assets\Scripts\Discard.cs" />
+     <Compile Include="Assets\Scripts\Display.cs" />
      <Compile Include="Assets\Scripts\ExtensionMethods.cs" />
      <Compile Include="Assets\Scripts\Game.cs" />
      <Compile Include="Assets\Scripts\Goal.cs" />

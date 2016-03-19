@@ -13,16 +13,20 @@ public class ObjectivePool : ObjectPool {
 	private int total = 0, threshold = 1;
 
     public void Reset() {
-
-
         if(pool == null)
             CreatePool(40, objCube);
 
-        objectives.Clear();
+        objectives.Reset();
         total = 0;
         threshold = 1;
         NewTracker();
     }
+
+	public override void SendToPool (GameObject obj){
+		objectives.Remove (obj);
+
+		ReturnObject (obj);
+	}
 
 	void NewTracker(){
 		objectives.Clear ();
@@ -35,7 +39,7 @@ public class ObjectivePool : ObjectPool {
 			obj.transform.SetParent (transform);
 			obj.SetActive (true);
 			obj.GetComponent<MeshRenderer> ().material = nullMaterials [0];
-			objectives.AddMana (obj);
+			objectives.AddObj (obj);
 		}
 	}
 

@@ -16,9 +16,7 @@ public class Hand : Collection<Hand> {
         scrub = true;
         maxHandSize = startHandSize;
 
-        while (contents.Count > 0) {
-            manaPool.SendToPool(contents[0]);
-        }
+		SharedSetup ();
     }
 
     public void SendToHand(GameObject mana) {
@@ -28,7 +26,7 @@ public class Hand : Collection<Hand> {
         // Remove from deck
         deck.Remove(mana);
 
-        AddMana(mana);
+        AddObj(mana);
     }
 
     public void PaySelected() {
@@ -57,6 +55,8 @@ public class Hand : Collection<Hand> {
 		deck.RefillDeck(maxHandSize);
 
 		scrub = true;
+
+		deck.HideMana();
 
 		StartCoroutine(goalScript.MoveGoal ());
     }
