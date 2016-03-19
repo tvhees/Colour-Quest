@@ -9,7 +9,8 @@ public class Discard : Collection<Discard> {
 
     public override void Reset()
     {
-        discardContainer.transform.localPosition = new Vector2(Screen.width * 0.45f - discardContainer.transform.localScale.x * 0.6f, 0f);
+		Debug.Log (Screen.width);
+		discardContainer.transform.localPosition = new Vector3 ((Screen.width * 0.45f) - transform.localScale.x / 2f, 0f, 0f);
 
         while (contents.Count > 0)
         {

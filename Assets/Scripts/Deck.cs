@@ -9,7 +9,7 @@ public class Deck : Collection<Deck> {
 
     public override void Reset()
     {
-        deckContainer.transform.localPosition = new Vector2(deckContainer.transform.localScale.x * 0.6f - Screen.width * 0.45f, 0f);
+		deckContainer.transform.localPosition = new Vector3 (-(Screen.width * 0.45f) + transform.localScale.x / 2f, 0f, 0f);
 
         while (contents.Count > 0)
         {
