@@ -6,11 +6,11 @@ public class Discard : Collection<Discard> {
     public Hand hand;
     public Deck deck;
     public GameObject discardContainer;
-	public Display discardDisplay;
+	public DisplayPanel discardDisplay;
 
     public override void Reset()
     {
-		discardContainer.transform.localPosition = new Vector3 ((Screen.width * 0.49f) - discardContainer.transform.localScale.x / 2f, 0f, 0f);
+		//discardContainer.transform.localPosition = new Vector3 (Screen.width * 0.43f, 0f, 0f);
 
 		SharedSetup ();
     }

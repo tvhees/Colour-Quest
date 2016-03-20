@@ -6,6 +6,7 @@ public class CameraScript : MonoBehaviour {
     public Camera thisCamera;
 	public Vector3 cameraOffset, lastPosition;
 	public float zoomSpeed, zoomRatio, panSpeed, panRatio, lastTouch, returnDelay, targetSize;
+	public RectTransform touchZone;
 
 #if UNITY_EDITOR || UNITY_STANDALONE
     private bool firstPan;
@@ -46,7 +47,7 @@ public class CameraScript : MonoBehaviour {
     void Update() {
         // Camera pan controlling code
 #if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
-        if (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Moved)
+		if (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Moved)
         {
             lastTouch = Time.time;
             Vector2 touchDeltaPosition = Input.GetTouch(0).deltaPosition;

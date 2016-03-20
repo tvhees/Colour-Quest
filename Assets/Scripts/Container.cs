@@ -4,6 +4,7 @@ using System.Collections;
 public class Container : ClickableObject {
 
 	public GameObject display;
+	public GameObject source;
 
 	#if UNITY_STANDALONE || UNITY_EDITOR
 	private void OnMouseUp() {
@@ -12,7 +13,7 @@ public class Container : ClickableObject {
 	#endif
 
 	public override void ClickAction(){
-		transform.parent.SendMessage ("SendToDisplay");
+		source.SendMessage ("SendToDisplay");
 		display.SetActive (true);
 	}
 

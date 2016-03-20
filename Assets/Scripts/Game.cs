@@ -18,8 +18,8 @@ public class Game : Singleton<Game> {
     public Camera uiCamera;
     public RaycastHit hit;
     public GUISkin menuSkin;
-	public Display discardDisplay;
-	public Display deckDisplay;
+	public DisplayPanel discardDisplay;
+	public DisplayPanel deckDisplay;
 
     public enum State
     {
