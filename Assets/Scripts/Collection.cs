@@ -3,45 +3,86 @@ using System.Collections.Generic;
 
 public abstract class Collection<T> : Singleton<T> where T : MonoBehaviour
 {
-    public float manaScale, gapScale;
-    public List<GameObject> contents, black;
-    public ManaPool manaPool;
+    public float objScale, gapScale;
+    public List<GameObject> contents, blackMana;
+    public ObjectPool pool;
+	public bool centered;
+	public int[] manaList;
 
     protected int size;
+	protected Vector3 translate;
 
     public virtual void Reset() {
-        while (contents.Count > 0)
-        {
-            manaPool.SendToPool(contents[0]);
-        }
+		SharedSetup ();
     }
 
-    public void AddMana(GameObject mana) {
+	protected virtual void SharedSetup(){
+		manaList = new int[7] { 0, 0, 0, 0, 0, 0, 0 };
+		centered = true;
+
+		while (contents.Count > 0)
+		{
+			pool.SendToPool(contents[0]);
+		}
+
+		translate = new Vector3 (0.5f * objScale * gapScale, 0f, 0f);
+	}
+
+    public void AddObj(GameObject obj) {
         // Add to container
-        contents.Add(mana);
-
-        // Assign local position to the right of existing mana
-        mana.transform.parent = transform;
-        mana.transform.localScale = manaScale * Vector3.one;
-		Vector3 localPoint = new Vector3((size + 0.6f) * manaScale * gapScale, 0f, 0f);
-        mana.transform.localPosition = localPoint;
-
+        contents.Add(obj);
+		if (obj.GetComponent<Mana> () != null) {
+			int[] value = obj.GetComponent<Mana> ().value;
+			if (value.Sum () == 0)
+				blackMana.Add (obj);
+			manaList [pool.GetValueIndex (value)]++;
+		}
         // Track mana in container
         size++;
-    }
+		
+        // Assign local position to the right of existing mana
+        obj.transform.parent = transform;
+        obj.transform.localScale = objScale * Vector3.one;
 
-    public void Remove(GameObject mana) {
-        if (contents.Contains(mana)) {
-            int j = contents.IndexOf(mana);
-            contents.Remove(mana);
+		Vector3 localPoint = FindPosition (size, new Vector3(0f, 0f, 0f));
+
+		obj.transform.localPosition = localPoint;
+
+		if (centered) {
+			// Shift all mana leftward to keep the hand centered
+			for (int i = 0; i < contents.Count; i++) {
+				contents [i].transform.localPosition = FindPosition (-1, contents [i].transform.localPosition);
+			}
+		}
+
+	}
+
+    public void Remove(GameObject obj) {
+        if (contents.Contains(obj)) {
+            int j = contents.IndexOf(obj);
+            contents.Remove(obj);
             size--;
 
-            for (int i = j; i < contents.Count; i++)
-                contents[i].transform.localPosition = contents[i].transform.localPosition - new Vector3(manaScale * gapScale, 0f, 0f);
+			if (obj.GetComponent<Mana> () != null) {
+				int[] value = obj.GetComponent<Mana> ().value;
+				manaList [pool.GetValueIndex (value)]--;
+			}
+
+			for (int i = 0; i < contents.Count; i++) {
+				if (i < j)
+					contents [i].transform.localPosition = FindPosition(1, contents [i].transform.localPosition);
+				else 
+					contents [i].transform.localPosition = FindPosition(-1, contents [i].transform.localPosition);
+			}
         }
 
-        if (black.Contains(mana)) {
-            black.Remove(mana);
+        if (blackMana.Contains(obj)) {
+            blackMana.Remove(obj);
         }
     }
+
+	protected virtual Vector3 FindPosition(int scalar, Vector3 pos){
+		Vector3 position = pos + scalar * translate;
+		return position;
+	}
 }

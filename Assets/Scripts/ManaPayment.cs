@@ -81,6 +81,8 @@ public class ManaPayment : MonoBehaviour {
         if (target.tag == "Goal")
         {
             goal.UpdateValue(payment, 1, -1);
+
+            RemainderToBlackMana(goal.goalObject.goalCost);
         }
         else
         {
@@ -101,5 +103,22 @@ public class ManaPayment : MonoBehaviour {
         
         if(Game.Instance.state != Game.State.WON)        
             Reset();
+    }
+
+    private void RemainderToBlackMana(int[] remainder)
+    {
+        int[] nullValue = new int[3] { 0, 0, 0 };
+
+        if (Game.Instance.state != Game.State.WON)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < remainder[i]; j++)
+                {
+                    GameObject mana = manaPool.GetManaOption(nullValue, 0);
+                    hand.SendToHand(mana);
+                }
+            }
+        }
     }
 }

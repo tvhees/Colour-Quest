@@ -5,10 +5,10 @@ using System;
 
 public class Goal : MovingObject<Goal> {
 
-    public GoalObject goalObject;
 	public int leftMax, rightMax;
 	public GameObject goalMarker, player, mainCamera;
-	public Vector3 goalTarget;
+    public GoalObject goalObject;
+    public Vector3 goalTarget;
     public TextMesh[] goalValue;
 
 	private GameObject goalTile = null;
@@ -124,5 +124,4 @@ public class Goal : MovingObject<Goal> {
             Game.Instance.state = Game.State.WON;
         }
     }
-
 }

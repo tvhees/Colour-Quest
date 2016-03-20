@@ -18,6 +18,8 @@ public class Game : Singleton<Game> {
     public Camera uiCamera;
     public RaycastHit hit;
     public GUISkin menuSkin;
+	public DisplayPanel discardDisplay;
+	public DisplayPanel deckDisplay;
 
     public enum State
     {
@@ -47,6 +49,8 @@ public class Game : Singleton<Game> {
         deck.Reset();
         discard.Reset();
         manaPool.Reset();
+		discardDisplay.Reset ();
+		deckDisplay.Reset ();
     }
 
     void Update()

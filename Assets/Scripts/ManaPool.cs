@@ -39,9 +39,11 @@ public class ManaPool : ObjectPool {
             mana.SetActive(true);
             deck.SendToDeck(mana);
         }
+
+		deck.HideMana ();
     }
 
-    public void SendToPool(GameObject mana)
+    public override void SendToPool(GameObject mana)
     {
         if (hand.selectedMana.Contains(mana))
         {
