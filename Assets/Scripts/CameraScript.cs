@@ -4,9 +4,14 @@ using System.Collections;
 public class CameraScript : MonoBehaviour {
 
     public Camera thisCamera;
+    public Camera uiCamera;
 	public Vector3 cameraOffset, lastPosition;
 	public float zoomSpeed, zoomRatio, panSpeed, panRatio, lastTouch, returnDelay, targetSize;
 	public RectTransform touchZone;
+
+#if UNITY_IOS || UNITY_ANDROID && !UNITY_EDITOR
+    private bool inTouchZone;
+#endif
 
 #if UNITY_EDITOR || UNITY_STANDALONE
     private bool firstPan;
@@ -47,41 +52,53 @@ public class CameraScript : MonoBehaviour {
     void Update() {
         // Camera pan controlling code
 #if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
-		if (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Moved)
+        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began && CheckTouchZone(Input.GetTouch(0).position))
+            inTouchZone = true;
+
+        if (Input.touchCount == 0) {
+            inTouchZone = false;
+        }
+
+        if (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Moved)
         {
-            lastTouch = Time.time;
-            Vector2 touchDeltaPosition = Input.GetTouch(0).deltaPosition;
-            transform.Translate(-touchDeltaPosition.x * panRatio * panSpeed, -touchDeltaPosition.y * panRatio * panSpeed, 0);
+            if (inTouchZone)
+            {
+                lastTouch = Time.time;
+                Vector2 touchDeltaPosition = Input.GetTouch(0).deltaPosition;
+                transform.Translate(-touchDeltaPosition.x * panRatio * panSpeed, -touchDeltaPosition.y * panRatio * panSpeed, 0);
+            }
         }          
 
         // Camera zoom controlling code
         // If there are two touches on the device...
         if (Input.touchCount == 2)
         {
-            // Store the last time zoom was requested
-            lastTouch = Time.time;
+            if (inTouchZone)
+            {
+                // Store the last time zoom was requested
+                lastTouch = Time.time;
 
-            // Store both touches.
-            Touch touchZero = Input.GetTouch(0);
-            Touch touchOne = Input.GetTouch(1);
+                // Store both touches.
+                Touch touchZero = Input.GetTouch(0);
+                Touch touchOne = Input.GetTouch(1);
 
-            // Find the position in the previous frame of each touch.
-            Vector2 touchZeroPrevPos = touchZero.position - touchZero.deltaPosition;
-            Vector2 touchOnePrevPos = touchOne.position - touchOne.deltaPosition;
+                // Find the position in the previous frame of each touch.
+                Vector2 touchZeroPrevPos = touchZero.position - touchZero.deltaPosition;
+                Vector2 touchOnePrevPos = touchOne.position - touchOne.deltaPosition;
 
-            // Find the magnitude of the vector (the distance) between the touches in each frame.
-            float prevTouchDeltaMag = (touchZeroPrevPos - touchOnePrevPos).magnitude;
-            float touchDeltaMag = (touchZero.position - touchOne.position).magnitude;
+                // Find the magnitude of the vector (the distance) between the touches in each frame.
+                float prevTouchDeltaMag = (touchZeroPrevPos - touchOnePrevPos).magnitude;
+                float touchDeltaMag = (touchZero.position - touchOne.position).magnitude;
 
-            // Find the difference in the distances between each frame.
-            float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
+                // Find the difference in the distances between each frame.
+                float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
 
-            // change the orthographic size based on the change in distance between the touches.
-            thisCamera.orthographicSize += zoomRatio * deltaMagnitudeDiff * zoomSpeed;
+                // change the orthographic size based on the change in distance between the touches.
+                thisCamera.orthographicSize += zoomRatio * deltaMagnitudeDiff * zoomSpeed;
 
-            // Make sure the orthographic size never drops below zero.
-            thisCamera.orthographicSize = Mathf.Max(thisCamera.orthographicSize, targetSize - 1);
-
+                // Make sure the orthographic size never drops below zero.
+                thisCamera.orthographicSize = Mathf.Max(thisCamera.orthographicSize, targetSize - 1);
+            }
         }
 #endif
 
@@ -125,5 +142,9 @@ public class CameraScript : MonoBehaviour {
             transform.localPosition = Vector3.MoveTowards(transform.localPosition, cameraOffset, panSpeed * Time.deltaTime);
             thisCamera.orthographicSize = Mathf.MoveTowards(thisCamera.orthographicSize, targetSize, zoomSpeed * Time.deltaTime);
         }
+    }
+
+    private bool CheckTouchZone(Vector2 touchPoint) {
+        return RectTransformUtility.RectangleContainsScreenPoint(touchZone, touchPoint, uiCamera);
     }
 }
