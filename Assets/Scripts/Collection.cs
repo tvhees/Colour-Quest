@@ -85,7 +85,7 @@ public abstract class Collection<T> : Singleton<T> where T : MonoBehaviour
 
 			int direction = 1;
 
-			// Shift objects towards position of the removed object
+			// Shift objects towards position of the removed object *** THIS CODE IS PROBABLY CAUSING ISSUES
 			if (centered) {
 				for(int i = 0; i < size; i++){
 					if(contents[i].transform.position.x < j)

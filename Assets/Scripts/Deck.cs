@@ -38,13 +38,11 @@ public class Deck : Collection<Deck> {
 		HideMana();
 			
 		float adjustment = contents [0].transform.localPosition.x;
+        if (hand.maxHandSize % 2 < 1)
+            adjustment /= 2;
 
-		// Reposition objects slightly
-		for (int i = 0; i < size; i++) {
-			if (hand.maxHandSize % 2 < 1)
-				adjustment /= 2;
-
-			Debug.Log(contents [i].transform.localPosition);
+        // Reposition objects slightly
+        for (int i = 0; i < size; i++) {
 
 			contents [i].transform.localPosition = contents [i].transform.localPosition - new Vector3 (adjustment, 0f, 0f);
 		}
