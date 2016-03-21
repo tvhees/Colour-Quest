@@ -1,18 +1,22 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/CameraScript.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Deck.cs">
     <Files>
-      <File FileName="Assets/Scripts/Container.cs" Line="8" Column="2" />
-      <File FileName="Assets/Scripts/Collection.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Deck.cs" Line="14" Column="3" />
-      <File FileName="Assets/Scripts/Discard.cs" Line="13" Column="22" />
-      <File FileName="Assets/Scripts/ManaPayment.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Hand.cs" Line="18" Column="3" />
-      <File FileName="Assets/Scripts/ManaPool.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/DisplayPanel.cs" Line="25" Column="69" />
-      <File FileName="Assets/Scripts/Game.cs" Line="50" Column="25" />
+      <File FileName="Assets/Scripts/CameraScript.cs" Line="69" Column="4" />
+      <File FileName="Assets/Scripts/Container.cs" Line="9" Column="38" />
+      <File FileName="Assets/Scripts/Collection.cs" Line="7" Column="65" />
+      <File FileName="Assets/Scripts/Deck.cs" Line="55" Column="39" />
+      <File FileName="Assets/Scripts/Discard.cs" Line="22" Column="35" />
+      <File FileName="Assets/Scripts/ManaPayment.cs" Line="95" Column="38" />
+      <File FileName="Assets/Scripts/Hand.cs" Line="90" Column="27" />
+      <File FileName="Assets/Scripts/ManaPool.cs" Line="52" Column="3" />
+      <File FileName="Assets/Scripts/DisplayPanel.cs" Line="25" Column="54" />
+      <File FileName="Assets/Scripts/Game.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/DebugScript.cs" Line="8" Column="71" />
-      <File FileName="Assets/Scripts/CameraScript.cs" Line="55" Column="20" />
+      <File FileName="Assets/Scripts/Objective.cs" Line="4" Column="32" />
+      <File FileName="Assets/Scripts/BlueObj.cs" Line="4" Column="24" />
+      <File FileName="Assets/Scripts/TileScript.cs" Line="46" Column="25" />
+      <File FileName="Assets/Scripts/ObjectivePool.cs" Line="48" Column="3" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

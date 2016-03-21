@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class CameraScript : MonoBehaviour {
@@ -8,6 +9,7 @@ public class CameraScript : MonoBehaviour {
 	public Vector3 cameraOffset, lastPosition;
 	public float zoomSpeed, zoomRatio, panSpeed, panRatio, lastTouch, returnDelay, targetSize;
 	public RectTransform touchZone;
+	public TextMesh touchPosition, isInTouchZone;
 
 #if UNITY_IOS || UNITY_ANDROID && !UNITY_EDITOR
     private bool inTouchZone;
@@ -52,12 +54,19 @@ public class CameraScript : MonoBehaviour {
     void Update() {
         // Camera pan controlling code
 #if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
-        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began && CheckTouchZone(Input.GetTouch(0).position))
+		if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began && CheckTouchZone(Input.GetTouch(0).position)){
             inTouchZone = true;
+		}
 
         if (Input.touchCount == 0) {
             inTouchZone = false;
         }
+
+		isInTouchZone.text = inTouchZone.ToString ();
+		if(Input.touchCount > 0)
+			touchPosition.text = Input.GetTouch(0).position.ToString();
+		else
+			touchPosition.text = "No touch recorded";
 
         if (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Moved)
         {

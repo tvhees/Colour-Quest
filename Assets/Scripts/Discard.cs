@@ -5,12 +5,14 @@ public class Discard : Collection<Discard> {
 
     public Hand hand;
     public Deck deck;
-    public GameObject discardContainer;
-	public DisplayPanel discardDisplay;
+    public GameObject container;
+	public DisplayPanel display;
 
     public override void Reset()
     {
-		//discardContainer.transform.localPosition = new Vector3 (Screen.width * 0.43f, 0f, 0f);
+		float width = GetComponent<RectTransform> ().rect.width;
+
+		container.transform.localPosition = new Vector3 (0.40f * width, 0f, 0f);
 
 		SharedSetup ();
     }
@@ -30,6 +32,6 @@ public class Discard : Collection<Discard> {
     }
 
 	public void SendToDisplay(){
-		discardDisplay.UpdateDisplay (manaList);
+		display.UpdateDisplay (manaList);
 	}
 }

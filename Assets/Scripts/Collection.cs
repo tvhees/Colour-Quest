@@ -4,15 +4,17 @@ using System.Collections.Generic;
 public abstract class Collection<T> : Singleton<T> where T : MonoBehaviour
 {
     public float objScale, gapScale;
-    public List<GameObject> contents, blackMana;
+    public List<GameObject> contents, blackMana, hidden, preview;
     public ObjectPool pool;
-	public bool centered;
+	public bool centered, valueOnAdd, valueOnRemove;
 	public int[] manaList;
 
     protected int size;
 	protected Vector3 translate;
 
     public virtual void Reset() {
+		valueOnAdd = true;
+		valueOnRemove = true;
 		SharedSetup ();
     }
 
@@ -28,14 +30,11 @@ public abstract class Collection<T> : Singleton<T> where T : MonoBehaviour
 		translate = new Vector3 (0.5f * objScale * gapScale, 0f, 0f);
 	}
 
-    public void AddObj(GameObject obj) {
+    public virtual void AddObj(GameObject obj) {
         // Add to container
         contents.Add(obj);
-		if (obj.GetComponent<Mana> () != null) {
-			int[] value = obj.GetComponent<Mana> ().value;
-			if (value.Sum () == 0)
-				blackMana.Add (obj);
-			manaList [pool.GetValueIndex (value)]++;
+		if (obj.GetComponent<Mana> () != null && valueOnAdd) {
+			ChangeValue (obj, true);
 		}
         // Track mana in container
         size++;
@@ -44,35 +43,65 @@ public abstract class Collection<T> : Singleton<T> where T : MonoBehaviour
         obj.transform.parent = transform;
         obj.transform.localScale = objScale * Vector3.one;
 
-		Vector3 localPoint = FindPosition (size, new Vector3(0f, 0f, 0f));
-
-		obj.transform.localPosition = localPoint;
+		Vector3 localPoint;
 
 		if (centered) {
-			// Shift all mana leftward to keep the hand centered
-			for (int i = 0; i < contents.Count; i++) {
-				contents [i].transform.localPosition = FindPosition (-1, contents [i].transform.localPosition);
+			localPoint = FindPosition (-1f * size * Mathf.Pow(-1, size), new Vector3(0f, 0f, 0f));
+			obj.transform.localPosition = localPoint;
+
+			// Shift all mana to keep the hand centered
+			for (int i = 0; i < size; i++) {
+				contents [i].transform.localPosition = FindPosition (Mathf.Pow(-1,size), contents [i].transform.localPosition);
 			}
+		} else {
+			localPoint = FindPosition (size, new Vector3(0f, 0f, 0f));
+
+			obj.transform.localPosition = localPoint;
 		}
 
 	}
 
-    public void Remove(GameObject obj) {
+	protected virtual void ChangeValue(GameObject obj, bool increase){
+		int[] value = obj.GetComponent<Mana> ().value;
+		if (increase) {
+			if (value.Sum () == 0)
+				blackMana.Add (obj);
+			manaList [pool.GetValueIndex (value)]++;
+		}
+		else {
+			manaList [pool.GetValueIndex (value)]--;
+		}
+	}
+
+    public virtual void Remove(GameObject obj) {
         if (contents.Contains(obj)) {
-            int j = contents.IndexOf(obj);
+			float j = obj.transform.position.x;
             contents.Remove(obj);
             size--;
 
-			if (obj.GetComponent<Mana> () != null) {
-				int[] value = obj.GetComponent<Mana> ().value;
-				manaList [pool.GetValueIndex (value)]--;
+			if (obj.GetComponent<Mana> () != null && valueOnRemove) {
+				ChangeValue (obj, false);
 			}
 
-			for (int i = 0; i < contents.Count; i++) {
-				if (i < j)
-					contents [i].transform.localPosition = FindPosition(1, contents [i].transform.localPosition);
-				else 
-					contents [i].transform.localPosition = FindPosition(-1, contents [i].transform.localPosition);
+			int direction = 1;
+
+			// Shift objects towards position of the removed object
+			if (centered) {
+				for(int i = 0; i < size; i++){
+					if(contents[i].transform.position.x < j)
+						direction = 1;
+					else
+						direction = -1;
+
+					contents [i].transform.localPosition = FindPosition (direction, contents [i].transform.localPosition);
+				}
+			} else {
+				for (int i = 0; i < contents.Count; i++) {
+					if (contents[i].transform.position.x > j)
+						direction = -2;
+
+					contents [i].transform.localPosition = FindPosition (direction, contents [i].transform.localPosition);
+				}
 			}
         }
 
@@ -81,7 +110,7 @@ public abstract class Collection<T> : Singleton<T> where T : MonoBehaviour
         }
     }
 
-	protected virtual Vector3 FindPosition(int scalar, Vector3 pos){
+	protected virtual Vector3 FindPosition(float scalar, Vector3 pos){
 		Vector3 position = pos + scalar * translate;
 		return position;
 	}

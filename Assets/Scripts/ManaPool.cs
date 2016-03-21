@@ -37,10 +37,10 @@ public class ManaPool : ObjectPool {
             mana.transform.SetParent(transform);
             RandomColour(mana);
             mana.SetActive(true);
-            deck.SendToDeck(mana);
+            discard.SendToDiscard(mana);
         }
 
-		deck.HideMana ();
+		deck.RefillDeck (hand.maxHandSize);
     }
 
     public override void SendToPool(GameObject mana)

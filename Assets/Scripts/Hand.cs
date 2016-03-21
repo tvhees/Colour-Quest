@@ -56,8 +56,6 @@ public class Hand : Collection<Hand> {
 
 		scrub = true;
 
-		deck.HideMana();
-
 		StartCoroutine(goalScript.MoveGoal ());
     }
 
