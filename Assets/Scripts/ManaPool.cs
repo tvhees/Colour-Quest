@@ -9,6 +9,7 @@ public class ManaPool : ObjectPool {
     public GameObject manaSphere;
 	public Material[] baseMaterials, advancedMaterials, nullMaterials, startMaterials;
     public Hand hand;
+	public Preview preview;
     public Discard discard;
     public Deck deck;
 
@@ -37,10 +38,10 @@ public class ManaPool : ObjectPool {
             mana.transform.SetParent(transform);
             RandomColour(mana);
             mana.SetActive(true);
-            discard.SendToDiscard(mana);
+            deck.SendToDeck(mana);
         }
 
-		deck.RefillDeck (hand.maxHandSize);
+		preview.RefillPreview (hand.maxHandSize);
     }
 
     public override void SendToPool(GameObject mana)

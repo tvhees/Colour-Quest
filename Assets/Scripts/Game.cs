@@ -12,6 +12,7 @@ public class Game : Singleton<Game> {
     public ObjectivePool objectivePool;
     public Hand hand;
     public Deck deck;
+	public Preview preview;
     public Discard discard;
     public ManaPool manaPool;
     public Camera mainCamera;
@@ -46,6 +47,7 @@ public class Game : Singleton<Game> {
         goal.Reset();
         objectivePool.Reset();
         hand.Reset();
+		preview.Reset();
         deck.Reset();
         discard.Reset();
         manaPool.Reset();

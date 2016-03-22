@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class Hand : Collection<Hand> {
 
     public Deck deck;
+	public Preview preview;
     public Discard discard;
 	public Goal goalScript;
     public List<GameObject> selectedMana;
@@ -25,6 +26,9 @@ public class Hand : Collection<Hand> {
 
         // Remove from deck
         deck.Remove(mana);
+
+		// Remove from preview
+		preview.Remove(mana);
 
         AddObj(mana);
     }
@@ -50,9 +54,9 @@ public class Hand : Collection<Hand> {
     public void RefillHand() {
         // Take mana from deck until hand is at current mana limit
         while (size < maxHandSize) {
-            SendToHand(deck.contents[0]);
+			SendToHand(preview.contents[0]);
         }
-		deck.RefillDeck(maxHandSize);
+		preview.RefillPreview(maxHandSize);
 
 		scrub = true;
 
@@ -88,6 +92,6 @@ public class Hand : Collection<Hand> {
 
 	public void IncreaseLimit(int increase){
 		maxHandSize += increase;
-		deck.RefillDeck (maxHandSize);
+		preview.RefillPreview (maxHandSize);
 	}
 }

@@ -4,6 +4,7 @@ using System.Collections;
 public class Discard : Collection<Discard> {
 
     public Hand hand;
+	public Preview preview;
     public Deck deck;
     public GameObject container;
 	public DisplayPanel display;
@@ -24,6 +25,10 @@ public class Discard : Collection<Discard> {
             hand.selectedMana.Remove(mana);
 
         hand.Remove(mana);
+
+		deck.Remove (mana);
+
+		preview.Remove (mana);
 
         // Reset any colour change or particles
         mana.GetComponent<Mana>().Reset();

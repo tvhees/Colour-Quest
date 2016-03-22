@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public abstract class Collection<T> : Singleton<T> where T : MonoBehaviour
 {
     public float objScale, gapScale;
-    public List<GameObject> contents, blackMana, hidden, preview;
+    public List<GameObject> contents, blackMana;
     public ObjectPool pool;
 	public bool centered, valueOnAdd, valueOnRemove;
 	public int[] manaList;
@@ -85,7 +85,7 @@ public abstract class Collection<T> : Singleton<T> where T : MonoBehaviour
 
 			int direction = 1;
 
-			// Shift objects towards position of the removed object *** THIS CODE IS PROBABLY CAUSING ISSUES
+			// Shift objects towards position of the removed object
 			if (centered) {
 				for(int i = 0; i < size; i++){
 					if(contents[i].transform.position.x < j)

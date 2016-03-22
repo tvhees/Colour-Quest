@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class Deck : Collection<Deck> {
     
 	public Hand hand;
+	public Preview preview;
 	public Discard discard;
     public GameObject container;
 	public DisplayPanel display;
@@ -12,8 +13,6 @@ public class Deck : Collection<Deck> {
 
     public override void Reset()
     {
-		valueOnRemove = false;
-
 		float width = GetComponent<RectTransform> ().rect.width;
 
 		container.transform.localPosition = new Vector3 (-0.40f * width, 0f, 0f);
@@ -26,45 +25,15 @@ public class Deck : Collection<Deck> {
 
 		discard.Remove (mana);
 
+		preview.Remove (mana);
+
 		AddObj (mana);
 	}
 
-	public void RefillDeck(int previewSize){
-		if (contents.Count < previewSize) {
+	public void RefillDeck(){
+		if (contents.Count < 1) {
 			while (discard.contents.Count > 0)
 				SendToDeck (discard.contents [Random.Range (0, discard.contents.Count)]);
-		}
-
-		HideMana();
-			
-		float adjustment = contents [0].transform.localPosition.x;
-        if (hand.maxHandSize % 2 < 1)
-            adjustment /= 2;
-
-        // Reposition objects slightly
-        for (int i = 0; i < size; i++) {
-
-			contents [i].transform.localPosition = contents [i].transform.localPosition - new Vector3 (adjustment, 0f, 0f);
-		}
-	}
-
-	public void HideMana(){
-		for (int i = 0; i < size; i++) {
-			GameObject deckMana = contents [i];
-			if (i < hand.maxHandSize) {
-				if (hidden.Contains (deckMana))
-					hidden.Remove (deckMana);
-
-				if (!preview.Contains (deckMana)) {
-					preview.Add (deckMana);
-					deckMana.transform.localScale = new Vector3 (objScale, objScale, objScale);
-					ChangeValue (deckMana, false);
-				}
-			} else {
-				if (!hidden.Contains (deckMana))
-					hidden.Add (deckMana);
-					deckMana.transform.localScale = Vector3.zero;
-			}
 		}
 	}
 
