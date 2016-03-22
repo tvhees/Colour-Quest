@@ -28,9 +28,15 @@ public class Preview : Collection<Preview> {
 	}
 
 	public void RefillPreview(int nextHandSize){
+		int i = 0;
 		while (size < nextHandSize) {
 			deck.RefillDeck();
 			SendToPreview (deck.contents [Random.Range (0, deck.contents.Count)]);
+			i++;
+			if (i > 50) {
+				Debug.Log ("infinite loop: RefillPreview");
+				break;
+			}
 		}
 	}
 }

@@ -52,9 +52,16 @@ public class Hand : Collection<Hand> {
     }
 
     public void RefillHand() {
+		int i = 0;
         // Take mana from deck until hand is at current mana limit
         while (size < maxHandSize) {
 			SendToHand(preview.contents[0]);
+			i++;
+			if (i > 50) {
+				Debug.Log ("infinite loop: RefillHand");
+				break;
+			}
+
         }
 		preview.RefillPreview(maxHandSize);
 

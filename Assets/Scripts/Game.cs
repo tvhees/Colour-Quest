@@ -47,9 +47,9 @@ public class Game : Singleton<Game> {
         goal.Reset();
         objectivePool.Reset();
         hand.Reset();
-		preview.Reset();
         deck.Reset();
         discard.Reset();
+		preview.Reset();
         manaPool.Reset();
 		discardDisplay.Reset ();
 		deckDisplay.Reset ();
