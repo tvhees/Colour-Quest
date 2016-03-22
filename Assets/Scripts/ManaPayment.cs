@@ -22,6 +22,7 @@ public class ManaPayment : MonoBehaviour {
         Game.Instance.state = Game.State.IDLE;
 
         selectionMarker.transform.position = new Vector3(-10f, 10f, -10f);
+        selectionMarker.SetActive(true);
         playerParticles.Stop();
 
         payed = false;
