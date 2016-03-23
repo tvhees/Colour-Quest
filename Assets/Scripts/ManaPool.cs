@@ -113,7 +113,7 @@ public class ManaPool : ObjectPool {
 
         int[] newValue = new int[3];
         for (int i = 0; i < value.Length; i++) {
-            newValue[i] = value[(i + value.Length - blackMana) % value.Length];
+			newValue[i] = value[(i + value.Sum() * (value.Length - blackMana)) % value.Length];
         }
 
         SpecificColour(mana, newValue);
