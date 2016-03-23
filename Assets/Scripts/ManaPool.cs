@@ -57,6 +57,8 @@ public class ManaPool : ObjectPool {
 
         discard.Remove(mana);
 
+        preview.Remove(mana);
+
         ReturnObject(mana);
     }
 

@@ -39,7 +39,6 @@ public class TileScript : ClickableObject {
                     {
                         Game.Instance.state = Game.State.PAYING;
                         selectionMarker.transform.position = transform.position;
-                        selectionMarker.SetActive(true);
 
                         // If there's an objective on the tile we add its cost
                         int[] objectiveCost = new int[3] { 0, 0, 0 };
@@ -56,8 +55,8 @@ public class TileScript : ClickableObject {
                     {
                         Game.Instance.state = Game.State.IDLE;
                         currentTile = false;
-                        manaPayment.Reset();
-                        selectionMarker.SetActive(false);
+                        manaPayment.Reset(); ;
+                        selectionMarker.transform.position = new Vector3(-10f, 10f, 0f);
                     }
                     break;
                 case Game.State.GOAL:
