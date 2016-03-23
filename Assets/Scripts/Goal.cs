@@ -45,7 +45,8 @@ public class Goal : MovingObject<Goal> {
     public IEnumerator MoveGoal(){
 		Game.Instance.state = Game.State.GOAL;
 
-		yield return StartCoroutine(mainCamera.GetComponent<CameraScript> ().FocusCamera (transform));
+		if(Preferences.Instance.watchGoal) // Set in player preferences
+			yield return StartCoroutine(mainCamera.GetComponent<CameraScript> ().FocusCamera (transform));
 
         // If there's still tiles to move to, continue. If not, end the game as a loss
         if (canMove)
@@ -54,7 +55,10 @@ public class Goal : MovingObject<Goal> {
             UpdateValue(goalTile.GetComponent<TileScript>().tileCost);
 
             // Move on to the tile and destroy it
-            yield return StartCoroutine(SmoothMovement(goalTarget, goalTile.transform.parent.gameObject));
+			if (Preferences.Instance.watchGoal)
+				yield return StartCoroutine (SmoothMovement (goalTarget, goalTile.transform.parent.gameObject));
+			else
+				InstantMovement (goalTarget, goalTile.transform.parent.gameObject);
 
             // If we've moved on top of the player, end the game as a loss
             if ((transform.position - player.transform.position).sqrMagnitude < 0.1f)
@@ -66,9 +70,11 @@ public class Goal : MovingObject<Goal> {
             {
                 canMove = NextTile();
 
-                yield return new WaitForSeconds(1.0f);
+				if (Preferences.Instance.watchGoal) { // Set in player preferences
+					yield return new WaitForSeconds (1.0f);
 
-                yield return StartCoroutine(mainCamera.GetComponent<CameraScript>().FocusCamera(player.transform));
+					yield return StartCoroutine (mainCamera.GetComponent<CameraScript> ().FocusCamera (player.transform));
+				}
 
                 Game.Instance.state = Game.State.IDLE;
             }

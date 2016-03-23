@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class Game : Singleton<Game> {
 
     public float[] guiBox, guiButton;
+	public RectTransform uiRect;
     public ManaPayment manaPayment;
     public BoardScript boardScript;
     public Player player;
@@ -21,6 +22,8 @@ public class Game : Singleton<Game> {
     public GUISkin menuSkin;
 	public DisplayPanel discardDisplay;
 	public DisplayPanel deckDisplay;
+	public float uiGap;
+
 
     public enum State
     {
@@ -28,19 +31,28 @@ public class Game : Singleton<Game> {
         PAYING,
         GOAL,
         MENU,
+		PREFS,
         WON,
         LOST
     };
 
     public State state;
 
-    private State savedState;
+	private State savedState, savedMenu;
+	private string title = null;
+	private float screenWidth, screenHeight;
 
     void Start() {
+		Preferences.Instance.Load();
         SetUpGame();
+
+		// Get dimensions to use for menus
+		screenWidth = Screen.width; //uiRect.rect.width;
+		screenHeight = Screen.height; //uiRect.rect.height;
     }
 
     void SetUpGame() {
+		
         boardScript.NewBoard();
         manaPayment.Reset();
         player.Reset();
@@ -60,9 +72,12 @@ public class Game : Singleton<Game> {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (state == State.MENU)
-            {
+			{
                 state = savedState;
             }
+			else if (state == State.PREFS) {
+				state = savedMenu;
+			}
             else if(state != State.WON || state != State.LOST)
             {
                 savedState = state;
@@ -97,53 +112,85 @@ public class Game : Singleton<Game> {
     void OnGUI() {
         GUI.skin = menuSkin;
 
-        if (state == State.MENU) {
-            GUI.Box(new Rect(Screen.width * guiBox[0], Screen.height*guiBox[1], Screen.width * guiBox[2], Screen.height * guiBox[3]), "MENU");
+		switch (state) {
+		case State.MENU:
+			title = "MENU";
+			break;
+		case State.WON:
+			title = "VICTORY";
+			break;
+		case State.LOST:
+			title = "DEFEAT";
+			break;
+		case State.PREFS:
+			title = "PREFERENCES";
+			break;
+		}
 
-            // Make the first button. If it is pressed, Application.Loadlevel (1) will be executed
-            if (GUI.Button(new Rect(Screen.width * guiButton[0], Screen.height * guiButton[1], Screen.width * guiButton[2], Screen.height * guiButton[3]), "RESTART"))
+		// Main menu - on Escape or win/loss
+		if (state == State.MENU || state == State.WON || state == State.LOST) {
+			
+            GUI.Box(new Rect(screenWidth * guiBox[0], screenHeight*guiBox[1], screenWidth * guiBox[2], screenHeight * guiBox[3]), title);
+
+            // Make the first button. If it is pressed, a new game will be set up
+			if (GUI.Button(MakeUIRect(0f * uiGap), "RESTART"))
             {
                 SetUpGame();
             }
 
-            // Make the second button.
-            if (GUI.Button(new Rect(Screen.width * guiButton[0], Screen.height * (guiButton[1] + 1.1f*guiButton[3]), Screen.width * guiButton[2], Screen.height * guiButton[3]), "QUIT"))
+            // Make the second button. Go to the preferences menu
+			if (GUI.Button(MakeUIRect(1f * uiGap), "PREFERENCES"))
             {
-                Application.Quit();
+				savedMenu = state;
+				state = State.PREFS;
             }
+
+			// Make the third button. Returns to the game
+			if (GUI.Button(MakeUIRect(2f * uiGap), "BACK"))
+			{
+				state = savedState;
+			}
+
+			// Make the fourth button. Quit the game
+			if (GUI.Button(MakeUIRect(3f * uiGap), "QUIT"))
+			{
+				Application.Quit();
+			}
         }
 
-        if (state == State.WON) {
-            GUI.Box(new Rect(Screen.width * guiBox[0], Screen.height * guiBox[1], Screen.width * guiBox[2], Screen.height * guiBox[3]), "VICTORY");
+		// Preferences menu - on pressing preferences button
+		if (state == State.PREFS) {
+			GUI.Box(new Rect(screenWidth * guiBox[0], screenHeight*guiBox[1], screenWidth * guiBox[2], screenHeight * guiBox[3]), title);
 
-            // Make the first button. If it is pressed, Application.Loadlevel (1) will be executed
-            if (GUI.Button(new Rect(Screen.width * guiButton[0], Screen.height * guiButton[1], Screen.width * guiButton[2], Screen.height * guiButton[3]), "RESTART"))
-            {
-                SetUpGame();
-            }
+			// Make the first button. Turns tutorial features on/off
+			Preferences.Instance.tutorial = GUI.Toggle(MakeUIRect(0f * uiGap), Preferences.Instance.tutorial, "TUTORIAL MODE");
 
-            // Make the second button.
-            if (GUI.Button(new Rect(Screen.width * guiButton[0], Screen.height * (guiButton[1] + 1.1f * guiButton[3]), Screen.width * guiButton[2], Screen.height * guiButton[3]), "QUIT"))
-            {
-                Application.Quit();
-            }
-        }
 
-        if (state == State.LOST) {
-            GUI.Box(new Rect(Screen.width * guiBox[0], Screen.height * guiBox[1], Screen.width * guiBox[2], Screen.height * guiBox[3]), "DEFEAT");
+			// Make a toggle that turns goal following with the camera on/off
+			Preferences.Instance.watchGoal = GUI.Toggle(MakeUIRect(1f * uiGap), Preferences.Instance.watchGoal, "WATCH GOAL");
 
-            // Make the first button. If it is pressed, Application.Loadlevel (1) will be executed
-            if (GUI.Button(new Rect(Screen.width * guiButton[0], Screen.height * guiButton[1], Screen.width * guiButton[2], Screen.height * guiButton[3]), "RESTART"))
-            {
-                SetUpGame();
-            }
+			// Make a slider. Changes speed of camera pan and zoom
+			Preferences.Instance.cameraSpeed = GUI.HorizontalSlider(MakeUIRect(2f * uiGap), Preferences.Instance.cameraSpeed, 3f, 10f);
+		
+			// Make a label for the slider
+			GUI.Label(MakeUIRect(2f * uiGap),"CAMERA SPEED");
 
-            // Make the second button.
-            if (GUI.Button(new Rect(Screen.width * guiButton[0], Screen.height * (guiButton[1] + 1.1f * guiButton[3]), Screen.width * guiButton[2], Screen.height * guiButton[3]), "QUIT"))
-            {
-                Application.Quit();
-            }
-        }
+			// Make the third button. Returns to previous Menu
+			if (GUI.Button(MakeUIRect(3f * uiGap), "RESET"))
+			{
+				PlayerPrefs.DeleteAll();
+				Preferences.Instance.Load();
+			}
+
+			// Make the fourth button. Returns to previous Menu
+			if (GUI.Button(MakeUIRect(4f * uiGap), "BACK"))
+			{
+				state = savedMenu;
+			}
+		}
     }
-
+	private Rect MakeUIRect(float multiplier){
+		return new Rect (screenWidth * guiButton [0], screenHeight * (guiButton [1] + multiplier * guiButton [3]),
+						screenWidth * guiButton [2], screenHeight * guiButton [3]);
+	}
 }

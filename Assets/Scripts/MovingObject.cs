@@ -27,4 +27,10 @@ public abstract class MovingObject<T>: Singleton<T> where T : MonoBehaviour {
 		}
         newTile.GetComponentInChildren<ClickableObject>().KillTile(killsTiles);
 	}
+
+	public void InstantMovement(Vector3 target, GameObject newTile){
+		transform.position = target;
+
+		newTile.GetComponentInChildren<ClickableObject>().KillTile(killsTiles);
+	}
 }
