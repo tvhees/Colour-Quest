@@ -143,7 +143,6 @@ public class Mana : ClickableObject {
         option.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
         option.transform.SetParent(wedge.transform.GetChild(blackNumber - 1));
         option.transform.localPosition = position;
-        option.SetActive(true);
         // Track optional mana so we can send it back to the pool later
         options.Add(option);
     }

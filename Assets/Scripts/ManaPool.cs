@@ -118,6 +118,8 @@ public class ManaPool : ObjectPool {
 
 		mana.GetComponent<Mana> ().SaveState();
 
+		mana.SetActive(true);
+
         return mana;
     }
 
