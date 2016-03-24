@@ -23,8 +23,6 @@ public class Game : Singleton<Game> {
 	public DisplayPanel discardDisplay;
 	public DisplayPanel deckDisplay;
 	public float uiGap;
-
-
     public enum State
     {
         IDLE,
@@ -35,7 +33,6 @@ public class Game : Singleton<Game> {
         WON,
         LOST
     };
-
     public State state;
 
 	private State savedState, savedMenu;
@@ -69,6 +66,8 @@ public class Game : Singleton<Game> {
 
     void Update()
     {
+
+		// Escape key used to get to menu
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (state == State.MENU)
@@ -85,6 +84,7 @@ public class Game : Singleton<Game> {
             }
         }
 
+		// Touch detection code
 #if UNITY_ANDROID || UNITY_IOS
         if (Input.touchCount > 0) {
             Touch touch = Input.GetTouch(0);
@@ -104,8 +104,6 @@ public class Game : Singleton<Game> {
             }
         }
 #endif
-
-
     }
 
 
