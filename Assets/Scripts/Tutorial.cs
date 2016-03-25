@@ -4,9 +4,21 @@ using System.Collections.Generic;
 
 public class Tutorial : MonoBehaviour {
 
+	public float[] guiBox;
+	public string[] tutText;
 	public GameObject[] arrows;
+	public GUISkin tutorialSkin;
 
+	private float screenWidth, screenHeight;
 	private List<GameObject> offArrows = new List<GameObject>();
+	private string clickTag;
+	private int tutStep = 0;
+	private bool clickAll = false;
+
+	void Start(){
+		screenWidth = Screen.width;
+		screenHeight = Screen.height;
+	}
 
 	void Update () {
 		// Tutorial arrow management
@@ -43,4 +55,57 @@ public class Tutorial : MonoBehaviour {
 		}
 	}
 
+	void OnGUI(){
+		GUI.skin = tutorialSkin;
+
+		if (Preferences.Instance.tutorial) {
+			clickAll = false;
+
+			switch (Game.Instance.state) {
+			case Game.State.IDLE:
+				if (tutStep == 0)
+					clickTag = null;
+				else if (tutStep == 1)
+					clickTag = "Tile";
+				else
+					clickAll = true;
+				break;
+			case Game.State.PAYING:
+				if (tutStep == 2)
+					clickTag = "Mana";
+				else if (tutStep == 3)
+					clickTag = "Player";
+				else
+					clickAll = true;
+				break;
+			case Game.State.GOAL:
+				clickAll = true;
+				break;
+			} 
+			if(!clickAll)
+				GUI.Box (new Rect (screenWidth * guiBox [0], screenHeight * guiBox [1], screenWidth * guiBox [2], screenHeight * guiBox [3]), tutText[tutStep]);
+		}
+		else{
+			tutStep = 0;
+		}
+	}
+
+	public void ClickAction(RaycastHit hit, string message){
+		if (message == "ClickAction") {
+			if (tutStep > 3) {
+				Preferences.Instance.tutorial = false;
+			}
+
+			tutStep++;
+
+			if (clickTag == null) {
+				return;
+			}
+		}
+
+		if (message != null)
+			if (clickAll || hit.transform.tag == clickTag) {
+				hit.transform.SendMessage (message);
+			}
+	}
 }
