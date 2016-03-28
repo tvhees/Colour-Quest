@@ -74,6 +74,7 @@ public class Game : Singleton<Game> {
                 state = savedState;
             }
 			else if (state == State.PREFS) {
+				Preferences.Instance.Save ();
 				state = savedMenu;
 			}
             else if(state != State.WON || state != State.LOST)
@@ -197,6 +198,7 @@ public class Game : Singleton<Game> {
 			// Make the fourth button. Returns to previous Menu
 			if (GUI.Button(MakeUIRect(4f * uiGap), "BACK"))
 			{
+				Preferences.Instance.Save ();
 				state = savedMenu;
 			}
 		}
