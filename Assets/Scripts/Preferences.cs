@@ -13,10 +13,14 @@ public class Preferences : Singleton<Preferences> {
 		watchGoal = ExtensionMethods.GetBool ("watchGoal", true);
 	}
 
-	void OnDisable(){
+	public void Save(){
 		PlayerPrefs.SetFloat ("cameraSpeed", cameraSpeed);
 		ExtensionMethods.SetBool ("tutorial", tutorial);
 		ExtensionMethods.SetBool ("watchGoal", watchGoal);
 		PlayerPrefs.Save ();
+	}
+
+	void OnDisable(){
+		Save ();
 	}
 }

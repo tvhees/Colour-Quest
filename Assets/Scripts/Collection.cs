@@ -19,7 +19,6 @@ public abstract class Collection<T> : Singleton<T> where T : MonoBehaviour
     }
 
 	protected virtual void SharedSetup(){
-		manaList = new int[7] { 0, 0, 0, 0, 0, 0, 0 };
 		centered = true;
 
 		while (contents.Count > 0)
@@ -27,15 +26,24 @@ public abstract class Collection<T> : Singleton<T> where T : MonoBehaviour
 			pool.SendToPool(contents[0]);
 		}
 
+		manaList = new int[7] { 0, 0, 0, 0, 0, 0, 0 };
+
 		translate = new Vector3 (0.5f * objScale * gapScale, 0f, 0f);
 	}
 
     public virtual void AddObj(GameObject obj) {
-        // Add to container
         contents.Add(obj);
-		if (obj.GetComponent<Mana> () != null && valueOnAdd) {
-			ChangeValue (obj, true);
+
+		// If we're adding a mana object, we need to check if it's black mana
+		// and also add its value to the container's contents summary if required
+		if (obj.GetComponent<Mana> () != null) {
+			if (obj.GetComponent<Mana>().value.Sum () == 0)
+				blackMana.Add (obj);
+
+			if(valueOnAdd)
+				ChangeValue (obj, true);
 		}
+
         // Track mana in container
         size++;
 		
@@ -64,8 +72,6 @@ public abstract class Collection<T> : Singleton<T> where T : MonoBehaviour
 	protected virtual void ChangeValue(GameObject obj, bool increase){
 		int[] value = obj.GetComponent<Mana> ().value;
 		if (increase) {
-			if (value.Sum () == 0)
-				blackMana.Add (obj);
 			manaList [pool.GetValueIndex (value)]++;
 		}
 		else {

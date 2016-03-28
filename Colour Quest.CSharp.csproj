@@ -99,6 +99,7 @@
     <Compile Include="Assets\Scripts\Objectives.cs" />
     <Compile Include="Assets\Scripts\PayButton.cs" />
     <Compile Include="Assets\Scripts\Player.cs" />
+    <Compile Include="Assets\Scripts\Preferences.cs" />
     <Compile Include="Assets\Scripts\Preview.cs" />
     <Compile Include="Assets\Scripts\RotationScript.cs" />
     <Compile Include="Assets\Scripts\Singleton.cs" />

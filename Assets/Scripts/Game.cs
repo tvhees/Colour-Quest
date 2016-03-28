@@ -5,7 +5,6 @@ using System.Collections.Generic;
 public class Game : Singleton<Game> {
 
     public float[] guiBox, guiButton;
-	public RectTransform uiRect;
     public ManaPayment manaPayment;
     public BoardScript boardScript;
     public Player player;
@@ -20,11 +19,9 @@ public class Game : Singleton<Game> {
     public Camera uiCamera;
     public RaycastHit hit;
     public GUISkin menuSkin;
-	public DisplayPanel discardDisplay;
-	public DisplayPanel deckDisplay;
+	public DisplayPanel discardDisplay, deckDisplay;
+	public Tutorial tutorial;
 	public float uiGap;
-
-
     public enum State
     {
         IDLE,
@@ -35,7 +32,6 @@ public class Game : Singleton<Game> {
         WON,
         LOST
     };
-
     public State state;
 
 	private State savedState, savedMenu;
@@ -47,8 +43,8 @@ public class Game : Singleton<Game> {
         SetUpGame();
 
 		// Get dimensions to use for menus
-		screenWidth = Screen.width; //uiRect.rect.width;
-		screenHeight = Screen.height; //uiRect.rect.height;
+		screenWidth = Screen.width;
+		screenHeight = Screen.height;
     }
 
     void SetUpGame() {
@@ -69,6 +65,8 @@ public class Game : Singleton<Game> {
 
     void Update()
     {
+
+		// Escape key used to get to menu
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (state == State.MENU)
@@ -76,6 +74,7 @@ public class Game : Singleton<Game> {
                 state = savedState;
             }
 			else if (state == State.PREFS) {
+				Preferences.Instance.Save ();
 				state = savedMenu;
 			}
             else if(state != State.WON || state != State.LOST)
@@ -85,27 +84,41 @@ public class Game : Singleton<Game> {
             }
         }
 
+		// Touch detection code
 #if UNITY_ANDROID || UNITY_IOS
         if (Input.touchCount > 0) {
             Touch touch = Input.GetTouch(0);
+			bool touched = false;
+			string message = null;
 
             switch (touch.phase) {
+			// If touch is beginning, get the collider being touched
                 case TouchPhase.Began:
-                    if (Physics.Raycast(uiCamera.ScreenPointToRay(Input.GetTouch(0).position), out hit))
-                        hit.transform.SendMessage("ClickAction");
-                    else if (Physics.Raycast(mainCamera.ScreenPointToRay(Input.GetTouch(0).position), out hit))
-                        hit.transform.SendMessage("ClickAction");
-                    break;
+					message = "ClickAction";
+					touched = Physics.Raycast(uiCamera.ScreenPointToRay(Input.GetTouch(0).position), out hit);
+					if(!touched)
+						touched = Physics.Raycast(mainCamera.ScreenPointToRay(Input.GetTouch(0).position), out hit);
+					break;
+			// If touch is ending, tell the collider that was originally touched
                 case TouchPhase.Ended:
                     if (hit.transform != null) {
-                        hit.transform.SendMessage("ReleaseAction");
+					message = "ReleaseAction";
                     }
                     break;
             }
+
+			// If the tutorial is running we want extra control over what happens
+			if(Preferences.Instance.tutorial){
+				if(state == State.IDLE || state == State.PAYING || state == State.GOAL){
+					tutorial.ClickAction(hit, message);
+					return;
+				}
+			}
+
+			if(message != null)
+				hit.transform.SendMessage(message);
         }
 #endif
-
-
     }
 
 
@@ -185,6 +198,7 @@ public class Game : Singleton<Game> {
 			// Make the fourth button. Returns to previous Menu
 			if (GUI.Button(MakeUIRect(4f * uiGap), "BACK"))
 			{
+				Preferences.Instance.Save ();
 				state = savedMenu;
 			}
 		}
