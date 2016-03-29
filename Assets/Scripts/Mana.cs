@@ -48,7 +48,14 @@ public class Mana : ClickableObject {
 
 #if UNITY_STANDALONE || UNITY_EDITOR
     private void OnMouseUp() {
-        ReleaseAction();
+		// If the tutorial is running we want extra control over what happens
+		if(Preferences.Instance.tutorial){
+			if(Game.Instance.state == Game.State.IDLE || Game.Instance.state == Game.State.PAYING || Game.Instance.state == Game.State.GOAL){
+				Game.Instance.tutorial.ClickAction(transform, "ReleaseAction");
+			}
+		}
+		else
+			ReleaseAction();
     }
 #endif
 

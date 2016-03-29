@@ -61,6 +61,7 @@ public class Game : Singleton<Game> {
         manaPool.Reset();
 		discardDisplay.Reset ();
 		deckDisplay.Reset ();
+		tutorial.Reset ();
     }
 
     void Update()
@@ -110,12 +111,10 @@ public class Game : Singleton<Game> {
 			// If the tutorial is running we want extra control over what happens
 			if(Preferences.Instance.tutorial){
 				if(state == State.IDLE || state == State.PAYING || state == State.GOAL){
-					tutorial.ClickAction(hit, message);
-					return;
+					tutorial.ClickAction(hit.transform, message);
 				}
 			}
-
-			if(message != null)
+			else if(message != null)
 				hit.transform.SendMessage(message);
         }
 #endif
