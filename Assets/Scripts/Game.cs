@@ -30,7 +30,8 @@ public class Game : Singleton<Game> {
         MENU,
 		PREFS,
         WON,
-        LOST
+        LOST,
+		CAMERA
     };
     public State state;
 
@@ -48,11 +49,10 @@ public class Game : Singleton<Game> {
     }
 
     void SetUpGame() {
-		
         boardScript.NewBoard();
-        manaPayment.Reset();
         player.Reset();
         goal.Reset();
+		manaPayment.Reset();
         objectivePool.Reset();
         hand.Reset();
         deck.Reset();

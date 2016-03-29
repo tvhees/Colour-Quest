@@ -33,7 +33,7 @@ public class Hand : Collection<Hand> {
         AddObj(mana);
     }
 
-    public void PaySelected() {
+    public IEnumerator PaySelected() {
         // Move spent mana to discard
         while(selectedMana.Count > 0)
         {
@@ -45,10 +45,12 @@ public class Hand : Collection<Hand> {
         // Draw new mana if hand is now empty
 		for (int i = 0; i < contents.Count; i++) {
 			if (!blackMana.Contains (contents [i]))
-				return;
+				yield break;
 		}
             
 		RefillHand();
+
+		yield return null;
     }
 
     public void RefillHand() {
@@ -93,7 +95,7 @@ public class Hand : Collection<Hand> {
                 }
 
 
-            PaySelected();
+			StartCoroutine(PaySelected());
         }
 	}
 

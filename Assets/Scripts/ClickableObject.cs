@@ -3,6 +3,8 @@ using System.Collections;
 
 public abstract class ClickableObject : MonoBehaviour {
 
+	public float moveTime;
+
 #if UNITY_STANDALONE || UNITY_EDITOR
     public void OnMouseDown() {
 		// If the tutorial is running we want extra control over what happens
@@ -15,6 +17,24 @@ public abstract class ClickableObject : MonoBehaviour {
 	        ClickAction();
     }
 #endif
+
+	public IEnumerator SmoothMovement(Vector3 target){
+		float sqrDistance = (transform.position - target).sqrMagnitude;
+
+		while (sqrDistance > Mathf.Epsilon) {
+
+			while (Game.Instance.state == Game.State.MENU)
+				yield return new WaitForSeconds(0.1f);
+
+			Vector3 newPosition = Vector3.MoveTowards (transform.position, target, Time.deltaTime / moveTime);
+
+			transform.position = newPosition;
+
+			sqrDistance = (transform.position - target).sqrMagnitude;
+
+			yield return null;
+		}
+	}
 
     public abstract void ClickAction();
 

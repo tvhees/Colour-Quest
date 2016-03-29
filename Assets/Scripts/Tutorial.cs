@@ -5,9 +5,11 @@ using System.Collections.Generic;
 public class Tutorial : MonoBehaviour {
 
 	public float[] guiBox;
+	public GameObject player, goal;
 	public GameObject[] arrows;
 	public GUISkin tutorialSkin;
 	public ManaPayment manaPayment;
+	public CameraScript mainCameraScript;
 
 	private float screenWidth, screenHeight;
 	public List<GameObject> offArrows = new List<GameObject>();
@@ -36,6 +38,8 @@ public class Tutorial : MonoBehaviour {
 	public void Reset(){
 		screenWidth = Screen.width;
 		screenHeight = Screen.height;
+
+		SetArrows (null);
 
 		tutStep = 0;
 	}
@@ -70,9 +74,11 @@ public class Tutorial : MonoBehaviour {
 					SetArrows (new int[1]{ 0 });
 					break;
 				case 1:
+					StartCoroutine(mainCameraScript.FocusCamera (goal.transform));
 					SetArrows (new int[1]{ 1 });
 					break;
 				case 2:		// Ask the player to select an adjacent tile
+					StartCoroutine(mainCameraScript.FocusCamera (player.transform));
 					clickTag = "Tile";
 					break;
 				default:	// If we're not at an appropriate stage of the tutorial we allow full functionality

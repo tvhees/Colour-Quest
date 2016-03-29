@@ -10,6 +10,7 @@ public class CameraScript : MonoBehaviour {
 	public float zoomRatio, panRatio, lastTouch, returnDelay, targetSize;
 	public RectTransform touchZone;
 	public TextMesh touchPosition, isInTouchZone;
+	public Game.State savedState;
 
 #if UNITY_IOS || UNITY_ANDROID && !UNITY_EDITOR
     private bool inTouchZone;
@@ -27,6 +28,10 @@ public class CameraScript : MonoBehaviour {
 
 		float sqrDistance = (transform.position - target).sqrMagnitude;
 
+		savedState = Game.Instance.state;
+
+		Game.Instance.state = Game.State.CAMERA;
+
 		while (sqrDistance > Mathf.Epsilon) {
 
             while (Game.Instance.state == Game.State.MENU)
@@ -40,6 +45,8 @@ public class CameraScript : MonoBehaviour {
 
 			yield return null;
 		}
+
+		Game.Instance.state = savedState;
 	}
 
     public void Reset(Transform player) {

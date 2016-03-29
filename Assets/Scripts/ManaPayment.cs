@@ -78,7 +78,7 @@ public class ManaPayment : MonoBehaviour {
 
     }
 
-    public void ConfirmPayment() {
+    public IEnumerator ConfirmPayment() {
         if (target.tag == "Goal")
         {
             goal.UpdateValue(payment, 1, -1);
@@ -88,7 +88,7 @@ public class ManaPayment : MonoBehaviour {
         else
         {
 
-            StartCoroutine(playerScript.SmoothMovement(target.transform.parent.position, target.transform.parent.gameObject));
+			yield return StartCoroutine(playerScript.SmoothMovement(target.transform.parent.position, target.transform.parent.gameObject));
 
             if (objectiveValue.Sum() > 0)
                 objectivePool.UpdateTracker(objectiveValue);
@@ -100,7 +100,7 @@ public class ManaPayment : MonoBehaviour {
             boardScript.FlipTiles(target.transform.parent.position);
         }
 
-        hand.PaySelected();
+		yield return StartCoroutine(hand.PaySelected());
         
         if(Game.Instance.state != Game.State.WON)        
             Reset();

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 public abstract class Collection<T> : Singleton<T> where T : MonoBehaviour
@@ -68,6 +69,10 @@ public abstract class Collection<T> : Singleton<T> where T : MonoBehaviour
 		}
 
 	}
+
+	protected virtual IEnumerator MoveObject(GameObject obj, Vector3 localPoint){
+		yield return StartCoroutine (obj.GetComponent<ClickableObject> ().SmoothMovement (localPoint));
+	} 
 
 	protected virtual void ChangeValue(GameObject obj, bool increase){
 		int[] value = obj.GetComponent<Mana> ().value;

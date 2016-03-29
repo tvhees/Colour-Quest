@@ -20,6 +20,6 @@ public class PayButton : MonoBehaviour {
 
     void ClickAction() {
         if (manaPayment.payed)
-            manaPayment.ConfirmPayment();
+			StartCoroutine(manaPayment.ConfirmPayment());
     }
 }
