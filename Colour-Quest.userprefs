@@ -1,8 +1,9 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Tutorial.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Container.cs">
     <Files>
-      <File FileName="Assets/Scripts/Game.cs" Line="114" Column="5" />
+      <File FileName="Assets/Scripts/Tutorial.cs" Line="116" Column="25" />
+      <File FileName="Assets/Scripts/Game.cs" Line="116" Column="5" />
       <File FileName="Assets/Scripts/ExtensionMethods.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/CameraScript.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/Preferences.cs" Line="1" Column="1" />
@@ -12,7 +13,8 @@
       <File FileName="Assets/Scripts/Arrow.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/BoardScript.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/ManaPayment.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Tutorial.cs" Line="94" Column="30" />
+      <File FileName="Assets/Scripts/DisplayPanel.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Container.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

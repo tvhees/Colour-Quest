@@ -6,7 +6,7 @@ public class Container : ClickableObject {
 	public GameObject display;
 	public GameObject source;
 
-	#if UNITY_STANDALONE || UNITY_EDITOR
+	#if UNITY_STANDALONE// || UNITY_EDITOR
 	private void OnMouseUp() {
 		ReleaseAction();
 	}
