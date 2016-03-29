@@ -33,7 +33,7 @@ public class Discard : Collection<Discard> {
         // Reset any colour change or particles
         mana.GetComponent<Mana>().Reset();
 
-        AddObj(mana);
+		StartCoroutine(AddObj(mana));
     }
 
 	public void SendToDisplay(){

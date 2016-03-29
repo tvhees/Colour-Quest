@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class ManaPool : ObjectPool {
 
     // Variables
-    public GameObject manaSphere;
+    public GameObject manaSphere, deckContainer;
 	public Material[] baseMaterials, advancedMaterials, nullMaterials, startMaterials;
     public Hand hand;
 	public Preview preview;
@@ -17,11 +17,12 @@ public class ManaPool : ObjectPool {
 
     // Methods
     public void Reset() {
+		homePosition = deckContainer.transform.position;
+
         if(pool == null)
             CreatePool(80, manaSphere);
 
         startMaterials.Randomise();
-
 
         for (int i = 0; i < hand.maxHandSize; i++)
         {

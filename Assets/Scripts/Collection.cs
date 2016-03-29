@@ -32,7 +32,7 @@ public abstract class Collection<T> : Singleton<T> where T : MonoBehaviour
 		translate = new Vector3 (0.5f * objScale * gapScale, 0f, 0f);
 	}
 
-    public virtual void AddObj(GameObject obj) {
+    public virtual IEnumerator AddObj(GameObject obj) {
         contents.Add(obj);
 
 		// If we're adding a mana object, we need to check if it's black mana
@@ -56,7 +56,7 @@ public abstract class Collection<T> : Singleton<T> where T : MonoBehaviour
 
 		if (centered) {
 			localPoint = FindPosition (-1f * size * Mathf.Pow(-1, size), new Vector3(0f, 0f, 0f));
-			obj.transform.localPosition = localPoint;
+			StartCoroutine (MoveObject (obj, transform.TransformPoint(localPoint)));
 
 			// Shift all mana to keep the hand centered
 			for (int i = 0; i < size; i++) {
@@ -65,8 +65,10 @@ public abstract class Collection<T> : Singleton<T> where T : MonoBehaviour
 		} else {
 			localPoint = FindPosition (size, new Vector3(0f, 0f, 0f));
 
-			obj.transform.localPosition = localPoint;
+			StartCoroutine (MoveObject (obj, transform.TransformPoint(localPoint)));
 		}
+
+		yield return null;
 
 	}
 

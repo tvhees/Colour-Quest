@@ -30,7 +30,7 @@ public class Hand : Collection<Hand> {
 		// Remove from preview
 		preview.Remove(mana);
 
-        AddObj(mana);
+		StartCoroutine(AddObj(mana));
     }
 
     public IEnumerator PaySelected() {

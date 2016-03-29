@@ -24,7 +24,7 @@ public class Preview : Collection<Preview> {
 
 		deck.Remove (mana);
 
-		AddObj (mana);
+		StartCoroutine(AddObj(mana));
 	}
 
 	public void RefillPreview(int nextHandSize){

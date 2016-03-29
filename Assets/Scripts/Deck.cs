@@ -27,7 +27,7 @@ public class Deck : Collection<Deck> {
 
 		preview.Remove (mana);
 
-		AddObj (mana);
+		StartCoroutine(AddObj(mana));
 	}
 
 	public void RefillDeck(){
