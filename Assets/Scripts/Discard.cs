@@ -13,12 +13,12 @@ public class Discard : Collection<Discard> {
     {
 		float width = GetComponent<RectTransform> ().rect.width;
 
-		container.transform.localPosition = new Vector3 (0.40f * width, 0f, 0f);
+		container.transform.localPosition = startHomePos = new Vector3 (0.40f * width, 0f, 0f);
 
 		SharedSetup ();
     }
 
-    public void SendToDiscard(GameObject mana)
+    public IEnumerator SendToDiscard(GameObject mana)
     {
         // Remove from other lists
         if (hand.selectedMana.Contains(mana))
@@ -33,7 +33,7 @@ public class Discard : Collection<Discard> {
         // Reset any colour change or particles
         mana.GetComponent<Mana>().Reset();
 
-		StartCoroutine(AddObj(mana));
+		yield return StartCoroutine(AddObj(mana));
     }
 
 	public void SendToDisplay(){

@@ -16,8 +16,7 @@ public class Hand : Collection<Hand> {
     public override void Reset() {
         scrub = true;
         maxHandSize = startHandSize;
-
-		SharedSetup ();
+        SharedSetup ();
     }
 
     public IEnumerator SendToHand(GameObject mana) {
@@ -37,7 +36,7 @@ public class Hand : Collection<Hand> {
         // Move spent mana to discard
         while(selectedMana.Count > 0)
         {
-            discard.SendToDiscard(selectedMana[0]);
+            yield return StartCoroutine(discard.SendToDiscard(selectedMana[0]));
         }
 
 		scrub = false;
@@ -48,16 +47,14 @@ public class Hand : Collection<Hand> {
 				yield break;
 		}
             
-		RefillHand();
-
-		yield return null;
+		yield return StartCoroutine(RefillHand());
     }
 
-    public void RefillHand() {
+    public IEnumerator RefillHand() {
 		int i = 0;
         // Take mana from deck until hand is at current mana limit
         while (size < maxHandSize) {
-			StartCoroutine(SendToHand(preview.contents[0]));
+			yield return StartCoroutine(SendToHand(preview.contents[0]));
 			i++;
 			if (i > 50) {
 				Debug.Log ("infinite loop: RefillHand");
@@ -65,7 +62,7 @@ public class Hand : Collection<Hand> {
 			}
 
         }
-		preview.RefillPreview(maxHandSize);
+		yield return StartCoroutine(preview.RefillPreview(maxHandSize));
 
 		scrub = true;
 

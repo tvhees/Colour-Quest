@@ -33,6 +33,8 @@ public class ManaPool : ObjectPool {
             yield return StartCoroutine(hand.SendToHand(mana));
         }
 
+        deck.moveTime = 0.0001f;
+
         for (int i = 0; i < hand.maxHandSize * 2; i++)
         {
             GameObject mana = GetObject();
@@ -41,6 +43,8 @@ public class ManaPool : ObjectPool {
             mana.SetActive(true);
             yield return StartCoroutine(deck.SendToDeck(mana));
         }
+
+        deck.moveTime = deck.startMoveTime;
 
 		yield return StartCoroutine(preview.RefillPreview (hand.maxHandSize));
     }

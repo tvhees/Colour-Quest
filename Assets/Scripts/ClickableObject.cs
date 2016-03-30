@@ -3,8 +3,6 @@ using System.Collections;
 
 public abstract class ClickableObject : MonoBehaviour {
 
-	public float moveTime;
-
 #if UNITY_STANDALONE || UNITY_EDITOR
     public void OnMouseDown() {
 		// If the tutorial is running we want extra control over what happens
@@ -18,8 +16,11 @@ public abstract class ClickableObject : MonoBehaviour {
     }
 #endif
 
-	public IEnumerator SmoothMovement(Vector3 target){
+	public IEnumerator SmoothMovement(Vector3 target, float moveTime, Vector3 s1){
 		float sqrDistance = (transform.position - target).sqrMagnitude;
+
+        float d0 = sqrDistance;
+        Vector3 s0 = transform.localScale;
 
 		while (sqrDistance > Mathf.Epsilon) {
 
@@ -31,6 +32,8 @@ public abstract class ClickableObject : MonoBehaviour {
 			transform.position = newPosition;
 
 			sqrDistance = (transform.position - target).sqrMagnitude;
+
+            transform.localScale = Vector3.Lerp(s0, s1, (d0 - sqrDistance) / d0);
 
 			yield return null;
 		}
