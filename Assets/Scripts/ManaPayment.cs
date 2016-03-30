@@ -95,7 +95,7 @@ public class ManaPayment : MonoBehaviour {
 
             GameObject manaReward = manaPool.GetObjectiveReward(objectiveValue);
             if (manaReward != null)
-                hand.SendToHand(manaReward);
+                StartCoroutine(hand.SendToHand(manaReward));
 
             boardScript.FlipTiles(target.transform.parent.position);
         }
@@ -117,7 +117,7 @@ public class ManaPayment : MonoBehaviour {
                 for (int j = 0; j < remainder[i]; j++)
                 {
                     GameObject mana = manaPool.GetManaOption(nullValue, 0);
-                    hand.SendToHand(mana);
+                    StartCoroutine(hand.SendToHand(mana));
                 }
             }
         }

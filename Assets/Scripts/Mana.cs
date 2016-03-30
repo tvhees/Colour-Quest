@@ -166,7 +166,7 @@ public class Mana : ClickableObject {
 		// Get any black mana required for this option and add it to player's hand
 		while(wedgeHalf.transform.childCount > 1){
 			newMana = wedgeHalf.transform.GetChild (1).gameObject;
-			Hand.Instance.SendToHand (newMana);
+			StartCoroutine(Hand.Instance.SendToHand (newMana));
 			options.Remove (newMana);
 			blackMana.Add (newMana);
 		}

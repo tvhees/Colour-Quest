@@ -20,14 +20,14 @@ public class Deck : Collection<Deck> {
 		SharedSetup ();
     }
 
-    public void SendToDeck(GameObject mana){
+    public IEnumerator SendToDeck(GameObject mana){
 		hand.Remove (mana);
 
 		discard.Remove (mana);
 
 		preview.Remove (mana);
 
-		StartCoroutine(AddObj(mana));
+		yield return StartCoroutine(AddObj(mana));
 	}
 
 	public void RefillDeck(){

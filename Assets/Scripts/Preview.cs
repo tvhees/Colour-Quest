@@ -17,22 +17,22 @@ public class Preview : Collection<Preview> {
 		SharedSetup ();
     }
 
-    public void SendToPreview(GameObject mana){
+    public IEnumerator SendToPreview(GameObject mana){
 		hand.Remove (mana);
 
 		discard.Remove (mana);
 
 		deck.Remove (mana);
 
-		StartCoroutine(AddObj(mana));
+		yield return StartCoroutine(AddObj(mana));
 	}
 
-	public void RefillPreview(int nextHandSize){
+	public IEnumerator RefillPreview(int nextHandSize){
 		int i = 0;
 		while (size < nextHandSize) {
 			deck.RefillDeck();
-			SendToPreview (deck.contents [Random.Range (0, deck.contents.Count)]);
-			i++;
+			yield return StartCoroutine(SendToPreview (deck.contents [Random.Range (0, deck.contents.Count)]));
+            i++;
 			if (i > 50) {
 				Debug.Log ("infinite loop: RefillPreview");
 				break;

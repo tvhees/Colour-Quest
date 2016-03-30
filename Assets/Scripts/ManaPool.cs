@@ -16,7 +16,7 @@ public class ManaPool : ObjectPool {
 	private int materialIndex = 0;
 
     // Methods
-    public void Reset() {
+    public IEnumerator Reset() {
 		homePosition = deckContainer.transform.position;
 
         if(pool == null)
@@ -30,7 +30,7 @@ public class ManaPool : ObjectPool {
             mana.transform.SetParent(transform);
             RandomColour(mana);
             mana.SetActive(true);
-            hand.SendToHand(mana);
+            yield return StartCoroutine(hand.SendToHand(mana));
         }
 
         for (int i = 0; i < hand.maxHandSize * 2; i++)
@@ -39,10 +39,10 @@ public class ManaPool : ObjectPool {
             mana.transform.SetParent(transform);
             RandomColour(mana);
             mana.SetActive(true);
-            deck.SendToDeck(mana);
+            yield return StartCoroutine(deck.SendToDeck(mana));
         }
 
-		preview.RefillPreview (hand.maxHandSize);
+		yield return StartCoroutine(preview.RefillPreview (hand.maxHandSize));
     }
 
     public override void SendToPool(GameObject mana)

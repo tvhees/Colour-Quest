@@ -56,20 +56,20 @@ public abstract class Collection<T> : Singleton<T> where T : MonoBehaviour
 
 		if (centered) {
 			localPoint = FindPosition (-1f * size * Mathf.Pow(-1, size), new Vector3(0f, 0f, 0f));
-			StartCoroutine (MoveObject (obj, transform.TransformPoint(localPoint)));
+			yield return StartCoroutine (MoveObject (obj, transform.TransformPoint(localPoint)));
+
+            Debug.Log(size + " " + this.name);
 
 			// Shift all mana to keep the hand centered
 			for (int i = 0; i < size; i++) {
-				contents [i].transform.localPosition = FindPosition (Mathf.Pow(-1,size), contents [i].transform.localPosition);
+				localPoint = FindPosition (Mathf.Pow(-1,size), contents [i].transform.localPosition);
+                StartCoroutine(MoveObject (contents [i], transform.TransformPoint(localPoint)));
 			}
 		} else {
 			localPoint = FindPosition (size, new Vector3(0f, 0f, 0f));
 
-			StartCoroutine (MoveObject (obj, transform.TransformPoint(localPoint)));
+			yield return StartCoroutine (MoveObject (obj, transform.TransformPoint(localPoint)));
 		}
-
-		yield return null;
-
 	}
 
 	protected virtual IEnumerator MoveObject(GameObject obj, Vector3 localPoint){

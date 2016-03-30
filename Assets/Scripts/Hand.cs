@@ -20,7 +20,7 @@ public class Hand : Collection<Hand> {
 		SharedSetup ();
     }
 
-    public void SendToHand(GameObject mana) {
+    public IEnumerator SendToHand(GameObject mana) {
         // Remove from discard pile
         discard.Remove(mana);
 
@@ -30,7 +30,7 @@ public class Hand : Collection<Hand> {
 		// Remove from preview
 		preview.Remove(mana);
 
-		StartCoroutine(AddObj(mana));
+		yield return StartCoroutine(AddObj(mana));
     }
 
     public IEnumerator PaySelected() {
@@ -57,7 +57,7 @@ public class Hand : Collection<Hand> {
 		int i = 0;
         // Take mana from deck until hand is at current mana limit
         while (size < maxHandSize) {
-			SendToHand(preview.contents[0]);
+			StartCoroutine(SendToHand(preview.contents[0]));
 			i++;
 			if (i > 50) {
 				Debug.Log ("infinite loop: RefillHand");
