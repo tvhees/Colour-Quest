@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -10,6 +11,7 @@ public class Tutorial : MonoBehaviour {
 	public GUISkin tutorialSkin;
 	public ManaPayment manaPayment;
 	public CameraScript mainCameraScript;
+    public Button scrubButton;
 
 	private float screenWidth, screenHeight;
 	public List<GameObject> offArrows = new List<GameObject>();
@@ -65,80 +67,111 @@ public class Tutorial : MonoBehaviour {
 
 		if (Preferences.Instance.tutorial) {
 			clickAll = false;
-
+            scrubButton.interactable = false;
 			switch (Game.Instance.state) {
-			case Game.State.IDLE: // The idle state covers situations where no tile has been clicked, player input is expected and so on
-				switch(tutStep){
-				case 0:	// Introducing the game, player sphere and goal sphere
-					clickTag = null;
-					SetArrows (new int[1]{ 0 });
-					break;
-				case 1:
-					StartCoroutine(mainCameraScript.FocusCamera (goal.transform));
-					SetArrows (new int[1]{ 1 });
-					break;
-				case 2:		// Ask the player to select an adjacent tile
-					StartCoroutine(mainCameraScript.FocusCamera (player.transform));
-					clickTag = "Tile";
-					break;
-				default:	// If we're not at an appropriate stage of the tutorial we allow full functionality
-					clickTag = "None";
-					clickAll = true;
-					SetArrows(null);
-					break;
-				}
-				break;
-			case Game.State.PAYING: // This is for when players have selected a tile but not confirmed movement
-				switch (tutStep) {
-				case 3:		// Explain tiles are highlighted and can be deselected
-					clickTag = null;
-					break;
-				case 4:		// Ask the player to select an appropriate colour of mana
-					SetArrows(new int[1]{ 2 });
-					clickTag = "Mana";
-					break;
-				case 5:		// Warn player if wrong colour combination has been selected, otherwise immediately progress to next step
-					if (manaPayment.payed)
-						tutStep++;
-					break;
-				case 6:		// Ask the player to confirm payment by pressing the player sphere
-					if (manaPayment.payed) {
-						SetArrows (new int[1]{ 0 });
-						clickTag = "Player";
-					}
-					else
-						tutStep--;
-					break;
-				default:
-					clickTag = "None";
-					clickAll = true;
-					SetArrows(null);
-					break;
-				}
-				break;
-			case Game.State.GOAL:
-				switch(tutStep){
-				default:
-					clickTag = "None";
-					clickAll = true;
-					SetArrows(null);
-					break;
-				}
-				break;
-			} 
-			if(!clickAll)
-				GUI.Box (new Rect (screenWidth * guiBox [0], screenHeight * guiBox [1], screenWidth * guiBox [2], screenHeight * guiBox [3]), tutText[tutStep]);
-		}
-		else{
-			tutStep = 0;
-		}
+			    case Game.State.IDLE: // The idle state covers situations where no tile has been clicked, player input is expected and so on
+				    switch(tutStep){
+				        case 0:	// Introducing the game, player sphere and goal sphere
+					        clickTag = null;
+					        SetArrows (new int[1]{ 0 });
+					        break;
+				        case 1:
+					        StartCoroutine(mainCameraScript.FocusCamera (goal.transform));
+					        SetArrows (new int[1]{ 1 });
+					        break;
+				        case 2:		// Ask the player to select an adjacent tile
+					        StartCoroutine(mainCameraScript.FocusCamera (player.transform));
+					        clickTag = "Tile";
+					        break;
+                        case 8:     // Explain Tile Flipping and Camera Movement
+                            clickTag = null;
+                            break;
+                        case 9:
+                            clickTag = "EndTurn";
+                            scrubButton.interactable = true;
+                            goal.GetComponent<Goal>().pause = true;
+                            break;
+                        case 12:
+                            clickTag = null;
+                            SetArrows(new int[1] { 3 });
+                            break;
+                        case 13:
+                            clickTag = null;
+                            SetArrows(new int[1] { 4 });
+                            break;
+                        case 14:
+                            clickTag = null;
+                            break;
+				        default:	// If we're not at an appropriate stage of the tutorial we allow full functionality
+					        clickTag = "None";
+					        clickAll = true;
+					        SetArrows(null);
+					        break;
+				        }
+				    break;
+			    case Game.State.PAYING: // This is for when players have selected a tile but not confirmed movement
+				    switch (tutStep) {
+				        case 3:		// Explain tiles are highlighted and can be deselected
+					        clickTag = null;
+					        break;
+				        case 4:		// Ask the player to select an appropriate colour of mana
+					        SetArrows(new int[1]{ 2 });
+					        clickTag = "Mana";
+					        break;
+				        case 5:		// Warn player if wrong colour combination has been selected, otherwise immediately progress to next step
+					        if (manaPayment.payed)
+						        tutStep++;
+					        break;
+				        case 6:		// Ask the player to confirm payment by pressing the player sphere
+					        if (manaPayment.payed) {
+						        SetArrows (new int[1]{ 0 });
+						        clickTag = "Player";
+                                manaPayment.pause = true;
+                            }
+					        else
+						        tutStep--;
+					        break;
+                        case 7:     // Show the player where spent mana goes
+                                    SetArrows(new int[1] { 5 });
+                                    clickTag = null;
+                                    break;
+				        default:
+					        clickTag = "None";
+					        clickAll = true;
+					        SetArrows(null);
+                            manaPayment.pause = false;
+					        break;
+				        }
+				    break;
+			    case Game.State.GOAL:
+				    switch(tutStep){
+                        case 10:
+                            clickTag = null;
+                            break;
+                        case 11:
+                            break;
+				        default:
+					        clickTag = "None";
+					        clickAll = true;
+					        SetArrows(null);
+                            goal.GetComponent<Goal>().pause = false;
+					        break;
+				    }
+				    break;
+			    } 
+			    if(!clickAll)
+				    GUI.Box (new Rect (screenWidth * guiBox [0], screenHeight * guiBox [1], screenWidth * guiBox [2], screenHeight * guiBox [3]), tutText[tutStep]);
+		    }
+		    else{
+			    tutStep = 0;
+		    }
 	}
 
 	public void ClickAction(Transform hit, string message){
 		// Only increment tutorials on click, otherwise release counts double immediately
 		if (message == "ClickAction") {
 			// Automatically turn off tutorial mode if we've gone all the way through.
-			if (tutStep > 10) {
+			if (tutStep > 14) {
 				Preferences.Instance.tutorial = false;
 			}
 
@@ -158,4 +191,9 @@ public class Tutorial : MonoBehaviour {
 
 		hit.SendMessage (message);
 	}
+
+    public void IncrementTutStep() {
+        if (Preferences.Instance.tutorial)
+            tutStep++;
+    }
 }

@@ -4,23 +4,27 @@ using System.Collections.Generic;
 
 public abstract class Collection<T> : Singleton<T> where T : MonoBehaviour
 {
-    public float objScale, gapScale;
+    public float objScale, gapScale, moveTime, startMoveTime;
     public List<GameObject> contents, blackMana;
     public ObjectPool pool;
 	public bool centered, valueOnAdd, valueOnRemove;
 	public int[] manaList;
-
+    public Vector3 startHomePos;
+    
     protected int size;
-	protected Vector3 translate;
+	protected Vector3 translate, homePos;
 
     public virtual void Reset() {
 		valueOnAdd = true;
 		valueOnRemove = true;
-		SharedSetup ();
+
+        SharedSetup ();
     }
 
 	protected virtual void SharedSetup(){
 		centered = true;
+        homePos = startHomePos;
+        moveTime = startMoveTime;
 
 		while (contents.Count > 0)
 		{
@@ -32,7 +36,7 @@ public abstract class Collection<T> : Singleton<T> where T : MonoBehaviour
 		translate = new Vector3 (0.5f * objScale * gapScale, 0f, 0f);
 	}
 
-    public virtual void AddObj(GameObject obj) {
+    public virtual IEnumerator AddObj(GameObject obj) {
         contents.Add(obj);
 
 		// If we're adding a mana object, we need to check if it's black mana
@@ -50,28 +54,28 @@ public abstract class Collection<T> : Singleton<T> where T : MonoBehaviour
 		
         // Assign local position to the right of existing mana
         obj.transform.parent = transform;
-        obj.transform.localScale = objScale * Vector3.one;
+        //obj.transform.localScale = objScale * Vector3.one;
 
 		Vector3 localPoint;
 
 		if (centered) {
-			localPoint = FindPosition (-1f * size * Mathf.Pow(-1, size), new Vector3(0f, 0f, 0f));
-			obj.transform.localPosition = localPoint;
+			localPoint = FindPosition (-1f * size * Mathf.Pow(-1, size), homePos);
+			yield return StartCoroutine (MoveObject (obj, transform.TransformPoint(localPoint)));
 
 			// Shift all mana to keep the hand centered
 			for (int i = 0; i < size; i++) {
-				contents [i].transform.localPosition = FindPosition (Mathf.Pow(-1,size), contents [i].transform.localPosition);
+				localPoint = FindPosition (Mathf.Pow(-1,size), contents [i].transform.localPosition);
+                StartCoroutine(MoveObject (contents [i], transform.TransformPoint(localPoint)));
 			}
 		} else {
-			localPoint = FindPosition (size, new Vector3(0f, 0f, 0f));
+			localPoint = FindPosition (size, homePos);
 
-			obj.transform.localPosition = localPoint;
+			yield return StartCoroutine (MoveObject (obj, transform.TransformPoint(localPoint)));
 		}
-
 	}
 
 	protected virtual IEnumerator MoveObject(GameObject obj, Vector3 localPoint){
-		yield return StartCoroutine (obj.GetComponent<ClickableObject> ().SmoothMovement (localPoint));
+		yield return StartCoroutine (obj.GetComponent<ClickableObject> ().SmoothMovement (localPoint, moveTime, new Vector3(objScale, objScale, objScale)));
 	} 
 
 	protected virtual void ChangeValue(GameObject obj, bool increase){

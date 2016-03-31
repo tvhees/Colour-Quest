@@ -13,6 +13,8 @@ public class ObjectivePool : ObjectPool {
 	private int total = 0, threshold = 1;
 
     public void Reset() {
+		homePosition = transform.position;
+
         if(pool == null)
             CreatePool(40, objCube);
 
@@ -39,7 +41,7 @@ public class ObjectivePool : ObjectPool {
 			obj.transform.SetParent (transform);
 			obj.SetActive (true);
 			obj.GetComponent<MeshRenderer> ().material = nullMaterials [0];
-			objectives.AddObj (obj);
+			StartCoroutine(objectives.AddObj (obj));
 		}
 	}
 
@@ -53,7 +55,7 @@ public class ObjectivePool : ObjectPool {
 			objectives.contents [total].GetComponent<MeshRenderer> ().material = baseMaterials[i];
 			total++;
 			if (total == threshold) {
-				hand.IncreaseLimit(1);
+				StartCoroutine(hand.IncreaseLimit(1));
 				NewTracker ();
 			}
 		}

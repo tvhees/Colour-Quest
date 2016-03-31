@@ -12,7 +12,7 @@ public class ManaPayment : MonoBehaviour {
 	public GameObject selectionMarker;
 	public ObjectivePool objectivePool;
     public ParticleSystem playerParticles;
-    public bool payed = false;
+    public bool payed = false, pause = false;
 
 	private int[] colourCost = new int[3], objectiveValue = new int[3], payment;
     private GameObject target;
@@ -25,6 +25,7 @@ public class ManaPayment : MonoBehaviour {
         selectionMarker.SetActive(true);
         playerParticles.Stop();
 
+        pause = false;
         payed = false;
         payment = new int[3] { 0, 0, 0 };
         objectiveValue = new int[3] { 0, 0, 0 };
@@ -79,6 +80,9 @@ public class ManaPayment : MonoBehaviour {
     }
 
     public IEnumerator ConfirmPayment() {
+        while (pause)
+            yield return new WaitForSeconds(0.1f);
+
         if (target.tag == "Goal")
         {
             goal.UpdateValue(payment, 1, -1);
@@ -88,14 +92,14 @@ public class ManaPayment : MonoBehaviour {
         else
         {
 
-			yield return StartCoroutine(playerScript.SmoothMovement(target.transform.parent.position, target.transform.parent.gameObject));
+			StartCoroutine(playerScript.SmoothMovement(target.transform.parent.position, target.transform.parent.gameObject));
 
             if (objectiveValue.Sum() > 0)
                 objectivePool.UpdateTracker(objectiveValue);
 
             GameObject manaReward = manaPool.GetObjectiveReward(objectiveValue);
             if (manaReward != null)
-                hand.SendToHand(manaReward);
+                StartCoroutine(hand.SendToHand(manaReward));
 
             boardScript.FlipTiles(target.transform.parent.position);
         }
@@ -117,7 +121,7 @@ public class ManaPayment : MonoBehaviour {
                 for (int j = 0; j < remainder[i]; j++)
                 {
                     GameObject mana = manaPool.GetManaOption(nullValue, 0);
-                    hand.SendToHand(mana);
+                    StartCoroutine(hand.SendToHand(mana));
                 }
             }
         }

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public abstract class ObjectPool : MonoBehaviour {
 
     public int poolSize;
+	public Vector3 homePosition;
 
 	protected List<GameObject> pool;
 
@@ -13,6 +14,7 @@ public abstract class ObjectPool : MonoBehaviour {
 
 		for(int i = 0; i < size; i++){
 			GameObject obj = (GameObject)Instantiate(prefab);
+			obj.transform.position = homePosition;
 			obj.SetActive (false);
 			pool.Add(obj);
 		}
@@ -34,7 +36,7 @@ public abstract class ObjectPool : MonoBehaviour {
 	public void ReturnObject(GameObject obj){
 		pool.Add(obj);
         obj.transform.SetParent(null);
-        obj.transform.position = Vector3.zero;
+        obj.transform.position = homePosition;
         obj.transform.localScale = Vector3.one;
         obj.SetActive(false);
 	}

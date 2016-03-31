@@ -15,25 +15,51 @@ public class Deck : Collection<Deck> {
     {
 		float width = GetComponent<RectTransform> ().rect.width;
 
-		container.transform.localPosition = new Vector3 (-0.40f * width, 0f, 0f);
+		container.transform.localPosition = startHomePos = new Vector3 (-0.40f * width, 0f, 0f);
 
 		SharedSetup ();
     }
 
-    public void SendToDeck(GameObject mana){
+    public IEnumerator SendToDeck(GameObject mana){
 		hand.Remove (mana);
 
 		discard.Remove (mana);
 
 		preview.Remove (mana);
 
-		AddObj (mana);
+		yield return StartCoroutine(AddObj(mana));
 	}
 
-	public void RefillDeck(){
+	public IEnumerator RefillDeck(){
+        int i = 0;
 		if (contents.Count < 1) {
-			while (discard.contents.Count > 0)
-				SendToDeck (discard.contents [Random.Range (0, discard.contents.Count)]);
+            GameObject lastObject = null;
+
+            while (discard.contents.Count > 0)
+            {
+                lastObject = discard.contents[Random.Range(0, discard.contents.Count)];
+                StartCoroutine(SendToDeck(lastObject));
+                yield return new WaitForSeconds(moveTime/4);
+                i++;
+                if (i > 50)
+                {
+                    Debug.Log("infinite loop: RefillDeck");
+                    break;
+                }
+            }
+
+            // Make sure we complete the refill before any other movement takes place
+            // We look for the last object to be given a movement command and wait until
+            // it has stopped moving.
+            while (lastObject.GetComponent<ClickableObject>().moving) {
+                yield return new WaitForSeconds(moveTime);
+                i++;
+                if (i > 100)
+                {
+                    Debug.Log("infinite loop: waiting");
+                    break;
+                }
+            }
 		}
 	}
 

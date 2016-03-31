@@ -10,17 +10,17 @@ public class Hand : Collection<Hand> {
 	public Goal goalScript;
     public List<GameObject> selectedMana;
     public int maxHandSize, startHandSize = 5;
+    public bool pause;
 
 	private bool scrub;
 
     public override void Reset() {
         scrub = true;
         maxHandSize = startHandSize;
-
-		SharedSetup ();
+        SharedSetup ();
     }
 
-    public void SendToHand(GameObject mana) {
+    public IEnumerator SendToHand(GameObject mana) {
         // Remove from discard pile
         discard.Remove(mana);
 
@@ -30,17 +30,35 @@ public class Hand : Collection<Hand> {
 		// Remove from preview
 		preview.Remove(mana);
 
-        AddObj(mana);
+		yield return StartCoroutine(AddObj(mana));
     }
 
     public IEnumerator PaySelected() {
+        GameObject lastObject = null;
+        
         // Move spent mana to discard
         while(selectedMana.Count > 0)
         {
-            discard.SendToDiscard(selectedMana[0]);
+            lastObject = selectedMana[0];
+            yield return StartCoroutine(discard.SendToDiscard(lastObject));
         }
 
-		scrub = false;
+        // Make sure we complete the payment before any other movement takes place
+        // We look for the last object to be given a movement command and wait until
+        // it has stopped moving.
+        int loopbreaker = 0;
+        while (lastObject.GetComponent<ClickableObject>().moving)
+        {
+            yield return new WaitForSeconds(moveTime);
+            loopbreaker++;
+            if (loopbreaker > 50)
+            {
+                Debug.Log("infinite loop: waiting");
+                break;
+            }
+        }
+
+        scrub = false;
 
         // Draw new mana if hand is now empty
 		for (int i = 0; i < contents.Count; i++) {
@@ -48,26 +66,42 @@ public class Hand : Collection<Hand> {
 				yield break;
 		}
             
-		RefillHand();
-
-		yield return null;
+		yield return StartCoroutine(RefillHand());
     }
 
-    public void RefillHand() {
+    public IEnumerator RefillHand() {
 		int i = 0;
         // Take mana from deck until hand is at current mana limit
+        GameObject lastObject = null;
         while (size < maxHandSize) {
-			SendToHand(preview.contents[0]);
+            lastObject = preview.contents[0];
+            yield return StartCoroutine(SendToHand(lastObject));
 			i++;
 			if (i > 50) {
 				Debug.Log ("infinite loop: RefillHand");
 				break;
 			}
-
         }
-		preview.RefillPreview(maxHandSize);
+
+        // Make sure we complete the refill before any other movement takes place
+        // We look for the last object to be given a movement command and wait until
+        // it has stopped moving.
+        while (lastObject.GetComponent<ClickableObject>().moving)
+        {
+            yield return new WaitForSeconds(moveTime);
+            i++;
+            if (i > 100)
+            {
+                Debug.Log("infinite loop: waiting");
+                break;
+            }
+        }
+
+		yield return StartCoroutine(preview.RefillPreview(maxHandSize));
 
 		scrub = true;
+
+        Game.Instance.state = Game.State.GOAL;
 
 		StartCoroutine(goalScript.MoveGoal ());
     }
@@ -99,8 +133,8 @@ public class Hand : Collection<Hand> {
         }
 	}
 
-	public void IncreaseLimit(int increase){
+	public IEnumerator IncreaseLimit(int increase){
 		maxHandSize += increase;
-		preview.RefillPreview (maxHandSize);
+		yield return StartCoroutine(preview.RefillPreview (maxHandSize));
 	}
 }

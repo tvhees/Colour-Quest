@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class ManaPool : ObjectPool {
 
     // Variables
-    public GameObject manaSphere;
+    public GameObject manaSphere, deckContainer;
 	public Material[] baseMaterials, advancedMaterials, nullMaterials, startMaterials;
     public Hand hand;
 	public Preview preview;
@@ -16,12 +16,13 @@ public class ManaPool : ObjectPool {
 	private int materialIndex = 0;
 
     // Methods
-    public void Reset() {
+    public IEnumerator Reset() {
+		homePosition = deckContainer.transform.position;
+
         if(pool == null)
             CreatePool(80, manaSphere);
 
         startMaterials.Randomise();
-
 
         for (int i = 0; i < hand.maxHandSize; i++)
         {
@@ -29,8 +30,10 @@ public class ManaPool : ObjectPool {
             mana.transform.SetParent(transform);
             RandomColour(mana);
             mana.SetActive(true);
-            hand.SendToHand(mana);
+            yield return StartCoroutine(hand.SendToHand(mana));
         }
+
+        deck.moveTime = 0.0001f;
 
         for (int i = 0; i < hand.maxHandSize * 2; i++)
         {
@@ -38,10 +41,12 @@ public class ManaPool : ObjectPool {
             mana.transform.SetParent(transform);
             RandomColour(mana);
             mana.SetActive(true);
-            deck.SendToDeck(mana);
+            yield return StartCoroutine(deck.SendToDeck(mana));
         }
 
-		preview.RefillPreview (hand.maxHandSize);
+        deck.moveTime = deck.startMoveTime;
+
+		yield return StartCoroutine(preview.RefillPreview (hand.maxHandSize));
     }
 
     public override void SendToPool(GameObject mana)

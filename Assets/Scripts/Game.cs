@@ -58,7 +58,7 @@ public class Game : Singleton<Game> {
         deck.Reset();
         discard.Reset();
 		preview.Reset();
-        manaPool.Reset();
+        StartCoroutine(manaPool.Reset());
 		discardDisplay.Reset ();
 		deckDisplay.Reset ();
 		tutorial.Reset ();

@@ -17,26 +17,42 @@ public class Preview : Collection<Preview> {
 		SharedSetup ();
     }
 
-    public void SendToPreview(GameObject mana){
+    public IEnumerator SendToPreview(GameObject mana){
 		hand.Remove (mana);
 
 		discard.Remove (mana);
 
 		deck.Remove (mana);
 
-		AddObj (mana);
+		yield return StartCoroutine(AddObj(mana));
 	}
 
-	public void RefillPreview(int nextHandSize){
+	public IEnumerator RefillPreview(int nextHandSize){
 		int i = 0;
+        GameObject lastObject = null;
 		while (size < nextHandSize) {
-			deck.RefillDeck();
-			SendToPreview (deck.contents [Random.Range (0, deck.contents.Count)]);
-			i++;
+			yield return StartCoroutine(deck.RefillDeck());
+            lastObject = deck.contents[Random.Range(0, deck.contents.Count)];
+            yield return StartCoroutine(SendToPreview (deck.contents [Random.Range (0, deck.contents.Count)]));
+            i++;
 			if (i > 50) {
 				Debug.Log ("infinite loop: RefillPreview");
 				break;
 			}
 		}
-	}
+
+        // Make sure we complete the refill before any other movement takes place
+        // We look for the last object to be given a movement command and wait until
+        // it has stopped moving.
+        while (lastObject.GetComponent<ClickableObject>().moving)
+        {
+            yield return new WaitForSeconds(moveTime);
+            i++;
+            if (i > 100)
+            {
+                Debug.Log("infinite loop: waiting");
+                break;
+            }
+        }
+    }
 }
