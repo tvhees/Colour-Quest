@@ -10,6 +10,7 @@ public class Goal : MovingObject<Goal> {
     public GoalObject goalObject;
     public Vector3 goalTarget;
     public TextMesh[] goalValue;
+    public bool pause;
 
 	private GameObject goalTile = null;
     private bool canMove, gameStarted;
@@ -43,10 +44,12 @@ public class Goal : MovingObject<Goal> {
     }
 
     public IEnumerator MoveGoal(){
-		Game.Instance.state = Game.State.GOAL;
 
 		if(Preferences.Instance.watchGoal) // Set in player preferences
 			yield return StartCoroutine(mainCamera.GetComponent<CameraScript> ().FocusCamera (transform));
+
+        while (pause)
+            yield return new WaitForSeconds(0.1f);
 
         // If there's still tiles to move to, continue. If not, end the game as a loss
         if (canMove)

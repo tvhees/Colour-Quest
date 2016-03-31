@@ -3,6 +3,8 @@ using System.Collections;
 
 public abstract class ClickableObject : MonoBehaviour {
 
+    public bool moving = false;
+
 #if UNITY_STANDALONE || UNITY_EDITOR
     public void OnMouseDown() {
 		// If the tutorial is running we want extra control over what happens
@@ -24,6 +26,8 @@ public abstract class ClickableObject : MonoBehaviour {
 
 		while (sqrDistance > Mathf.Epsilon) {
 
+            moving = true;
+
 			while (Game.Instance.state == Game.State.MENU)
 				yield return new WaitForSeconds(0.1f);
 
@@ -37,6 +41,8 @@ public abstract class ClickableObject : MonoBehaviour {
 
 			yield return null;
 		}
+
+        moving = false;
 	}
 
     public abstract void ClickAction();

@@ -55,7 +55,7 @@ public class ObjectivePool : ObjectPool {
 			objectives.contents [total].GetComponent<MeshRenderer> ().material = baseMaterials[i];
 			total++;
 			if (total == threshold) {
-				hand.IncreaseLimit(1);
+				StartCoroutine(hand.IncreaseLimit(1));
 				NewTracker ();
 			}
 		}

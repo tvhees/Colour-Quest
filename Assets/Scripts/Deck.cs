@@ -33,10 +33,12 @@ public class Deck : Collection<Deck> {
 	public IEnumerator RefillDeck(){
         int i = 0;
 		if (contents.Count < 1) {
-            float waitTime = discard.contents.Count * moveTime / 2;
+            GameObject lastObject = null;
+
             while (discard.contents.Count > 0)
             {
-                StartCoroutine(SendToDeck(discard.contents[Random.Range(0, discard.contents.Count)]));
+                lastObject = discard.contents[Random.Range(0, discard.contents.Count)];
+                StartCoroutine(SendToDeck(lastObject));
                 yield return new WaitForSeconds(moveTime/4);
                 i++;
                 if (i > 50)
@@ -45,7 +47,19 @@ public class Deck : Collection<Deck> {
                     break;
                 }
             }
-            yield return new WaitForSeconds(waitTime);
+
+            // Make sure we complete the refill before any other movement takes place
+            // We look for the last object to be given a movement command and wait until
+            // it has stopped moving.
+            while (lastObject.GetComponent<ClickableObject>().moving) {
+                yield return new WaitForSeconds(moveTime);
+                i++;
+                if (i > 100)
+                {
+                    Debug.Log("infinite loop: waiting");
+                    break;
+                }
+            }
 		}
 	}
 
