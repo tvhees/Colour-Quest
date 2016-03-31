@@ -98,6 +98,6 @@ public class Hand : Collection<Hand> {
 
 	public void IncreaseLimit(int increase){
 		maxHandSize += increase;
-		preview.RefillPreview (maxHandSize);
+		StartCoroutine(preview.RefillPreview (maxHandSize));
 	}
 }

@@ -15,7 +15,7 @@ public class Deck : Collection<Deck> {
     {
 		float width = GetComponent<RectTransform> ().rect.width;
 
-		container.transform.localPosition = new Vector3 (-0.40f * width, 0f, 0f);
+		container.transform.localPosition = startHomePos = new Vector3 (-0.40f * width, 0f, 0f);
 
 		SharedSetup ();
     }
@@ -30,10 +30,22 @@ public class Deck : Collection<Deck> {
 		yield return StartCoroutine(AddObj(mana));
 	}
 
-	public void RefillDeck(){
+	public IEnumerator RefillDeck(){
+        int i = 0;
 		if (contents.Count < 1) {
-			while (discard.contents.Count > 0)
-				SendToDeck (discard.contents [Random.Range (0, discard.contents.Count)]);
+            float waitTime = discard.contents.Count * moveTime / 2;
+            while (discard.contents.Count > 0)
+            {
+                StartCoroutine(SendToDeck(discard.contents[Random.Range(0, discard.contents.Count)]));
+                yield return new WaitForSeconds(moveTime/4);
+                i++;
+                if (i > 50)
+                {
+                    Debug.Log("infinite loop: RefillDeck");
+                    break;
+                }
+            }
+            yield return new WaitForSeconds(waitTime);
 		}
 	}
 

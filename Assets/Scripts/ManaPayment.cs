@@ -88,7 +88,7 @@ public class ManaPayment : MonoBehaviour {
         else
         {
 
-			yield return StartCoroutine(playerScript.SmoothMovement(target.transform.parent.position, target.transform.parent.gameObject));
+			StartCoroutine(playerScript.SmoothMovement(target.transform.parent.position, target.transform.parent.gameObject));
 
             if (objectiveValue.Sum() > 0)
                 objectivePool.UpdateTracker(objectiveValue);

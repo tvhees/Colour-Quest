@@ -30,7 +30,7 @@ public class Preview : Collection<Preview> {
 	public IEnumerator RefillPreview(int nextHandSize){
 		int i = 0;
 		while (size < nextHandSize) {
-			deck.RefillDeck();
+			yield return StartCoroutine(deck.RefillDeck());
 			yield return StartCoroutine(SendToPreview (deck.contents [Random.Range (0, deck.contents.Count)]));
             i++;
 			if (i > 50) {
