@@ -6,7 +6,8 @@ using System.Collections.Generic;
 public class Tutorial : MonoBehaviour {
 
 	public float[] guiBox;
-	public GameObject player, goal;
+	public GameObject player;
+    public Goal goal;
 	public GameObject[] arrows;
 	public GUISkin tutorialSkin;
 	public ManaPayment manaPayment;
@@ -20,25 +21,25 @@ public class Tutorial : MonoBehaviour {
 	private bool clickAll = false, release = false;
 
     private string[] tutText = new string[20]{
-		/*0*/	"Welcome to Colour Quest! This lovely sphere is you, the PLAYER.",
-		/*1*/	"Your goal is to reach this GOAL sphere and feed it colours until it is satisfied.",
+		/*0*/	"Welcome to Colour Quest! This sphere is you, the PLAYER.",
+		/*1*/	"Your must reach this GOAL sphere and FEED it colours until it is satisfied.",
 		/*2*/	"To succeed, you'll need to move across the map. Start by touching an adjacent TILE to select it.",
 		/*3*/	"Selected tiles are highlighted and can be touched again to deselect.",
 		/*4*/	"To move on to a new tile you need to feed it the appropriate COLOUR from your hand. Try touching a colour to select it.",
-		/*5*/	"The selected colour needs to match the tile - try deselecting non-matching colours and then selecting matching ones.",
+		/*5*/	"The selected colour needs to match the tile - deselect non-matching colours by touching them and try again.",
 		/*6*/	"If all tile requirements have been satisfied, the player sphere will light up. Touch it to confirm and move on to the tile.",
 		/*7*/	"SPENT colours are sent here. Long-pressing this container will display a list of the colours within, right above the player sphere.",
 		/*8*/	"Most tiles are hidden to start with, and will flip as you approach them. You can move and zoom the CAMERA around at any time by dragging or pinching.",
 		/*9*/	"Touching here will END your turn and send all unused colours to the spent container. Your turn will also end automatically any time your hand is empty.",
 		/*10*/	"At the end of each turn the goal sphere will move one tile, adding that tile's colour requirements to its own.",
-		/*11*/	"The goal will always indicate the next tile it will move to",
-		/*12*/	"At the start of a new turn your hand will be refilled with colours from the fresh colour STOCK. Your next hand is always openly displayed.",
-		/*13*/	"Long-pressing the colour stock will display any other colours remaining in there",
+		/*11*/	"The goal always shows which tile it will move to next.",
+		/*12*/	"At the start of a new turn your hand will be refilled with colours from the fresh colour STOCK. Your next hand is always displayed next to it.",
+		/*13*/	"Long-pressing the colour stock will display any other colours remaining in there.",
 		/*14*/	"If the stock becomes empty it is refilled with spent colours, which can be used again when they make it in to your hand!",
-        /*15*/  "Some tiles have OBJECTIVES above them. To move on to these tiles you must use feed them the objective colour as well as the tile colour.",
+        /*15*/  "Some tiles have OBJECTIVES above them. To move on to these tiles you must feed them the objective colour as well as the tile colour.",
         /*16*/  "Collected objectives are sent to the objective TRACKER. Filling this up will increase your maximum hand size by one.",
         /*17*/  "RED objectives will add two to your tracker, while YELLOW objectives will put a new red colour in to your hand immediately.",
-        /*18*/  "Sometimes you won't have the right colours in your hand. You can change a colour to any other by long-pressing it and selecting the new colour",
+        /*18*/  "Sometimes you won't have the right colours in your hand. You can change a colour to any other by long-pressing it and selecting the new colour.",
         /*19*/  "Beware - this will add one or more BLACK colours to your hand. Black colours cannot be used to move and won't leave your hand unless you skip an entire turn."
 	};
 
@@ -95,7 +96,7 @@ public class Tutorial : MonoBehaviour {
                         case 9:     // Explain ending turn and discarding hand
                             clickTag = "EndTurn";
                             scrubButton.interactable = true;
-                            goal.GetComponent<Goal>().pause = true;
+                            goal.pause = true;
                             break;
                         case 12:    // Explain hand from stock
                             clickTag = null;
@@ -109,7 +110,16 @@ public class Tutorial : MonoBehaviour {
                         case 14:    // Explain refilling stock from discard
                             clickTag = null;
                             break;
-				        default:	// If we're not at an appropriate stage of the tutorial we allow full functionality
+                        case 15:    // Explaining objectives
+                            clickTag = null;
+                            break;
+                        case 16:    // Objective tracker
+                            clickTag = null;
+                            break;
+                        case 17:    // Objective bonuses
+                            clickTag = null;
+                            break;
+                        default:	// If we're not at an appropriate stage of the tutorial we allow full functionality
 					        clickTag = "None";
 					        clickAll = true;
 					        SetArrows(null);
@@ -143,6 +153,13 @@ public class Tutorial : MonoBehaviour {
                             clickTag = "Discard";
                             release = true;
                             break;
+                        case 18:    // Explain long-pressing to change colours
+                            clickTag = "Mana";
+                            release = true;
+                            break;
+                        case 19:    // Explain black mana
+                            clickTag = null;
+                            break;
 				        default:
 					        clickTag = "None";
 					        clickAll = true;
@@ -162,17 +179,25 @@ public class Tutorial : MonoBehaviour {
 					        clickTag = "None";
 					        clickAll = true;
 					        SetArrows(null);
-                            goal.GetComponent<Goal>().pause = false;
+                            goal.pause = false;
 					        break;
 				    }
 				    break;
-			    } 
-			    if(!clickAll)
-				    GUI.Box (new Rect (screenWidth * guiBox [0], screenHeight * guiBox [1], screenWidth * guiBox [2], screenHeight * guiBox [3]), tutText[tutStep]);
-		    }
+			    }
+                if (!clickAll)
+                {
+                    float tO = 0.5f;
+                    GUI.Label(new Rect(screenWidth * guiBox[0] + tO, screenHeight * guiBox[1] + tO, screenWidth * guiBox[2], screenHeight * guiBox[3]), tutText[tutStep]);
+                    GUI.Label(new Rect(screenWidth * guiBox[0] + tO, screenHeight * guiBox[1] - tO, screenWidth * guiBox[2], screenHeight * guiBox[3]), tutText[tutStep]);
+                    GUI.Label(new Rect(screenWidth * guiBox[0] - tO, screenHeight * guiBox[1] + tO, screenWidth * guiBox[2], screenHeight * guiBox[3]), tutText[tutStep]);
+                    GUI.Label(new Rect(screenWidth * guiBox[0] - tO, screenHeight * guiBox[1] - tO, screenWidth * guiBox[2], screenHeight * guiBox[3]), tutText[tutStep]);
+                    GUI.Label(new Rect(screenWidth * guiBox[0], screenHeight * guiBox[1], screenWidth * guiBox[2], screenHeight * guiBox[3]), tutText[tutStep], tutorialSkin.customStyles[0]);
+            }
+            }
 		    else{
 			    tutStep = 0;
                 scrubButton.interactable = true;
+                goal.pause = false;
 		    }
 	}
 
@@ -181,7 +206,7 @@ public class Tutorial : MonoBehaviour {
         if (message == "ClickAction")
         {
             // Automatically turn off tutorial mode if we've gone all the way through.
-            if (tutStep > 14)
+            if (tutStep > 19)
             {
                 Preferences.Instance.tutorial = false;
             }

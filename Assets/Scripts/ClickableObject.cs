@@ -42,6 +42,9 @@ public abstract class ClickableObject : MonoBehaviour {
 			yield return null;
 		}
 
+        // Make sure the local scale is correct at the end point in case movement happens too fast for the system.
+        transform.localScale = s1;
+
         moving = false;
 	}
 
