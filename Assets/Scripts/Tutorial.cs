@@ -19,7 +19,7 @@ public class Tutorial : MonoBehaviour {
 	public int tutStep = 0;
 	private bool clickAll = false, release = false;
 
-    private string[] tutText = new string[18]{
+    private string[] tutText = new string[20]{
 		/*0*/	"Welcome to Colour Quest! This lovely sphere is you, the PLAYER.",
 		/*1*/	"Your goal is to reach this GOAL sphere and feed it colours until it is satisfied.",
 		/*2*/	"To succeed, you'll need to move across the map. Start by touching an adjacent TILE to select it.",
@@ -35,9 +35,11 @@ public class Tutorial : MonoBehaviour {
 		/*12*/	"At the start of a new turn your hand will be refilled with colours from the fresh colour STOCK. Your next hand is always openly displayed.",
 		/*13*/	"Long-pressing the colour stock will display any other colours remaining in there",
 		/*14*/	"If the stock becomes empty it is refilled with spent colours, which can be used again when they make it in to your hand!",
-        /*15*/  "Sometimes you won't have the right colours in your hand. You can change a colour to any other by long-pressing it and selecting the new colour",
-        /*16*/  "Beware - this will add one or more BLACK colours to your hand. Black colours cannot be used to move and won't leave your hand unless you skip an entire turn.",
-        /*17*/  "Some tiles have "
+        /*15*/  "Some tiles have OBJECTIVES above them. To move on to these tiles you must use feed them the objective colour as well as the tile colour.",
+        /*16*/  "Collected objectives are sent to the objective TRACKER. Filling this up will increase your maximum hand size by one.",
+        /*17*/  "RED objectives will add two to your tracker, while YELLOW objectives will put a new red colour in to your hand immediately.",
+        /*18*/  "Sometimes you won't have the right colours in your hand. You can change a colour to any other by long-pressing it and selecting the new colour",
+        /*19*/  "Beware - this will add one or more BLACK colours to your hand. Black colours cannot be used to move and won't leave your hand unless you skip an entire turn."
 	};
 
 	public void Reset(){
@@ -170,6 +172,7 @@ public class Tutorial : MonoBehaviour {
 		    }
 		    else{
 			    tutStep = 0;
+                scrubButton.interactable = true;
 		    }
 	}
 
