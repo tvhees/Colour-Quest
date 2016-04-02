@@ -186,13 +186,8 @@ public class Tutorial : MonoBehaviour {
 			    }
                 if (!clickAll)
                 {
-                    float tO = 0.5f;
-                    GUI.Label(new Rect(screenWidth * guiBox[0] + tO, screenHeight * guiBox[1] + tO, screenWidth * guiBox[2], screenHeight * guiBox[3]), tutText[tutStep]);
-                    GUI.Label(new Rect(screenWidth * guiBox[0] + tO, screenHeight * guiBox[1] - tO, screenWidth * guiBox[2], screenHeight * guiBox[3]), tutText[tutStep]);
-                    GUI.Label(new Rect(screenWidth * guiBox[0] - tO, screenHeight * guiBox[1] + tO, screenWidth * guiBox[2], screenHeight * guiBox[3]), tutText[tutStep]);
-                    GUI.Label(new Rect(screenWidth * guiBox[0] - tO, screenHeight * guiBox[1] - tO, screenWidth * guiBox[2], screenHeight * guiBox[3]), tutText[tutStep]);
-                    GUI.Label(new Rect(screenWidth * guiBox[0], screenHeight * guiBox[1], screenWidth * guiBox[2], screenHeight * guiBox[3]), tutText[tutStep], tutorialSkin.customStyles[0]);
-            }
+                    ExtensionMethods.BackgroundText(new Rect(screenWidth * guiBox[0], screenHeight * guiBox[1], screenWidth * guiBox[2], screenHeight * guiBox[3]), tutText[tutStep], tutorialSkin);
+                }
             }
 		    else{
 			    tutStep = 0;
