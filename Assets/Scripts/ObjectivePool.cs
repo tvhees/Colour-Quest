@@ -45,7 +45,7 @@ public class ObjectivePool : ObjectPool {
 		}
 	}
 
-	public void UpdateTracker(int[] value){
+	public IEnumerator UpdateTracker(int[] value){
 		int sum = value.Sum();
 
         if (sum == 1 && value[1] == 1)
@@ -55,7 +55,7 @@ public class ObjectivePool : ObjectPool {
 			objectives.contents [total].GetComponent<MeshRenderer> ().material = baseMaterials[i];
 			total++;
 			if (total == threshold) {
-				StartCoroutine(hand.IncreaseLimit(1));
+				yield return StartCoroutine(hand.IncreaseLimit(1));
 				NewTracker ();
 			}
 		}

@@ -59,4 +59,22 @@ public static class ExtensionMethods {
 
 		return defaultValue;
 	}
+
+    // Make text with a different colour background
+    public static void BackgroundText(Rect rect, string textString, GUISkin textSkin, bool background = false) {
+        float tO = 1f;
+        if(background)
+            GUI.Label(new Rect(rect.x, rect.y, rect.width, rect.height), "", textSkin.customStyles[1]);
+        GUI.Label(new Rect(rect.x + tO, rect.y + tO, rect.width, rect.height), textString);
+        GUI.Label(new Rect(rect.x + tO, rect.y - tO, rect.width, rect.height), textString);
+        GUI.Label(new Rect(rect.x - tO, rect.y + tO, rect.width, rect.height), textString);
+        GUI.Label(new Rect(rect.x - tO, rect.y - tO, rect.width, rect.height), textString);
+        GUI.Label(new Rect(rect.x, rect.y, rect.width, rect.height), textString, textSkin.customStyles[0]);
+    }
+
+    public static bool BGButton(Rect rect, string textString, GUISkin textSkin) {
+        bool value = GUI.Button(rect, "");
+        BackgroundText(rect, textString, textSkin);
+        return value;
+    }
 }

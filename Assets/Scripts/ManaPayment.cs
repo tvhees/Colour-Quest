@@ -87,7 +87,7 @@ public class ManaPayment : MonoBehaviour {
         {
             goal.UpdateValue(payment, 1, -1);
 
-            RemainderToBlackMana(goal.goalObject.goalCost);
+            yield return RemainderToBlackMana(goal.goalObject.goalCost);
         }
         else
         {
@@ -95,11 +95,11 @@ public class ManaPayment : MonoBehaviour {
 			StartCoroutine(playerScript.SmoothMovement(target.transform.parent.position, target.transform.parent.gameObject));
 
             if (objectiveValue.Sum() > 0)
-                objectivePool.UpdateTracker(objectiveValue);
+                yield return StartCoroutine(objectivePool.UpdateTracker(objectiveValue));
 
             GameObject manaReward = manaPool.GetObjectiveReward(objectiveValue);
             if (manaReward != null)
-                StartCoroutine(hand.SendToHand(manaReward));
+                yield return StartCoroutine(hand.SendToHand(manaReward));
 
             boardScript.FlipTiles(target.transform.parent.position);
         }
@@ -110,7 +110,7 @@ public class ManaPayment : MonoBehaviour {
             Reset();
     }
 
-    private void RemainderToBlackMana(int[] remainder)
+    private IEnumerator RemainderToBlackMana(int[] remainder)
     {
         int[] nullValue = new int[3] { 0, 0, 0 };
 
@@ -121,7 +121,7 @@ public class ManaPayment : MonoBehaviour {
                 for (int j = 0; j < remainder[i]; j++)
                 {
                     GameObject mana = manaPool.GetManaOption(nullValue, 0);
-                    StartCoroutine(hand.SendToHand(mana));
+                    yield return StartCoroutine(hand.SendToHand(mana));
                 }
             }
         }

@@ -62,34 +62,38 @@ public class Mana : ClickableObject {
     public void ReleaseAction() {
              
 		if (menu) {
-			menu = false;
+            StartCoroutine(CleanUp());
+        }
+    }
 
-			// Check if we are over the main mana globe or the option wedges. Do nothing if not.
-			RaycastHit hit;
-			Ray ray = uiCamera.ScreenPointToRay (Input.mousePosition);
-			Physics.Raycast (ray.origin, ray.direction, out hit);
-			wedge.SetActive (false);
+    private IEnumerator CleanUp() {
+        // Check if we are over the main mana globe or the option wedges. Do nothing if not.
+        RaycastHit hit;
+        Ray ray = uiCamera.ScreenPointToRay(Input.mousePosition);
+        Physics.Raycast(ray.origin, ray.direction, out hit);
+        wedge.SetActive(false);
 
-			if (hit.collider == GetComponent<Collider> ())
-				Select (Hand.Instance.selectedMana.Contains (gameObject));
+        if (hit.collider == GetComponent<Collider>())
+            Select(Hand.Instance.selectedMana.Contains(gameObject));
 
-			if (hit.collider == wedgeLower.GetComponent<Collider> () || hit.collider == wedgeUpper.GetComponent<Collider> ()) {
-				UseOption (hit.collider.gameObject);
-				Select (Hand.Instance.selectedMana.Contains (gameObject));
-			}
-		
-		}
+        if (hit.collider == wedgeLower.GetComponent<Collider>() || hit.collider == wedgeUpper.GetComponent<Collider>())
+        {
+            yield return StartCoroutine(UseOption(hit.collider.gameObject));
+            Select(Hand.Instance.selectedMana.Contains(gameObject));
+        }
 
-		// Remove any UI mana globes and put the object back in line with the rest.
-		if (options.Count > 0)
-		{
+        // Remove any UI mana globes and put the object back in line with the rest.
+        if (options.Count > 0)
+        {
             while (options.Count > 0)
             {
-				manaPool.SendToPool(options[0]);
+                manaPool.SendToPool(options[0]);
                 options.Remove(options[0]);
             }
-			transform.position = transform.position + Vector3.forward;
-		}
+            transform.position = transform.position + Vector3.forward;
+        }
+
+        menu = false;
     }
 
 	public void Select(bool selected){
@@ -154,7 +158,7 @@ public class Mana : ClickableObject {
         options.Add(option);
     }
 
-    private void UseOption(GameObject wedgeHalf) {
+    private IEnumerator UseOption(GameObject wedgeHalf) {
 		// Save original value and material
         savedValue = value;
         savedMaterial = GetComponent<MeshRenderer> ().material;
@@ -166,7 +170,7 @@ public class Mana : ClickableObject {
 		// Get any black mana required for this option and add it to player's hand
 		while(wedgeHalf.transform.childCount > 1){
 			newMana = wedgeHalf.transform.GetChild (1).gameObject;
-			StartCoroutine(Hand.Instance.SendToHand (newMana));
+			yield return StartCoroutine(Hand.Instance.SendToHand (newMana));
 			options.Remove (newMana);
 			blackMana.Add (newMana);
 		}
