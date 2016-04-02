@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
 public class Game : Singleton<Game> {
 
     public float[] guiBox, guiButton;
+    public Text headerText;
+    public GameObject menuPanel, prefsPanel;
     public ManaPayment manaPayment;
     public BoardScript boardScript;
     public Player player;
@@ -48,7 +51,7 @@ public class Game : Singleton<Game> {
 		screenHeight = Screen.height;
     }
 
-    void SetUpGame() {
+    public void SetUpGame() {
         boardScript.NewBoard();
         player.Reset();
         goal.Reset();
@@ -64,6 +67,35 @@ public class Game : Singleton<Game> {
 		tutorial.Reset ();
     }
 
+    public void BackToGame() {
+        state = savedState;
+    }
+
+    public void BackToMenu() {
+        state = savedMenu;
+    }
+
+    public void Quit() {
+        PlayerPrefs.Save();
+        Application.Quit();
+    }
+
+    public void ChangeState(int newState) {
+        switch (state) {
+            case State.MENU:
+            case State.WON:
+            case State.LOST:
+            case State.PREFS:
+                savedMenu = state;
+                break;
+            default:
+                savedState = state;
+                break;
+        }
+
+        state = (State)newState;
+    }
+
     void Update()
     {
 
@@ -72,20 +104,44 @@ public class Game : Singleton<Game> {
         {
             if (state == State.MENU)
 			{
-                state = savedState;
+                BackToGame();
             }
 			else if (state == State.PREFS) {
 				Preferences.Instance.Save ();
-				state = savedMenu;
+                BackToMenu();
 			}
             else if(state != State.WON || state != State.LOST)
             {
-                savedState = state;
-                state = State.MENU;
+                ChangeState((int)State.MENU);
             }
         }
 
-		// Touch detection code
+        menuPanel.SetActive(false);
+        prefsPanel.SetActive(false);
+
+        switch (state)
+        {
+            case State.MENU:
+                title = "MENU";
+                menuPanel.SetActive(true);
+                break;
+            case State.WON:
+                title = "VICTORY";
+                menuPanel.SetActive(true);
+                break;
+            case State.LOST:
+                title = "DEFEAT";
+                menuPanel.SetActive(true);
+                break;
+            case State.PREFS:
+                title = "PREFERENCES";
+                prefsPanel.SetActive(true);
+                break;
+        }
+
+        headerText.text = title;
+
+        // Touch detection code
 #if UNITY_ANDROID || UNITY_IOS
         if (Input.touchCount > 0) {
             Touch touch = Input.GetTouch(0);
@@ -120,7 +176,7 @@ public class Game : Singleton<Game> {
 #endif
     }
 
-
+/*
     void OnGUI() {
         GUI.skin = menuSkin;
 
@@ -181,13 +237,13 @@ public class Game : Singleton<Game> {
             ExtensionMethods.BackgroundText(MakeUIRect(-1f * uiGap), title, menuSkin);
 
             // Make the first button. Turns tutorial features on/off
-            Preferences.Instance.tutorial = GUI.Toggle(MakeUIRect(0f * uiGap), Preferences.Instance.tutorial, "");
             ExtensionMethods.BackgroundText(MakeUIRect(0f * uiGap), "TUTORIAL MODE", menuSkin, true);
+            Preferences.Instance.tutorial = GUI.Toggle(MakeUIRect(0f * uiGap), Preferences.Instance.tutorial, "");
 
 
             // Make a toggle that turns goal following with the camera on/off
-            Preferences.Instance.tutorial = GUI.Toggle(MakeUIRect(1f * uiGap), Preferences.Instance.tutorial, "");
             ExtensionMethods.BackgroundText(MakeUIRect(1f * uiGap), "WATCH GOAL", menuSkin, true);
+            Preferences.Instance.watchGoal = GUI.Toggle(MakeUIRect(1f * uiGap), Preferences.Instance.watchGoal, "");
 
             // Make a slider. Changes speed of camera pan and zoom
             Preferences.Instance.cameraSpeed = GUI.HorizontalSlider(MakeUIRect(2.5f * uiGap), Preferences.Instance.cameraSpeed, 3f, 10f);
@@ -214,4 +270,5 @@ public class Game : Singleton<Game> {
 		return new Rect (screenWidth * guiButton [0], screenHeight * (guiButton [1] + multiplier * guiButton [3]),
 						screenWidth * guiButton [2], screenHeight * guiButton [3]);
 	}
+    */
 }
