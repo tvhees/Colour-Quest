@@ -40,15 +40,10 @@ public class Game : Singleton<Game> {
 
 	private State savedState, savedMenu;
 	private string title = null;
-	private float screenWidth, screenHeight;
 
     void Start() {
 		Preferences.Instance.Load();
         SetUpGame();
-
-		// Get dimensions to use for menus
-		screenWidth = Screen.width;
-		screenHeight = Screen.height;
     }
 
     public void SetUpGame() {
@@ -175,100 +170,4 @@ public class Game : Singleton<Game> {
         }
 #endif
     }
-
-/*
-    void OnGUI() {
-        GUI.skin = menuSkin;
-
-		switch (state) {
-		case State.MENU:
-			title = "MENU";
-			break;
-		case State.WON:
-			title = "VICTORY";
-			break;
-		case State.LOST:
-			title = "DEFEAT";
-			break;
-		case State.PREFS:
-			title = "PREFERENCES";
-			break;
-		}
-
-		// Main menu - on Escape or win/loss
-		if (state == State.MENU || state == State.WON || state == State.LOST) {
-			
-            GUI.Box(new Rect(screenWidth * guiBox[0], screenHeight*guiBox[1], screenWidth * guiBox[2], screenHeight * guiBox[3]), "");
-
-            // Write the MENU header
-            ExtensionMethods.BackgroundText(MakeUIRect(-1f * uiGap), title, menuSkin);
-
-            // Make the first button. If it is pressed, a new game will be set up
-			if (ExtensionMethods.BGButton(MakeUIRect(0f * uiGap), "RESTART", menuSkin))
-            {
-                SetUpGame();
-            }
-
-            // Make the second button. Go to the preferences menu
-            if (ExtensionMethods.BGButton(MakeUIRect(1f * uiGap), "PREFERENCES", menuSkin))
-            {
-				savedMenu = state;
-				state = State.PREFS;
-            }
-
-            // Make the third button. Returns to the game
-            if (ExtensionMethods.BGButton(MakeUIRect(2f * uiGap), "BACK", menuSkin))
-            {
-				state = savedState;
-			}
-
-            // Make the fourth button. Quit the game
-            if (ExtensionMethods.BGButton(MakeUIRect(3f * uiGap), "QUIT", menuSkin))
-            {
-				Application.Quit();
-			}
-        }
-
-		// Preferences menu - on pressing preferences button
-		if (state == State.PREFS) {
-			GUI.Box(new Rect(screenWidth * guiBox[0], screenHeight*guiBox[1], screenWidth * guiBox[2], screenHeight * guiBox[3]), "");
-
-            // Make the PREFERENCES header
-            ExtensionMethods.BackgroundText(MakeUIRect(-1f * uiGap), title, menuSkin);
-
-            // Make the first button. Turns tutorial features on/off
-            ExtensionMethods.BackgroundText(MakeUIRect(0f * uiGap), "TUTORIAL MODE", menuSkin, true);
-            Preferences.Instance.tutorial = GUI.Toggle(MakeUIRect(0f * uiGap), Preferences.Instance.tutorial, "");
-
-
-            // Make a toggle that turns goal following with the camera on/off
-            ExtensionMethods.BackgroundText(MakeUIRect(1f * uiGap), "WATCH GOAL", menuSkin, true);
-            Preferences.Instance.watchGoal = GUI.Toggle(MakeUIRect(1f * uiGap), Preferences.Instance.watchGoal, "");
-
-            // Make a slider. Changes speed of camera pan and zoom
-            Preferences.Instance.cameraSpeed = GUI.HorizontalSlider(MakeUIRect(2.5f * uiGap), Preferences.Instance.cameraSpeed, 3f, 10f);
-
-            // Make a label for the slider
-            ExtensionMethods.BackgroundText(MakeUIRect(2f * uiGap), "CAMERA SPEED", menuSkin, true);
-
-            // Make the third button. Returns to previous Menu
-            if (ExtensionMethods.BGButton(MakeUIRect(3.5f * uiGap), "RESET", menuSkin))
-			{
-				PlayerPrefs.DeleteAll();
-				Preferences.Instance.Load();
-			}
-
-			// Make the fourth button. Returns to previous Menu
-			if (ExtensionMethods.BGButton(MakeUIRect(4.5f * uiGap), "BACK", menuSkin))
-			{
-				Preferences.Instance.Save ();
-				state = savedMenu;
-			}
-		}
-    }
-	private Rect MakeUIRect(float multiplier){
-		return new Rect (screenWidth * guiButton [0], screenHeight * (guiButton [1] + multiplier * guiButton [3]),
-						screenWidth * guiButton [2], screenHeight * guiButton [3]);
-	}
-    */
 }

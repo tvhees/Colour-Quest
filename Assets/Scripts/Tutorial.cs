@@ -6,7 +6,8 @@ using System.Collections.Generic;
 public class Tutorial : MonoBehaviour {
 
 	public float[] guiBox;
-	public GameObject player;
+	public GameObject player, tutorialPanel, twoDPanel;
+    public Text tutorialText;
     public Goal goal;
 	public GameObject[] arrows;
 	public GUISkin tutorialSkin;
@@ -14,13 +15,12 @@ public class Tutorial : MonoBehaviour {
 	public CameraScript mainCameraScript;
     public Button scrubButton;
 
-	private float screenWidth, screenHeight;
 	public List<GameObject> offArrows = new List<GameObject>();
 	private string clickTag;
 	public int tutStep = 0;
-	private bool clickAll = false, release = false;
+	private bool clickAll = false, release = false, scrubIncrement = false;
 
-    private string[] tutText = new string[20]{
+    private string[] tutText = new string[26]{
 		/*0*/	"Welcome to Colour Quest! This sphere is you, the PLAYER.",
 		/*1*/	"Your must reach this GOAL sphere and FEED it colours until it is satisfied.",
 		/*2*/	"To succeed, you'll need to move across the map. Start by touching an adjacent TILE to select it.",
@@ -40,13 +40,16 @@ public class Tutorial : MonoBehaviour {
         /*16*/  "Collected objectives are sent to the objective TRACKER. Filling this up will increase your maximum hand size by one.",
         /*17*/  "RED objectives will add two to your tracker, while YELLOW objectives will put a new red colour in to your hand immediately.",
         /*18*/  "Sometimes you won't have the right colours in your hand. You can change a colour to any other by long-pressing it and selecting the new colour.",
-        /*19*/  "Beware - this will add one or more BLACK colours to your hand. Black colours cannot be used to move and won't leave your hand unless you skip an entire turn."
+        /*19*/  "Beware - this will add one or more BLACK colours to your hand. Black colours cannot be used to move and won't leave your hand unless you skip an entire turn.",
+        /*20*/  "Eventually you will encounter PURPLE, GREEN and ORANGE tiles and objectives. These count as the two colours you would mix to form them.",
+        /*21*/  "You can also acquire these colours to your hand. They can be used to satisfy either or both of the colours they count as - so a PURPLE can be used to feed a red, blue, or purple requirement!",
+        /*22*/  "Winning involves feeding the goal the colours it wants, which are displayed above it at all times. The goal acts like a tile, so you'll need to move next to it and then select it first.",
+        /*23*/  "Unlike a tile, you don't have to satisfy ALL of the goal's colour requirements at once - pay any amount and the goal's requirements will decrease accordingly.",
+        /*24*/  "Beware, though: For every colour you DON'T feed the goal, it will add one BLACK colour to your hand. If the number of black colours in your hand ever exceeds your maximum hand size, you will lose!",
+        /*25*/  "That's it for the tutorial - you can turn it on again in the preferences menu if you need a refresher. Have fun!"
 	};
 
 	public void Reset(){
-		screenWidth = Screen.width;
-		screenHeight = Screen.height;
-
 		SetArrows (null);
 
 		tutStep = 0;
@@ -68,13 +71,12 @@ public class Tutorial : MonoBehaviour {
 		}
 	}
 
-	void OnGUI(){
-		GUI.skin = tutorialSkin;
-
+	void Update(){
 		if (Preferences.Instance.tutorial) {
 			clickAll = false;
             release = false;
             scrubButton.interactable = false;
+            scrubIncrement = false;
 			switch (Game.Instance.state) {
 			    case Game.State.IDLE: // The idle state covers situations where no tile has been clicked, player input is expected and so on
 				    switch(tutStep){
@@ -95,7 +97,9 @@ public class Tutorial : MonoBehaviour {
                             break;
                         case 9:     // Explain ending turn and discarding hand
                             clickTag = "EndTurn";
+                            SetArrows(new int[1] { 7 });
                             scrubButton.interactable = true;
+                            scrubIncrement = true;
                             goal.pause = true;
                             break;
                         case 12:    // Explain hand from stock
@@ -109,20 +113,33 @@ public class Tutorial : MonoBehaviour {
                             break;
                         case 14:    // Explain refilling stock from discard
                             clickTag = null;
+                            SetArrows(null);
                             break;
                         case 15:    // Explaining objectives
                             clickTag = null;
                             break;
                         case 16:    // Objective tracker
+                            SetArrows(new int[1] { 6 });
                             clickTag = null;
                             break;
                         case 17:    // Objective bonuses
+                            SetArrows(null);
+                            clickTag = null;
+                            break;
+                        case 20:    // Double colour tiles and objectives
+                            clickTag = null;
+                            break;
+                        case 21:    // Double colour mana
+                            goal.pause = true;
                             clickTag = null;
                             break;
                         default:	// If we're not at an appropriate stage of the tutorial we allow full functionality
 					        clickTag = "None";
 					        clickAll = true;
-					        SetArrows(null);
+                            tutorialPanel.SetActive(false);
+                            twoDPanel.SetActive(false);
+                            SetArrows(null);
+                            scrubButton.interactable = true;
 					        break;
 				        }
 				    break;
@@ -165,32 +182,49 @@ public class Tutorial : MonoBehaviour {
 					        clickAll = true;
 					        SetArrows(null);
                             manaPayment.pause = false;
-					        break;
+                            scrubButton.interactable = true;
+                            tutorialPanel.SetActive(false);
+                            twoDPanel.SetActive(false);
+                            break;
 				        }
 				    break;
 			    case Game.State.GOAL:
 				    switch(tutStep){
                         case 10:    // Explain goal movement
+                        case 11:    // Explain goal selection display
+                        case 22:    // How to win
+                        case 23:
+                        case 24:
+                        case 25:
                             clickTag = null;
                             break;
-                        case 11:    // Explain goal selection display
-                            break;
-				        default:
+                        default:
 					        clickTag = "None";
 					        clickAll = true;
-					        SetArrows(null);
+                            tutorialPanel.SetActive(false);
+                            twoDPanel.SetActive(false);
+                            SetArrows(null);
                             goal.pause = false;
 					        break;
 				    }
 				    break;
 			    }
-                if (!clickAll)
-                {
-                    ExtensionMethods.BackgroundText(new Rect(screenWidth * guiBox[0], screenHeight * guiBox[1], screenWidth * guiBox[2], screenHeight * guiBox[3]), tutText[tutStep], tutorialSkin);
-                }
+            if (tutStep >= tutText.Length)
+            {
+                Preferences.Instance.tutorialMode.isOn = false;
+                Preferences.Instance.UpdateTutorialMode();
+            }
+            else if (!clickAll)
+            {
+                tutorialPanel.SetActive(true);
+                twoDPanel.SetActive(true);
+                tutorialText.text = tutText[tutStep];
+            }
             }
 		    else{
-			    tutStep = 0;
+                tutorialPanel.SetActive(false);
+                twoDPanel.SetActive(false);
+                tutStep = 0;
                 scrubButton.interactable = true;
                 goal.pause = false;
 		    }
@@ -200,12 +234,6 @@ public class Tutorial : MonoBehaviour {
         // Only increment tutorials on click, otherwise release counts double immediately
         if (message == "ClickAction")
         {
-            // Automatically turn off tutorial mode if we've gone all the way through.
-            if (tutStep > 19)
-            {
-                Preferences.Instance.tutorial = false;
-            }
-
             // This is for messages that don't request specific targets from players
             if (clickTag == null)
             {
@@ -228,12 +256,11 @@ public class Tutorial : MonoBehaviour {
             else if (!clickAll)
                 return;
         }
-
-		hit.SendMessage (message);
+        hit.SendMessage (message);
 	}
 
     public void IncrementTutStep() {
-        if (Preferences.Instance.tutorial)
+        if (scrubIncrement)
             tutStep++;
     }
 }
