@@ -1,3 +1,4 @@
+C:\Users\Torbjorn\Documents\HigherLevel\Games\Colour-Quest\Temp\UnityVS_obj\Debug\Colour-Quest.CSharp.csprojResolveAssemblyReference.cache
 C:\Users\Torbjorn\Documents\HigherLevel\Games\Colour-Quest\Temp\UnityVS_bin\Debug\Assembly-CSharp.dll
 C:\Users\Torbjorn\Documents\HigherLevel\Games\Colour-Quest\Temp\UnityVS_bin\Debug\Assembly-CSharp.pdb
 C:\Users\Torbjorn\Documents\HigherLevel\Games\Colour-Quest\Temp\UnityVS_bin\Debug\UnityEditor.dll
@@ -8,6 +9,5 @@ C:\Users\Torbjorn\Documents\HigherLevel\Games\Colour-Quest\Temp\UnityVS_bin\Debu
 C:\Users\Torbjorn\Documents\HigherLevel\Games\Colour-Quest\Temp\UnityVS_bin\Debug\UnityEngine.UI.xml
 C:\Users\Torbjorn\Documents\HigherLevel\Games\Colour-Quest\Temp\UnityVS_bin\Debug\UnityEngine.Networking.xml
 C:\Users\Torbjorn\Documents\HigherLevel\Games\Colour-Quest\Temp\UnityVS_bin\Debug\UnityEditor.xml
-C:\Users\Torbjorn\Documents\HigherLevel\Games\Colour-Quest\Temp\UnityVS_obj\Debug\Colour-Quest.CSharp.csprojResolveAssemblyReference.cache
 C:\Users\Torbjorn\Documents\HigherLevel\Games\Colour-Quest\Temp\UnityVS_obj\Debug\Assembly-CSharp.dll
 C:\Users\Torbjorn\Documents\HigherLevel\Games\Colour-Quest\Temp\UnityVS_obj\Debug\Assembly-CSharp.pdb

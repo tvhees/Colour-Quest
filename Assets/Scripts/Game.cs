@@ -7,7 +7,8 @@ public class Game : Singleton<Game> {
 
     public float[] guiBox, guiButton;
     public Text headerText;
-    public GameObject menuPanel, prefsPanel, splashPanel, twoDBlocker;
+    public GameObject menuPanel, prefsPanel, splashPanel;
+    public ParticleSystem menuParticles;
     public ManaPayment manaPayment;
     public BoardScript boardScript;
     public Player player;
@@ -121,50 +122,44 @@ public class Game : Singleton<Game> {
         switch (state)
         {
             case State.MENU:
-                title = "MENU";
+                title = "menu";
                 prefsPanel.SetActive(false);
                 splashPanel.SetActive(false);
-                twoDBlocker.SetActive(false);
-                if (!menuPanel.activeInHierarchy)
-                    menuPanel.SetActive(true);
+                menuPanel.SetActive(true);
+                menuParticles.gameObject.SetActive(true);
                 break;
             case State.WON:
-                title = "VICTORY";
+                title = "victory";
                 prefsPanel.SetActive(false);
                 splashPanel.SetActive(false);
-                twoDBlocker.SetActive(false);
-                if (!menuPanel.activeInHierarchy)
-                    menuPanel.SetActive(true);
+                menuPanel.SetActive(true);
+                menuParticles.gameObject.SetActive(true);
                 break;
             case State.LOST:
-                title = "DEFEAT";
+                title = "defeat";
                 prefsPanel.SetActive(false);
                 splashPanel.SetActive(false);
-                twoDBlocker.SetActive(false);
-                if (!menuPanel.activeInHierarchy)
-                    menuPanel.SetActive(true);
+                menuPanel.SetActive(true);
+                menuParticles.gameObject.SetActive(true);
                 break;
             case State.PREFS:
-                title = "PREFERENCES";
+                title = "preferences";
                 menuPanel.SetActive(false);
                 splashPanel.SetActive(false);
-                twoDBlocker.SetActive(false);
-                if (!prefsPanel.activeInHierarchy)
-                    prefsPanel.SetActive(true);
+                prefsPanel.SetActive(true);
+                menuParticles.gameObject.SetActive(true);
                 break;
             case State.SPLASH:
                 menuPanel.SetActive(false);
                 prefsPanel.SetActive(false);
-                if (!splashPanel.activeInHierarchy)
-                {
-                    splashPanel.SetActive(true);
-                    twoDBlocker.SetActive(true);
-                }
+                splashPanel.SetActive(true);
+                menuParticles.gameObject.SetActive(true);
                 break;
             default:
                 menuPanel.SetActive(false);
                 prefsPanel.SetActive(false);
                 splashPanel.SetActive(false);
+                menuParticles.gameObject.SetActive(false);
                 break;
         }
 
