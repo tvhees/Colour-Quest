@@ -8,9 +8,11 @@ public class Hand : Collection<Hand> {
 	public Preview preview;
     public Discard discard;
 	public Goal goalScript;
+    public Files files;
     public List<GameObject> selectedMana;
     public int maxHandSize, startHandSize = 5;
     public bool pause;
+    public TextMesh maxHandMesh;
 
 	private bool scrub;
 
@@ -47,14 +49,17 @@ public class Hand : Collection<Hand> {
         // We look for the last object to be given a movement command and wait until
         // it has stopped moving.
         int loopbreaker = 0;
-        while (lastObject.GetComponent<ClickableObject>().moving)
+        if (lastObject != null)
         {
-            yield return new WaitForSeconds(moveTime);
-            loopbreaker++;
-            if (loopbreaker > 50)
+            while (lastObject.GetComponent<ClickableObject>().moving)
             {
-                Debug.Log("infinite loop: waiting");
-                break;
+                yield return new WaitForSeconds(moveTime);
+                loopbreaker++;
+                if (loopbreaker > 50)
+                {
+                    Debug.Log("infinite loop: waiting");
+                    break;
+                }
             }
         }
 
@@ -65,8 +70,14 @@ public class Hand : Collection<Hand> {
 			if (!blackMana.Contains (contents [i]))
 				yield break;
 		}
-            
-		yield return StartCoroutine(RefillHand());
+
+        if (blackMana.Count >= maxHandSize)
+        {
+            Game.Instance.state = Game.State.LOST;
+            Preferences.Instance.UpdateDifficulty(-1);
+        }
+        else
+            yield return StartCoroutine(RefillHand());
     }
 
     public IEnumerator RefillHand() {
@@ -103,7 +114,9 @@ public class Hand : Collection<Hand> {
 
         Game.Instance.state = Game.State.GOAL;
 
-		StartCoroutine(goalScript.MoveGoal ());
+		yield return StartCoroutine(goalScript.MoveGoal ());
+
+        files.SaveFile();
     }
 
 	public void ScrubHand(){
@@ -135,6 +148,8 @@ public class Hand : Collection<Hand> {
 
 	public IEnumerator IncreaseLimit(int increase){
 		maxHandSize += increase;
+        maxHandMesh.text = maxHandSize.ToString();
 		yield return StartCoroutine(preview.RefillPreview (maxHandSize));
+        yield return new WaitForSeconds(0.5f);
 	}
 }

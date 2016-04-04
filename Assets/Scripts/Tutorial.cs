@@ -13,7 +13,7 @@ public class Tutorial : MonoBehaviour {
 	public GUISkin tutorialSkin;
 	public ManaPayment manaPayment;
 	public CameraScript mainCameraScript;
-    public Button scrubButton;
+    public Button scrubButton, tutNextButton;
 
 	public List<GameObject> offArrows = new List<GameObject>();
 	private string clickTag;
@@ -28,24 +28,24 @@ public class Tutorial : MonoBehaviour {
 		/*4*/	"To move on to a new tile you need to feed it the appropriate COLOUR from your hand. Try touching a colour to select it.",
 		/*5*/	"The selected colour needs to match the tile - deselect non-matching colours by touching them and try again.",
 		/*6*/	"If all tile requirements have been satisfied, the player sphere will light up. Touch it to confirm and move on to the tile.",
-		/*7*/	"SPENT colours are sent here. Long-pressing this container will display a list of the colours within, right above the player sphere.",
+		/*7*/	"SPENT colours are sent here. Long-pressing this container will display a list of the colours within, right above the player sphere. Try it now.",
 		/*8*/	"Most tiles are hidden to start with, and will flip as you approach them. You can move and zoom the CAMERA around at any time by dragging or pinching.",
 		/*9*/	"Touching here will END your turn and send all unused colours to the spent container. Your turn will also end automatically any time your hand is empty.",
 		/*10*/	"At the end of each turn the goal sphere will move one tile, adding that tile's colour requirements to its own.",
-		/*11*/	"The goal always shows which tile it will move to next.",
+		/*11*/	"The goal always shows which tile it will move to next with a black smoke marker.",
 		/*12*/	"At the start of a new turn your hand will be refilled with colours from the fresh colour STOCK. Your next hand is always displayed next to it.",
-		/*13*/	"Long-pressing the colour stock will display any other colours remaining in there.",
+		/*13*/	"Long-pressing the colour stock will display any other colours remaining in there. Try it now.",
 		/*14*/	"If the stock becomes empty it is refilled with spent colours, which can be used again when they make it in to your hand!",
-        /*15*/  "Some tiles have OBJECTIVES above them. To move on to these tiles you must feed them the objective colour as well as the tile colour.",
+        /*15*/  "Some tiles have square OBJECTIVE markers above them. To move on to these tiles you must feed them the objective colour as well as the tile colour.",
         /*16*/  "Collected objectives are sent to the objective TRACKER. Filling this up will increase your maximum hand size by one.",
         /*17*/  "RED objectives will add two to your tracker, while YELLOW objectives will put a new red colour in to your hand immediately.",
-        /*18*/  "Sometimes you won't have the right colours in your hand. You can change a colour to any other by long-pressing it and selecting the new colour.",
+        /*18*/  "Sometimes you won't have the right colours in your hand. You can change a colour to any other by long-pressing it and selecting the new colour. Try this now.",
         /*19*/  "Beware - this will add one or more BLACK colours to your hand. Black colours cannot be used to move and won't leave your hand unless you skip an entire turn.",
         /*20*/  "Eventually you will encounter PURPLE, GREEN and ORANGE tiles and objectives. These count as the two colours you would mix to form them.",
         /*21*/  "You can also acquire these colours to your hand. They can be used to satisfy either or both of the colours they count as - so a PURPLE can be used to feed a red, blue, or purple requirement!",
         /*22*/  "Winning involves feeding the goal the colours it wants, which are displayed above it at all times. The goal acts like a tile, so you'll need to move next to it and then select it first.",
         /*23*/  "Unlike a tile, you don't have to satisfy ALL of the goal's colour requirements at once - pay any amount and the goal's requirements will decrease accordingly.",
-        /*24*/  "Beware, though: For every colour you DON'T feed the goal, it will add one BLACK colour to your hand. If the number of black colours in your hand ever exceeds your maximum hand size, you will lose!",
+        /*24*/  "Beware, though: For every colour you DON'T feed the goal, it will add one BLACK colour to your hand. If the number of black colours in your hand exceeds your maximum hand size at the end of any turn, you will lose!",
         /*25*/  "That's it for the tutorial - you can turn it on again in the preferences menu if you need a refresher. Have fun!"
 	};
 
@@ -72,7 +72,7 @@ public class Tutorial : MonoBehaviour {
 	}
 
 	void Update(){
-		if (Preferences.Instance.tutorial) {
+		if (Preferences.Instance.tutorial && Game.Instance.state != Game.State.SPLASH) {
 			clickAll = false;
             release = false;
             scrubButton.interactable = false;
@@ -219,6 +219,10 @@ public class Tutorial : MonoBehaviour {
                 tutorialPanel.SetActive(true);
                 twoDPanel.SetActive(true);
                 tutorialText.text = tutText[tutStep];
+                if (clickTag == null)
+                    tutNextButton.gameObject.SetActive(true);
+                else
+                    tutNextButton.gameObject.SetActive(false);
             }
             }
 		    else{
@@ -234,13 +238,6 @@ public class Tutorial : MonoBehaviour {
         // Only increment tutorials on click, otherwise release counts double immediately
         if (message == "ClickAction")
         {
-            // This is for messages that don't request specific targets from players
-            if (clickTag == null)
-            {
-                tutStep++;
-                return;
-            }
-
             // This is for messages that ask for specific objects to be clicked
             if (hit.transform.tag == clickTag)
             {
@@ -259,8 +256,10 @@ public class Tutorial : MonoBehaviour {
         hit.SendMessage (message);
 	}
 
-    public void IncrementTutStep() {
-        if (scrubIncrement)
+    public void IncrementTutStep(string source) {
+        if (scrubIncrement && source == "Scrub")
+            tutStep++;
+        else if (clickTag == null && source == "TutNext")
             tutStep++;
     }
 }

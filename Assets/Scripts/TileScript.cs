@@ -94,10 +94,6 @@ public class TileScript : ClickableObject {
 
     public override void KillTile(bool dead)
     {
-
-        if (transform.parent.childCount > 1)
-            Destroy(transform.parent.GetChild(1).gameObject);
-
         if (dead)
         {
             alive = false;

@@ -7,7 +7,7 @@ public class Game : Singleton<Game> {
 
     public float[] guiBox, guiButton;
     public Text headerText;
-    public GameObject menuPanel, prefsPanel;
+    public GameObject menuPanel, prefsPanel, splashPanel, twoDBlocker;
     public ManaPayment manaPayment;
     public BoardScript boardScript;
     public Player player;
@@ -34,7 +34,8 @@ public class Game : Singleton<Game> {
 		PREFS,
         WON,
         LOST,
-		CAMERA
+		CAMERA,
+        SPLASH
     };
     public State state;
 
@@ -43,7 +44,7 @@ public class Game : Singleton<Game> {
 
     void Start() {
 		Preferences.Instance.Load();
-        SetUpGame();
+        state = State.SPLASH;
     }
 
     public void SetUpGame() {
@@ -70,6 +71,11 @@ public class Game : Singleton<Game> {
         state = savedMenu;
     }
 
+    public void NewGame() {
+        state = State.IDLE;
+        SetUpGame();
+    }
+
     public void Quit() {
         PlayerPrefs.Save();
         Application.Quit();
@@ -81,6 +87,7 @@ public class Game : Singleton<Game> {
             case State.WON:
             case State.LOST:
             case State.PREFS:
+            case State.SPLASH:
                 savedMenu = state;
                 break;
             default:
@@ -111,26 +118,53 @@ public class Game : Singleton<Game> {
             }
         }
 
-        menuPanel.SetActive(false);
-        prefsPanel.SetActive(false);
-
         switch (state)
         {
             case State.MENU:
                 title = "MENU";
-                menuPanel.SetActive(true);
+                prefsPanel.SetActive(false);
+                splashPanel.SetActive(false);
+                twoDBlocker.SetActive(false);
+                if (!menuPanel.activeInHierarchy)
+                    menuPanel.SetActive(true);
                 break;
             case State.WON:
                 title = "VICTORY";
-                menuPanel.SetActive(true);
+                prefsPanel.SetActive(false);
+                splashPanel.SetActive(false);
+                twoDBlocker.SetActive(false);
+                if (!menuPanel.activeInHierarchy)
+                    menuPanel.SetActive(true);
                 break;
             case State.LOST:
                 title = "DEFEAT";
-                menuPanel.SetActive(true);
+                prefsPanel.SetActive(false);
+                splashPanel.SetActive(false);
+                twoDBlocker.SetActive(false);
+                if (!menuPanel.activeInHierarchy)
+                    menuPanel.SetActive(true);
                 break;
             case State.PREFS:
                 title = "PREFERENCES";
-                prefsPanel.SetActive(true);
+                menuPanel.SetActive(false);
+                splashPanel.SetActive(false);
+                twoDBlocker.SetActive(false);
+                if (!prefsPanel.activeInHierarchy)
+                    prefsPanel.SetActive(true);
+                break;
+            case State.SPLASH:
+                menuPanel.SetActive(false);
+                prefsPanel.SetActive(false);
+                if (!splashPanel.activeInHierarchy)
+                {
+                    splashPanel.SetActive(true);
+                    twoDBlocker.SetActive(true);
+                }
+                break;
+            default:
+                menuPanel.SetActive(false);
+                prefsPanel.SetActive(false);
+                splashPanel.SetActive(false);
                 break;
         }
 
