@@ -83,6 +83,7 @@
     <Compile Include="Assets\Scripts\Mana.cs" />
     <Compile Include="Assets\Scripts\ManaPayment.cs" />
     <Compile Include="Assets\Scripts\ManaPool.cs" />
+    <Compile Include="Assets\Scripts\Master.cs" />
     <Compile Include="Assets\Scripts\MovingObject.cs" />
     <Compile Include="Assets\Scripts\ObjectPool.cs" />
     <Compile Include="Assets\Scripts\Objective.cs" />

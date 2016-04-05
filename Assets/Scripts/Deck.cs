@@ -6,6 +6,7 @@ public class Deck : Collection<Deck> {
     
 	public Hand hand;
 	public Preview preview;
+
 	public Discard discard;
     public GameObject container;
 	public DisplayPanel display;

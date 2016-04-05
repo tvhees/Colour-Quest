@@ -6,7 +6,7 @@ using System;
 public class Goal : MovingObject<Goal> {
 
 	public int leftMax, rightMax;
-	public GameObject goalMarker, player, mainCamera;
+	public GameObject goalMarker, player, gameCamera;
     public GoalObject goalObject;
     public Vector3 goalTarget;
     public TextMesh[] goalValue;
@@ -55,7 +55,7 @@ public class Goal : MovingObject<Goal> {
     public IEnumerator MoveGoal(){
 
 		if(Preferences.Instance.watchGoal) // Set in player preferences
-			yield return StartCoroutine(mainCamera.GetComponent<CameraScript> ().FocusCamera (transform));
+			yield return StartCoroutine(gameCamera.GetComponent<CameraScript> ().FocusCamera (transform));
 
         while (pause)
             yield return new WaitForSeconds(0.1f);
@@ -87,7 +87,7 @@ public class Goal : MovingObject<Goal> {
                 { // Set in player preferences
                     yield return new WaitForSeconds(1.0f);
 
-                    yield return StartCoroutine(mainCamera.GetComponent<CameraScript>().FocusCamera(player.transform));
+                    yield return StartCoroutine(gameCamera.GetComponent<CameraScript>().FocusCamera(player.transform));
                 }
 
                 Game.Instance.state = Game.State.IDLE;

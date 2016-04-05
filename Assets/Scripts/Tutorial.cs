@@ -12,7 +12,7 @@ public class Tutorial : MonoBehaviour {
 	public GameObject[] arrows;
 	public GUISkin tutorialSkin;
 	public ManaPayment manaPayment;
-	public CameraScript mainCameraScript;
+	public CameraScript gameCameraScript;
     public Button scrubButton, tutNextButton;
 
 	public List<GameObject> offArrows = new List<GameObject>();
@@ -85,11 +85,11 @@ public class Tutorial : MonoBehaviour {
 					        SetArrows (new int[1]{ 0 });
 					        break;
 				        case 1:
-					        StartCoroutine(mainCameraScript.FocusCamera (goal.transform));
+					        StartCoroutine(gameCameraScript.FocusCamera (goal.transform));
 					        SetArrows (new int[1]{ 1 });
 					        break;
 				        case 2:		// Ask the player to select an adjacent tile
-					        StartCoroutine(mainCameraScript.FocusCamera (player.transform));
+					        StartCoroutine(gameCameraScript.FocusCamera (player.transform));
 					        clickTag = "Tile";
 					        break;
                         case 8:     // Explain Tile Flipping and Camera Movement

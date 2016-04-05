@@ -9,7 +9,7 @@ public class ObjectivePool : ObjectPool {
 	public Discard discard;
 	public Deck deck;
 	public Objectives objectives;
-    public Camera uiCamera, mainCamera;
+    public Camera uiCamera, gameCamera;
     public ManaPool manaPool;
 
 	private int total = 0, threshold = 1;
@@ -58,7 +58,7 @@ public class ObjectivePool : ObjectPool {
             sum++;
 
         // Get the screen position of the objective
-        Vector3 screenPos = mainCamera.WorldToScreenPoint(objectiveCube.transform.position);
+        Vector3 screenPos = gameCamera.WorldToScreenPoint(objectiveCube.transform.position);
         Vector3 worldPos = uiCamera.ScreenToWorldPoint(screenPos);
 
         // Send any colour rewards earned to the player's hand

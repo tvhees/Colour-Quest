@@ -19,12 +19,11 @@ public class Game : Singleton<Game> {
 	public Preview preview;
     public Discard discard;
     public ManaPool manaPool;
-    public Camera mainCamera, uiCamera;
+    public Camera gameCamera, uiCamera;
     public Canvas boardCanvas, uiCanvas;
     public RaycastHit hit;
     public GUISkin menuSkin;
 	public DisplayPanel discardDisplay, deckDisplay;
-	public Tutorial tutorial;
 	public float uiGap;
     public enum State
     {
@@ -61,7 +60,6 @@ public class Game : Singleton<Game> {
         StartCoroutine(manaPool.Reset());
 		discardDisplay.Reset ();
 		deckDisplay.Reset ();
-		tutorial.Reset ();
     }
 
     public void BackToGame() {
@@ -108,7 +106,7 @@ public class Game : Singleton<Game> {
 
         if (menu != null)
         {
-            mainCamera.enabled = false;
+            gameCamera.enabled = false;
             boardCanvas.enabled = false;
             uiCamera.enabled = false;
             uiCanvas.enabled = false;
@@ -116,7 +114,7 @@ public class Game : Singleton<Game> {
             menu.SetActive(true);
         }
         else {
-            mainCamera.enabled = true;
+            gameCamera.enabled = true;
             boardCanvas.enabled = true;
             uiCamera.enabled = true;
             uiCanvas.enabled = true;
@@ -185,30 +183,23 @@ public class Game : Singleton<Game> {
 			bool touched = false;
 			string message = null;
 
-            switch (touch.phase) {
-			// If touch is beginning, get the collider being touched
+            switch (touch.phase)
+            {
+                // If touch is beginning, get the collider being touched
                 case TouchPhase.Began:
-					message = "ClickAction";
-					touched = Physics.Raycast(uiCamera.ScreenPointToRay(Input.GetTouch(0).position), out hit);
-					if(!touched)
-						touched = Physics.Raycast(mainCamera.ScreenPointToRay(Input.GetTouch(0).position), out hit);
-					break;
-			// If touch is ending, tell the collider that was originally touched
+                    message = "ClickAction";
+                    touched = Physics.Raycast(uiCamera.ScreenPointToRay(Input.GetTouch(0).position), out hit);
+                    if (!touched)
+                        touched = Physics.Raycast(gameCamera.ScreenPointToRay(Input.GetTouch(0).position), out hit);
+                    break;
+                // If touch is ending, tell the collider that was originally touched
                 case TouchPhase.Ended:
-                    if (hit.transform != null) {
-					message = "ReleaseAction";
+                    if (hit.transform != null)
+                    {
+                        message = "ReleaseAction";
                     }
                     break;
             }
-
-			// If the tutorial is running we want extra control over what happens
-			if(Preferences.Instance.tutorial){
-				if(state == State.IDLE || state == State.PAYING || state == State.GOAL){
-					tutorial.ClickAction(hit.transform, message);
-				}
-			}
-			else if(message != null)
-				hit.transform.SendMessage(message);
         }
 #endif
     }

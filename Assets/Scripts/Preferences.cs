@@ -9,7 +9,6 @@ public class Preferences : Singleton<Preferences> {
 	public bool tutorial, watchGoal;
     public Slider cameraSlider;
     public Toggle tutorialMode, watchMode;
-    public TextMesh difficultyMesh;
 
 	// Use this for initialization
 	public void Load(){
@@ -40,7 +39,6 @@ public class Preferences : Singleton<Preferences> {
 
     public void UpdateDifficulty(int adjustment) {
         difficulty = Mathf.Max(difficulty + adjustment, 0);
-        difficultyMesh.text = difficulty.ToString();
         PlayerPrefs.Save();
     }
 
