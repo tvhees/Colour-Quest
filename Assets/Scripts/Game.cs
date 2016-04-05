@@ -7,7 +7,7 @@ public class Game : Singleton<Game> {
 
     public float[] guiBox, guiButton;
     public Text headerText;
-    public GameObject menuPanel, prefsPanel, splashPanel;
+    public GameObject menuPanel, prefsPanel, splashPanel, dampener;
     public ParticleSystem menuParticles;
     public ManaPayment manaPayment;
     public BoardScript boardScript;
@@ -19,8 +19,8 @@ public class Game : Singleton<Game> {
 	public Preview preview;
     public Discard discard;
     public ManaPool manaPool;
-    public Camera mainCamera;
-    public Camera uiCamera;
+    public Camera mainCamera, uiCamera;
+    public Canvas boardCanvas, uiCanvas;
     public RaycastHit hit;
     public GUISkin menuSkin;
 	public DisplayPanel discardDisplay, deckDisplay;
@@ -40,7 +40,7 @@ public class Game : Singleton<Game> {
     };
     public State state;
 
-	private State savedState, savedMenu;
+	private State lastState, savedState, savedMenu;
 	private string title = null;
 
     void Start() {
@@ -73,6 +73,7 @@ public class Game : Singleton<Game> {
     }
 
     public void NewGame() {
+        Debug.Log("clicked");
         state = State.IDLE;
         SetUpGame();
     }
@@ -99,6 +100,31 @@ public class Game : Singleton<Game> {
         state = (State)newState;
     }
 
+    private void SetMenus(GameObject menu) {
+        menuPanel.SetActive(false);
+        prefsPanel.SetActive(false);
+        splashPanel.SetActive(false);
+        dampener.SetActive(false);
+
+        if (menu != null)
+        {
+            mainCamera.enabled = false;
+            boardCanvas.enabled = false;
+            uiCamera.enabled = false;
+            uiCanvas.enabled = false;
+
+            menu.SetActive(true);
+        }
+        else {
+            mainCamera.enabled = true;
+            boardCanvas.enabled = true;
+            uiCamera.enabled = true;
+            uiCanvas.enabled = true;
+
+            dampener.SetActive(true);
+        }
+    }
+
     void Update()
     {
 
@@ -119,49 +145,36 @@ public class Game : Singleton<Game> {
             }
         }
 
-        switch (state)
+        if (state != lastState)
         {
-            case State.MENU:
-                title = "menu";
-                prefsPanel.SetActive(false);
-                splashPanel.SetActive(false);
-                menuPanel.SetActive(true);
-                menuParticles.gameObject.SetActive(true);
-                break;
-            case State.WON:
-                title = "victory";
-                prefsPanel.SetActive(false);
-                splashPanel.SetActive(false);
-                menuPanel.SetActive(true);
-                menuParticles.gameObject.SetActive(true);
-                break;
-            case State.LOST:
-                title = "defeat";
-                prefsPanel.SetActive(false);
-                splashPanel.SetActive(false);
-                menuPanel.SetActive(true);
-                menuParticles.gameObject.SetActive(true);
-                break;
-            case State.PREFS:
-                title = "preferences";
-                menuPanel.SetActive(false);
-                splashPanel.SetActive(false);
-                prefsPanel.SetActive(true);
-                menuParticles.gameObject.SetActive(true);
-                break;
-            case State.SPLASH:
-                menuPanel.SetActive(false);
-                prefsPanel.SetActive(false);
-                splashPanel.SetActive(true);
-                menuParticles.gameObject.SetActive(true);
-                break;
-            default:
-                menuPanel.SetActive(false);
-                prefsPanel.SetActive(false);
-                splashPanel.SetActive(false);
-                menuParticles.gameObject.SetActive(false);
-                break;
+            switch (state)
+            {
+                case State.MENU:
+                    title = "menu";
+                    SetMenus(menuPanel);
+                    break;
+                case State.WON:
+                    title = "victory";
+                    SetMenus(menuPanel);
+                    break;
+                case State.LOST:
+                    title = "defeat";
+                    SetMenus(menuPanel);
+                    break;
+                case State.PREFS:
+                    title = "preferences";
+                    SetMenus(prefsPanel);
+                    break;
+                case State.SPLASH:
+                    SetMenus(splashPanel);
+                    break;
+                default:
+                    SetMenus(null);
+                    break;
+            }
         }
+
+        lastState = state;
 
         headerText.text = title;
 
