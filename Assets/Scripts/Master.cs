@@ -18,6 +18,7 @@ public class Master : Singleton<Master>
     public Game game;
     public Player player;
     public Hand hand;
+    public bool newGame;
 
     void Start()
     {
@@ -27,8 +28,11 @@ public class Master : Singleton<Master>
         state = State.TITLE;
     }
 
-    public void StartGame()
+    public void StartGame(bool continuing)
     {
+        // We need a flag to tell the game manager whether to make a new board entirely
+        newGame = !continuing;
+
         ChangeState((int)State.GAME);
 
         // Unload any existing game scene, then load a new one

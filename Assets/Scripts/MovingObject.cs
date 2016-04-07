@@ -26,6 +26,9 @@ public abstract class MovingObject : MonoBehaviour {
 
 			yield return null;
 		}
+
+        SavePosition();
+
         newTile.GetComponentInChildren<ClickableObject>().KillTile(killsTiles);
 	}
 
@@ -34,4 +37,6 @@ public abstract class MovingObject : MonoBehaviour {
 
 		newTile.GetComponentInChildren<ClickableObject>().KillTile(killsTiles);
 	}
+
+    protected abstract void SavePosition();
 }

@@ -9,6 +9,7 @@ public class TileScript : ClickableObject {
 	public bool currentTile = false;
     public Material nullMaterial, colouredMaterial, liveMaterial, deadMaterial;
     public float startRotation = -180f;
+    public int index; // Used for serialization
 
 	private float rotationSpeed = 180f;
     private bool alive = true;
@@ -71,6 +72,16 @@ public class TileScript : ClickableObject {
         }
 	}
 
+    public void Flip() {
+        transform.parent.rotation = Quaternion.identity;
+
+        GetComponent<MeshRenderer>().sharedMaterial = colouredMaterial;
+        if(boardScript.hiddenTiles.Contains(gameObject))
+            boardScript.hiddenTiles.Remove(gameObject);
+
+        SaveSystem.Instance.flipped[index] = true;
+    }
+
     public IEnumerator Flip(Vector3 playerPosition, float distance) {
 
 
@@ -90,8 +101,9 @@ public class TileScript : ClickableObject {
 
             transform.parent.rotation = Quaternion.identity;
 
-            GetComponent<MeshRenderer>().material = colouredMaterial;
+            GetComponent<MeshRenderer>().sharedMaterial = colouredMaterial;
             boardScript.hiddenTiles.Remove(gameObject);
+            boardScript.flipped[index] = true;
         }
     }
 

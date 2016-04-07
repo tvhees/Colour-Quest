@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -35,12 +36,20 @@ public class Game : MonoBehaviour {
     }
 
     public void SetUpGame() {
+        SceneManager.SetActiveScene(SceneManager.GetSceneByName("Game"));
+
         Master.Instance.game = this;
+        Master.Instance.player = player;
 
         state = State.IDLE;
 
+        if (Master.Instance.newGame)
+            boardScript.NewBoard();
+        else
+            boardScript.InstantiateBoard(false, SaveSystem.Instance.tilesPerRow, SaveSystem.Instance.materials,
+                SaveSystem.Instance.flipped, SaveSystem.Instance.goalLocation, SaveSystem.Instance.playerLocation);
+
         player.Reset();
-        boardScript.NewBoard();
         goal.Reset();
 		manaPayment.Reset();
         objectivePool.Reset();

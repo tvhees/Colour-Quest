@@ -147,4 +147,9 @@ public class Goal : MovingObject {
             Preferences.Instance.UpdateDifficulty(2);
         }
     }
+
+    protected override void SavePosition()
+    {
+        SaveSystem.Instance.goalLocation = transform.position;
+    }
 }

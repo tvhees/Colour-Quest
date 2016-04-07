@@ -1,11 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
-public class SaveSystem : MonoBehaviour {
-    public GameObject player;
+public class SaveSystem : Singleton<SaveSystem> {
+    public int[] tilesPerRow;
+    public List<int> materials;
+    public List<bool> flipped;
+    public Vector3 goalLocation, playerLocation;
 
     public void LoadGame() {
         Debug.Log("Loading game from file");
@@ -18,8 +22,13 @@ public class SaveSystem : MonoBehaviour {
             SaveData data = (SaveData)bf.Deserialize(file);
             file.Close();
 
-            // Load objects from data
-            player = data.player;
+            // Load data
+            tilesPerRow = data.tilesPerRow;
+            materials = data.materials;
+            flipped = data.flipped;
+            goalLocation = data.goalLocation;
+            playerLocation = data.playerLocation;
+            Master.Instance.StartGame(true);
         }
     }
 
@@ -30,7 +39,11 @@ public class SaveSystem : MonoBehaviour {
 
         // Pass objects to data
         SaveData data = new SaveData();
-        data.player = player;
+        data.tilesPerRow = tilesPerRow;
+        data.materials = materials;
+        data.flipped = flipped;
+        data.goalLocation = goalLocation;
+        data.playerLocation = playerLocation;
 
         // Write data to file
         bf.Serialize(file, data);
@@ -39,6 +52,10 @@ public class SaveSystem : MonoBehaviour {
 }
 
 [Serializable]
-class SaveData{
-    public GameObject player;
+class SaveData
+{
+    public int[] tilesPerRow;
+    public List<int> materials;
+    public List<bool> flipped;
+    public ExtensionMethods.SerializableVector3 goalLocation, playerLocation;
 }

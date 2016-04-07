@@ -9,10 +9,14 @@ public class Player : MovingObject {
 
     public override void Reset()
     {
-        Master.Instance.player = this;
         transform.position = startLocation;
         moveDistance = 2.5f;
         childRenderer.enabled = true;
         cameraScript.Reset(transform);
+    }
+
+    protected override void SavePosition()
+    {
+        SaveSystem.Instance.playerLocation = transform.position;
     }
 }

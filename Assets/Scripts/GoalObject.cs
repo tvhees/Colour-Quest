@@ -15,8 +15,6 @@ public class GoalObject : ClickableObject {
 
     void Awake()
     {
-        game = Master.Instance.game;
-        player = Master.Instance.player;
         manaHand = GameObject.Find("Hand");
         manaPayment = manaHand.GetComponent<ManaPayment>();
         selectionMarker = GameObject.Find("SelectionMarker");

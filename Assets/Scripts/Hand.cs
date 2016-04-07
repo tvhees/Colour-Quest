@@ -9,7 +9,6 @@ public class Hand : Collection {
 	public Preview preview;
     public Discard discard;
 	public Goal goalScript;
-    public Files files;
     public List<GameObject> selectedMana;
     public int maxHandSize, startHandSize = 5;
     public bool pause;
@@ -118,7 +117,7 @@ public class Hand : Collection {
 
 		yield return StartCoroutine(goalScript.MoveGoal ());
 
-        files.SaveFile();
+        SaveSystem.Instance.SaveGame();
     }
 
 	public void ScrubHand(){
