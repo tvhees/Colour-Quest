@@ -21,7 +21,7 @@ public abstract class ClickableObject : MonoBehaviour {
 
             moving = true;
 
-			while (Game.Instance.state == Game.State.MENU)
+			while (Master.Instance.state != Master.State.GAME)
 				yield return new WaitForSeconds(0.1f);
 
 			Vector3 newPosition = Vector3.MoveTowards (transform.position, target, Time.deltaTime / moveTime);

@@ -4,42 +4,73 @@ using System.Collections.Generic;
 
 public class BoardScript : MonoBehaviour {
 
-	public GameObject[] baseHexes, advancedHexes;
-    public GameObject startTiles;
+    public Material[] materialArray;
+    public GameObject tileHolder;
     public List<GameObject> hiddenTiles = new List<GameObject>();
-    public float sightDistance;
+    public float sightDistance, dX;
+    public List<GameObject> tiles = new List<GameObject>();
+    public List<int> materials = new List<int>(); 
 
-	private float zF = 1 / Mathf.Sqrt (3f);
+	private float dZ = 2 / Mathf.Sqrt (3f);
 
-    public void NewBoard()
-    {
-        if (transform.childCount > 0)
+    public void NewBoard() {
+        int[] tilesPerRow = new int[Preferences.Instance.difficulty + 1];
+        int[] colourDistribution = new int[6] { 0, 0, 0, 0, 0, 0 };
+        List<int> colourMaster = new List<int>();
+        List<int> colourCopy = new List<int>();
+
+        int i; // row
+        int j; // column
+        int m; // material index
+        float offset; //offset
+
+        // Test code
+        tilesPerRow[0] = 1;
+
+        for (i = 1; i < tilesPerRow.Length; i++)
         {
-            for (int i = 0; i < transform.childCount; i++)
+            tilesPerRow[i] = 2;
+        }
+        colourDistribution[0] = 1;
+        for (i = 0; i < colourDistribution.Length; i++)
+        {
+            for (j = 0; j < colourDistribution[i]; j++)
             {
-                Destroy(transform.GetChild(i).gameObject);
+                colourMaster.Add(i);
             }
         }
+        colourCopy.AddRange(colourMaster);
 
-        hiddenTiles.Clear();
+        for (i = 0; i < tilesPerRow.Length; i++) // Iterate by row
+        {
+            if (i % 2 == 0)
+                offset = 0f;
+            else
+                offset = -0.5f; // Odd rows need to be shifted across
 
-        transform.InstantiateChild(startTiles);
+            for (j = 0; j < tilesPerRow[i]; j++) // Iterate by column within row
+            {
+                Vector3 position = new Vector3(i * dX, 0, (1 + offset - j) * dZ);
 
-        PlaceHexes(0, baseHexes);
-        PlaceHexes(1, baseHexes);
-        PlaceHexes(2, baseHexes);
-        PlaceHexes(3, advancedHexes);
-        PlaceHexes(4, advancedHexes);
-
-        FlipTiles(Vector3.zero);
-    }
-
-    void PlaceHexes(float j, GameObject[] hexType) {
-        float i = 3 * j;
-        hexType.Randomise();
-        transform.InstantiateChild(hexType[0], new Vector3(i + 1f, 0f, (j + 5f) * zF), Quaternion.Euler(0f, Random.Range(0, 6) * 60f, 0));
-        transform.InstantiateChild(hexType[1], new Vector3(i + 2f, 0f, (j - 4f) * zF), Quaternion.Euler(0f, Random.Range(0, 6) * 60f, 0));
-        transform.InstantiateChild(hexType[2], new Vector3(i + 3f, 0f, (j + 1f) * zF), Quaternion.Euler(0f, Random.Range(0, 6) * 60f, 0));
+                // Create a new tile as child of the board object
+                GameObject tile = transform.InstantiateChild(tileHolder, position);
+                // Give the tile an appropriate material at random
+                // First repopulate the colour list if all have been assigned
+                if (colourCopy.Count < 1)
+                {
+                    colourCopy.AddRange(colourMaster);
+                }
+                // Choose a random colour index then remove it from the list
+                int n = Random.Range(0, colourCopy.Count);
+                m = colourCopy[n];
+                colourCopy.RemoveAt(n);
+                    
+                tile.GetComponentInChildren<MeshRenderer>().sharedMaterial = materialArray[m]; 
+                tiles.Add(tile);
+                materials.Add(m);
+ 
+            }
+        }
     }
 
     public void FlipTiles(Vector3 pos) {

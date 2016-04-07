@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public class Goal : MovingObject<Goal> {
+public class Goal : MovingObject {
 
 	public int leftMax, rightMax;
 	public GameObject goalMarker, player, gameCamera;
@@ -75,7 +75,7 @@ public class Goal : MovingObject<Goal> {
             // If we've moved on top of the player, end the game as a loss
             if ((transform.position - player.transform.position).sqrMagnitude < 0.1f)
             {
-                Game.Instance.state = Game.State.LOST;
+                game.state = Game.State.LOST;
                 Preferences.Instance.UpdateDifficulty(-1);
                 player.GetComponent<Player>().childRenderer.enabled = false;
             }
@@ -90,11 +90,11 @@ public class Goal : MovingObject<Goal> {
                     yield return StartCoroutine(gameCamera.GetComponent<CameraScript>().FocusCamera(player.transform));
                 }
 
-                Game.Instance.state = Game.State.IDLE;
+                game.state = Game.State.IDLE;
             }
         }
         else {
-            Game.Instance.state = Game.State.LOST;
+            game.state = Game.State.LOST;
             Preferences.Instance.UpdateDifficulty(-1);
         }
 
@@ -143,7 +143,7 @@ public class Goal : MovingObject<Goal> {
 
         if (defeated && gameStarted)
         {
-            Game.Instance.state = Game.State.WON;
+            game.state = Game.State.WON;
             Preferences.Instance.UpdateDifficulty(2);
         }
     }

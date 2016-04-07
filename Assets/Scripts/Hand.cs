@@ -2,8 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Hand : Collection<Hand> {
+public class Hand : Collection {
 
+    public Game game;
     public Deck deck;
 	public Preview preview;
     public Discard discard;
@@ -17,6 +18,7 @@ public class Hand : Collection<Hand> {
 	private bool scrub;
 
     public override void Reset() {
+        Master.Instance.hand = this;
         scrub = true;
         maxHandSize = startHandSize;
         SharedSetup ();
@@ -73,7 +75,7 @@ public class Hand : Collection<Hand> {
 
         if (blackMana.Count >= maxHandSize)
         {
-            Game.Instance.state = Game.State.LOST;
+            game.state = Game.State.LOST;
             Preferences.Instance.UpdateDifficulty(-1);
         }
         else
@@ -112,7 +114,7 @@ public class Hand : Collection<Hand> {
 
 		scrub = true;
 
-        Game.Instance.state = Game.State.GOAL;
+        game.state = Game.State.GOAL;
 
 		yield return StartCoroutine(goalScript.MoveGoal ());
 
@@ -121,7 +123,7 @@ public class Hand : Collection<Hand> {
 
 	public void ScrubHand(){
         // Gets rid of an entire hand, triggering refill from deck.
-        if (Game.Instance.state == Game.State.IDLE || Game.Instance.state == Game.State.PAYING)
+        if (game.state == Game.State.IDLE || game.state == Game.State.PAYING)
         {
             // Clear any current selections or unnecessary black mana additions
             while (selectedMana.Count > 0)

@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Deck : Collection<Deck> {
+public class Deck : Collection {
     
 	public Hand hand;
 	public Preview preview;

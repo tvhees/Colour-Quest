@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Objectives : Collection<Objectives> {
+public class Objectives : Collection {
 
 	public override void Reset ()
 	{

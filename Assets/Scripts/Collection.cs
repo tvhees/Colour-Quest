@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public abstract class Collection<T> : Singleton<T> where T : MonoBehaviour
+public abstract class Collection : MonoBehaviour
 {
     public float objScale, gapScale, moveTime, startMoveTime;
     public List<GameObject> contents, blackMana;

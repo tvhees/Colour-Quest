@@ -13,9 +13,10 @@ public static class ExtensionMethods {
 		}
 	}
 
-	public static void InstantiateChild(this Transform parent, GameObject obj, Vector3 position = default(Vector3), Quaternion rotation = default(Quaternion)){
+	public static GameObject InstantiateChild(this Transform parent, GameObject obj, Vector3 position = default(Vector3), Quaternion rotation = default(Quaternion)){
 		GameObject instance = (GameObject)Object.Instantiate (obj, position, rotation);
 		instance.transform.SetParent (parent);
+        return instance;
 	}
 
 	public static int[] Zip(this int[] a, int[] b, int alpha = 1, int beta = 1){

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class ManaPayment : MonoBehaviour {
 
+    public Game game;
     public Player playerScript;
     public Goal goal;
     public Hand hand;
@@ -19,7 +20,7 @@ public class ManaPayment : MonoBehaviour {
 
     public void Reset()
     {
-        Game.Instance.state = Game.State.IDLE;
+        game.state = Game.State.IDLE;
 
         selectionMarker.transform.position = new Vector3(-10f, 10f, -10f);
         selectionMarker.SetActive(true);
@@ -40,7 +41,7 @@ public class ManaPayment : MonoBehaviour {
     }
 
     public void SetCost(int[] tileColour, int[] objectiveColour, GameObject tile){
-        Game.Instance.state = Game.State.PAYING;
+        game.state = Game.State.PAYING;
 
         if (target != null)
             target.GetComponent<TileScript>().currentTile = false;
@@ -105,7 +106,7 @@ public class ManaPayment : MonoBehaviour {
 
 		yield return StartCoroutine(hand.PaySelected());
 
-        if(Game.Instance.state != Game.State.WON && Game.Instance.state != Game.State.LOST)        
+        if(game.state != Game.State.WON && game.state != Game.State.LOST)        
             Reset();
     }
 
@@ -113,7 +114,7 @@ public class ManaPayment : MonoBehaviour {
     {
         int[] nullValue = new int[3] { 0, 0, 0 };
 
-        if (Game.Instance.state != Game.State.WON)
+        if (game.state != Game.State.WON)
         {
             for (int i = 0; i < 3; i++)
             {
