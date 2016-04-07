@@ -48,14 +48,7 @@ public class Mana : ClickableObject {
 
 #if UNITY_STANDALONE || UNITY_EDITOR
     private void OnMouseUp() {
-		// If the tutorial is running we want extra control over what happens
-		if(Preferences.Instance.tutorial){
-			if(Game.Instance.state == Game.State.IDLE || Game.Instance.state == Game.State.PAYING || Game.Instance.state == Game.State.GOAL){
-				Game.Instance.tutorial.ClickAction(transform, "ReleaseAction");
-			}
-		}
-		else
-			ReleaseAction();
+		ReleaseAction();
     }
 #endif
 
@@ -100,10 +93,10 @@ public class Mana : ClickableObject {
 		if (!selected) { // Newly selected mana - recalculate mana payment and show particles
 			Hand.Instance.selectedMana.Add (gameObject);
 			selectFX.Play ();
-			manaPayment.CheckPayment (value, true);
+			StartCoroutine(manaPayment.CheckPayment (value, true));
 		} else { // Deselected mana - recalculate mana payment, remove any added black mana, reset colour/particles
 			Hand.Instance.selectedMana.Remove (gameObject);
-			manaPayment.CheckPayment (value, false);
+			StartCoroutine(manaPayment.CheckPayment (value, false));
             while (blackMana.Count > 0) {
 				manaPool.SendToPool(blackMana[0]);
                 blackMana.Remove(blackMana[0]);
@@ -151,7 +144,7 @@ public class Mana : ClickableObject {
         GameObject option = manaPool.GetManaOption(manaValue, blackNumber);
 
         // Optional mana is smaller to fit in selection wedges
-        option.transform.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+        option.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
         option.transform.SetParent(wedge.transform.GetChild(blackNumber - 1));
         option.transform.localPosition = position;
         // Track optional mana so we can send it back to the pool later

@@ -50,7 +50,7 @@ public class ManaPayment : MonoBehaviour {
         target = tile;
 	}
 
-	public void CheckPayment(int[] delta, bool add){
+	public IEnumerator CheckPayment(int[] delta, bool add){
         if(add)
             payment = payment.Zip (delta, 1);
         else
@@ -72,9 +72,11 @@ public class ManaPayment : MonoBehaviour {
                     playerParticles.Stop();
                 }
             }
-        }
 
-        if (payed)
+            if (payed)
+                yield return StartCoroutine(ConfirmPayment());
+        }
+        else if (payed)
             playerParticles.Play();
 
     }
@@ -94,19 +96,16 @@ public class ManaPayment : MonoBehaviour {
 
 			StartCoroutine(playerScript.SmoothMovement(target.transform.parent.position, target.transform.parent.gameObject));
 
+            // Send the value of the objective collected to the tracker
             if (objectiveValue.Sum() > 0)
-                yield return StartCoroutine(objectivePool.UpdateTracker(objectiveValue));
-
-            GameObject manaReward = manaPool.GetObjectiveReward(objectiveValue);
-            if (manaReward != null)
-                yield return StartCoroutine(hand.SendToHand(manaReward));
+                yield return StartCoroutine(objectivePool.UpdateTracker(objectiveValue, target.transform.parent.GetChild(1).gameObject));
 
             boardScript.FlipTiles(target.transform.parent.position);
         }
 
 		yield return StartCoroutine(hand.PaySelected());
-        
-        if(Game.Instance.state != Game.State.WON)        
+
+        if(Game.Instance.state != Game.State.WON && Game.Instance.state != Game.State.LOST)        
             Reset();
     }
 

@@ -7,7 +7,8 @@ public class Game : Singleton<Game> {
 
     public float[] guiBox, guiButton;
     public Text headerText;
-    public GameObject menuPanel, prefsPanel;
+    public GameObject menuPanel, prefsPanel, splashPanel, dampener;
+    public ParticleSystem menuParticles;
     public ManaPayment manaPayment;
     public BoardScript boardScript;
     public Player player;
@@ -18,12 +19,11 @@ public class Game : Singleton<Game> {
 	public Preview preview;
     public Discard discard;
     public ManaPool manaPool;
-    public Camera mainCamera;
-    public Camera uiCamera;
+    public Camera gameCamera, uiCamera;
+    public Canvas boardCanvas, uiCanvas;
     public RaycastHit hit;
     public GUISkin menuSkin;
 	public DisplayPanel discardDisplay, deckDisplay;
-	public Tutorial tutorial;
 	public float uiGap;
     public enum State
     {
@@ -34,16 +34,17 @@ public class Game : Singleton<Game> {
 		PREFS,
         WON,
         LOST,
-		CAMERA
+		CAMERA,
+        SPLASH
     };
     public State state;
 
-	private State savedState, savedMenu;
+	private State lastState, savedState, savedMenu;
 	private string title = null;
 
     void Start() {
 		Preferences.Instance.Load();
-        SetUpGame();
+        state = State.SPLASH;
     }
 
     public void SetUpGame() {
@@ -59,7 +60,6 @@ public class Game : Singleton<Game> {
         StartCoroutine(manaPool.Reset());
 		discardDisplay.Reset ();
 		deckDisplay.Reset ();
-		tutorial.Reset ();
     }
 
     public void BackToGame() {
@@ -68,6 +68,12 @@ public class Game : Singleton<Game> {
 
     public void BackToMenu() {
         state = savedMenu;
+    }
+
+    public void NewGame() {
+        Debug.Log("clicked");
+        state = State.IDLE;
+        SetUpGame();
     }
 
     public void Quit() {
@@ -81,6 +87,7 @@ public class Game : Singleton<Game> {
             case State.WON:
             case State.LOST:
             case State.PREFS:
+            case State.SPLASH:
                 savedMenu = state;
                 break;
             default:
@@ -89,6 +96,31 @@ public class Game : Singleton<Game> {
         }
 
         state = (State)newState;
+    }
+
+    private void SetMenus(GameObject menu) {
+        menuPanel.SetActive(false);
+        prefsPanel.SetActive(false);
+        splashPanel.SetActive(false);
+        dampener.SetActive(false);
+
+        if (menu != null)
+        {
+            gameCamera.enabled = false;
+            boardCanvas.enabled = false;
+            uiCamera.enabled = false;
+            uiCanvas.enabled = false;
+
+            menu.SetActive(true);
+        }
+        else {
+            gameCamera.enabled = true;
+            boardCanvas.enabled = true;
+            uiCamera.enabled = true;
+            uiCanvas.enabled = true;
+
+            dampener.SetActive(true);
+        }
     }
 
     void Update()
@@ -111,28 +143,36 @@ public class Game : Singleton<Game> {
             }
         }
 
-        menuPanel.SetActive(false);
-        prefsPanel.SetActive(false);
-
-        switch (state)
+        if (state != lastState)
         {
-            case State.MENU:
-                title = "MENU";
-                menuPanel.SetActive(true);
-                break;
-            case State.WON:
-                title = "VICTORY";
-                menuPanel.SetActive(true);
-                break;
-            case State.LOST:
-                title = "DEFEAT";
-                menuPanel.SetActive(true);
-                break;
-            case State.PREFS:
-                title = "PREFERENCES";
-                prefsPanel.SetActive(true);
-                break;
+            switch (state)
+            {
+                case State.MENU:
+                    title = "menu";
+                    SetMenus(menuPanel);
+                    break;
+                case State.WON:
+                    title = "victory";
+                    SetMenus(menuPanel);
+                    break;
+                case State.LOST:
+                    title = "defeat";
+                    SetMenus(menuPanel);
+                    break;
+                case State.PREFS:
+                    title = "preferences";
+                    SetMenus(prefsPanel);
+                    break;
+                case State.SPLASH:
+                    SetMenus(splashPanel);
+                    break;
+                default:
+                    SetMenus(null);
+                    break;
+            }
         }
+
+        lastState = state;
 
         headerText.text = title;
 
@@ -143,30 +183,23 @@ public class Game : Singleton<Game> {
 			bool touched = false;
 			string message = null;
 
-            switch (touch.phase) {
-			// If touch is beginning, get the collider being touched
+            switch (touch.phase)
+            {
+                // If touch is beginning, get the collider being touched
                 case TouchPhase.Began:
-					message = "ClickAction";
-					touched = Physics.Raycast(uiCamera.ScreenPointToRay(Input.GetTouch(0).position), out hit);
-					if(!touched)
-						touched = Physics.Raycast(mainCamera.ScreenPointToRay(Input.GetTouch(0).position), out hit);
-					break;
-			// If touch is ending, tell the collider that was originally touched
+                    message = "ClickAction";
+                    touched = Physics.Raycast(uiCamera.ScreenPointToRay(Input.GetTouch(0).position), out hit);
+                    if (!touched)
+                        touched = Physics.Raycast(gameCamera.ScreenPointToRay(Input.GetTouch(0).position), out hit);
+                    break;
+                // If touch is ending, tell the collider that was originally touched
                 case TouchPhase.Ended:
-                    if (hit.transform != null) {
-					message = "ReleaseAction";
+                    if (hit.transform != null)
+                    {
+                        message = "ReleaseAction";
                     }
                     break;
             }
-
-			// If the tutorial is running we want extra control over what happens
-			if(Preferences.Instance.tutorial){
-				if(state == State.IDLE || state == State.PAYING || state == State.GOAL){
-					tutorial.ClickAction(hit.transform, message);
-				}
-			}
-			else if(message != null)
-				hit.transform.SendMessage(message);
         }
 #endif
     }

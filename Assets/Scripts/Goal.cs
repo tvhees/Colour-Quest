@@ -6,7 +6,7 @@ using System;
 public class Goal : MovingObject<Goal> {
 
 	public int leftMax, rightMax;
-	public GameObject goalMarker, player, mainCamera;
+	public GameObject goalMarker, player, gameCamera;
     public GoalObject goalObject;
     public Vector3 goalTarget;
     public TextMesh[] goalValue;
@@ -25,7 +25,16 @@ public class Goal : MovingObject<Goal> {
 
         gameStarted = false;
         goalObject.goalCost = new int[3] { 0, 0, 0 };
-        UpdateValue(goalObject.goalCost);
+
+        int[] startCost = new int[3] { 0, 0, 0 };
+
+        // Increase goalCost based on difficulty
+        for (int i = 0; i < Preferences.Instance.difficulty; i++) {
+            int j = (int)Mathf.Repeat(i, 3);
+            startCost[j]++;
+        }
+
+        UpdateValue(startCost);
 
         gameStarted = true;
 
@@ -46,7 +55,7 @@ public class Goal : MovingObject<Goal> {
     public IEnumerator MoveGoal(){
 
 		if(Preferences.Instance.watchGoal) // Set in player preferences
-			yield return StartCoroutine(mainCamera.GetComponent<CameraScript> ().FocusCamera (transform));
+			yield return StartCoroutine(gameCamera.GetComponent<CameraScript> ().FocusCamera (transform));
 
         while (pause)
             yield return new WaitForSeconds(0.1f);
@@ -58,32 +67,36 @@ public class Goal : MovingObject<Goal> {
             UpdateValue(goalTile.GetComponent<TileScript>().tileCost);
 
             // Move on to the tile and destroy it
-			if (Preferences.Instance.watchGoal)
-				yield return StartCoroutine (SmoothMovement (goalTarget, goalTile.transform.parent.gameObject));
-			else
-				InstantMovement (goalTarget, goalTile.transform.parent.gameObject);
+            if (Preferences.Instance.watchGoal)
+                yield return StartCoroutine(SmoothMovement(goalTarget, goalTile.transform.parent.gameObject));
+            else
+                InstantMovement(goalTarget, goalTile.transform.parent.gameObject);
 
             // If we've moved on top of the player, end the game as a loss
             if ((transform.position - player.transform.position).sqrMagnitude < 0.1f)
             {
                 Game.Instance.state = Game.State.LOST;
+                Preferences.Instance.UpdateDifficulty(-1);
                 player.GetComponent<Player>().childRenderer.enabled = false;
             }
             else
             {
                 canMove = NextTile();
 
-				if (Preferences.Instance.watchGoal) { // Set in player preferences
-					yield return new WaitForSeconds (1.0f);
+                if (Preferences.Instance.watchGoal)
+                { // Set in player preferences
+                    yield return new WaitForSeconds(1.0f);
 
-					yield return StartCoroutine (mainCamera.GetComponent<CameraScript> ().FocusCamera (player.transform));
-				}
+                    yield return StartCoroutine(gameCamera.GetComponent<CameraScript>().FocusCamera(player.transform));
+                }
 
                 Game.Instance.state = Game.State.IDLE;
             }
         }
-        else
+        else {
             Game.Instance.state = Game.State.LOST;
+            Preferences.Instance.UpdateDifficulty(-1);
+        }
 
 		yield return null;
 	}
@@ -131,6 +144,7 @@ public class Goal : MovingObject<Goal> {
         if (defeated && gameStarted)
         {
             Game.Instance.state = Game.State.WON;
+            Preferences.Instance.UpdateDifficulty(2);
         }
     }
 }
