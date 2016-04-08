@@ -4,6 +4,7 @@ using System.Collections;
 public abstract class MovingObject : MonoBehaviour {
 
     public Game game;
+    public BoardScript boardScript;
     public bool killsTiles;
 	public float moveTime;
     public Vector3 startLocation;
@@ -13,8 +14,10 @@ public abstract class MovingObject : MonoBehaviour {
 	public IEnumerator SmoothMovement(Vector3 target, GameObject newTile){
 		float sqrDistance = (transform.position - target).sqrMagnitude;
 
-		while (sqrDistance > Mathf.Epsilon) {
+        if(boardScript.hiddenTiles.Contains(newTile.transform.GetChild(0).gameObject))
+            yield return StartCoroutine(newTile.GetComponentInChildren<TileScript>().Flip(180f));
 
+		while (sqrDistance > Mathf.Epsilon) {
             while (Master.Instance.state == Master.State.MENU)
                 yield return new WaitForSeconds(0.1f);
 

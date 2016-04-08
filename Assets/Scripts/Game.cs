@@ -47,7 +47,7 @@ public class Game : MonoBehaviour {
             boardScript.NewBoard();
         else
             boardScript.InstantiateBoard(false, SaveSystem.Instance.tilesPerRow, SaveSystem.Instance.materials,
-                SaveSystem.Instance.flipped, SaveSystem.Instance.goalLocation, SaveSystem.Instance.playerLocation);
+                SaveSystem.Instance.flipped, SaveSystem.Instance.alive, SaveSystem.Instance.goalLocation, SaveSystem.Instance.playerLocation);
 
         player.Reset();
         goal.Reset();

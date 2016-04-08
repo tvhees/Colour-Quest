@@ -10,7 +10,8 @@ public class Master : Singleton<Master>
         TITLE,
         MENU,
         PREFS,
-        GAME
+        GAME,
+        LOADING
     }
 
     public State state, savedState;
@@ -18,12 +19,14 @@ public class Master : Singleton<Master>
     public Game game;
     public Player player;
     public Hand hand;
-    public bool newGame;
+    public bool newGame, loading;
 
     void Start()
     {
         // Every time app opens we want to get any saved preferences first
         // And then open the title screen
+        if (SceneManager.GetSceneByName("Game").isLoaded)
+            SceneManager.UnloadScene("Game");
         Preferences.Instance.Load();
         state = State.TITLE;
     }
@@ -32,6 +35,8 @@ public class Master : Singleton<Master>
     {
         // We need a flag to tell the game manager whether to make a new board entirely
         newGame = !continuing;
+
+        loading = true;
 
         ChangeState((int)State.GAME);
 
@@ -74,7 +79,7 @@ public class Master : Singleton<Master>
 
     void Update() {
         // Escape key used to get to menu
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape) && !loading)
         {
             if (state == State.MENU)
             {

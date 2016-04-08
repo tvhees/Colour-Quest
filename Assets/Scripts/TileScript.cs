@@ -11,7 +11,6 @@ public class TileScript : ClickableObject {
     public float startRotation = -180f;
     public int index; // Used for serialization
 
-	private float rotationSpeed = 180f;
     private bool alive = true;
 	private GameObject manaHand, boardHolder, selectionMarker;
     private BoardScript boardScript;
@@ -82,29 +81,24 @@ public class TileScript : ClickableObject {
         SaveSystem.Instance.flipped[index] = true;
     }
 
-    public IEnumerator Flip(Vector3 playerPosition, float distance) {
+    public IEnumerator Flip(float rotationSpeed) {
+        int i = 0;
+        float step = 0;
+        while(Mathf.Abs(step) < 180f){
+            step += rotationSpeed * Time.deltaTime;
 
-
-        if ((transform.parent.position - playerPosition).sqrMagnitude < distance && alive)
-        {
-            int i = 0;
-            float step = 0;
-            while(step < 180f){
-                step += rotationSpeed * Time.deltaTime;
-
-                transform.parent.rotation = Quaternion.Euler(0f, 0f, startRotation + step);
-                i++;
-                if (i > 300)
-                    break;
-                yield return null;
-            }
-
-            transform.parent.rotation = Quaternion.identity;
-
-            GetComponent<MeshRenderer>().sharedMaterial = colouredMaterial;
-            boardScript.hiddenTiles.Remove(gameObject);
-            boardScript.flipped[index] = true;
+            transform.parent.rotation = Quaternion.Euler(0f, 0f, startRotation + step);
+            i++;
+            if (i > 300)
+                break;
+            yield return null;
         }
+
+        transform.parent.rotation = Quaternion.identity;
+
+        GetComponent<MeshRenderer>().sharedMaterial = colouredMaterial;
+        boardScript.hiddenTiles.Remove(gameObject);
+        boardScript.flipped[index] = true;
     }
 
     public override void KillTile(bool dead)
@@ -112,6 +106,7 @@ public class TileScript : ClickableObject {
         if (dead)
         {
             alive = false;
+            SaveSystem.Instance.alive[index] = false;
             GetComponent<MeshRenderer>().material = deadMaterial;
         }
     }

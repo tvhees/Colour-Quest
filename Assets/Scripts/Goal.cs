@@ -5,17 +5,16 @@ using System;
 
 public class Goal : MovingObject {
 
-	public int leftMax, rightMax;
 	public GameObject goalMarker, player, gameCamera;
     public GoalObject goalObject;
     public Vector3 goalTarget;
     public TextMesh[] goalValue;
     public bool pause;
 
+    private int index = -1;
 	private GameObject goalTile = null;
     private bool canMove, gameStarted;
 	private Vector3 leftVector = new Vector3(1f, 0f, -1f/Mathf.Sqrt(3f)), rightVector = new Vector3(1f, 0f, 1f/Mathf.Sqrt(3f)), raycastOffset = new Vector3(0f, 1f, 0f);
-	private List<bool> directionList = new List<bool>();
 
     public override void Reset()
     {
@@ -26,28 +25,9 @@ public class Goal : MovingObject {
         gameStarted = false;
         goalObject.goalCost = new int[3] { 0, 0, 0 };
 
-        int[] startCost = new int[3] { 0, 0, 0 };
-
-        // Increase goalCost based on difficulty
-        for (int i = 0; i < Preferences.Instance.difficulty; i++) {
-            int j = (int)Mathf.Repeat(i, 3);
-            startCost[j]++;
-        }
-
-        UpdateValue(startCost);
+        UpdateValue(SaveSystem.Instance.goalCost);
 
         gameStarted = true;
-
-        bool[] temp = new bool[leftMax + rightMax];
-
-        for (int i = 0; i < leftMax; i++)
-            temp[i] = true;
-
-        for (int i = leftMax; i < temp.Length; i++)
-            temp[i] = false;
-
-        temp.Randomise();
-        directionList.AddRange(temp);
 
         NextTile();
     }
@@ -67,7 +47,7 @@ public class Goal : MovingObject {
             UpdateValue(goalTile.GetComponent<TileScript>().tileCost);
 
             // Move on to the tile and destroy it
-            if (Preferences.Instance.watchGoal)
+            if (Preferences.Instance.watchGoal) // Player prefs decide whether we move the camera and animate the goal sphere
                 yield return StartCoroutine(SmoothMovement(goalTarget, goalTile.transform.parent.gameObject));
             else
                 InstantMovement(goalTarget, goalTile.transform.parent.gameObject);
@@ -84,11 +64,13 @@ public class Goal : MovingObject {
                 canMove = NextTile();
 
                 if (Preferences.Instance.watchGoal)
-                { // Set in player preferences
+                { // Player prefs determine if we move the camera
                     yield return new WaitForSeconds(1.0f);
 
                     yield return StartCoroutine(gameCamera.GetComponent<CameraScript>().FocusCamera(player.transform));
                 }
+
+
 
                 game.state = Game.State.IDLE;
             }
@@ -105,8 +87,11 @@ public class Goal : MovingObject {
 		RaycastHit hit;
 		goalTarget = Vector3.zero;
 
-		for (int i = 0; i < directionList.Count; i++) {
-			if (directionList [i])
+        if(index >= 0)
+            SaveSystem.Instance.directionList.RemoveAt(index);
+
+        for (int i = 0; i < SaveSystem.Instance.directionList.Count; i++) {
+			if (SaveSystem.Instance.directionList[i])
 				goalTarget = transform.position - leftVector - raycastOffset;
 			else
 				goalTarget = transform.position - rightVector - raycastOffset;
@@ -117,11 +102,12 @@ public class Goal : MovingObject {
 				goalTile = hit.collider.gameObject;
                 goalTarget = goalTarget + raycastOffset;
 				goalMarker.transform.position = goalTarget;
-				directionList.RemoveAt (i);
+                index = i;
 				return true;
 			}
 		}
 
+        index = -1;
         goalMarker.SetActive(false);
 
         return false;
@@ -129,6 +115,8 @@ public class Goal : MovingObject {
 
     public void UpdateValue(int[] value, int alpha = 1, int beta = 1) {
         goalObject.goalCost = goalObject.goalCost.Zip(value, alpha, beta);
+
+        SaveSystem.Instance.goalCost = goalObject.goalCost;
 
         bool defeated = true;
 

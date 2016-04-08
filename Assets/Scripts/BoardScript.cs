@@ -9,11 +9,20 @@ public class BoardScript : MonoBehaviour {
     public List<GameObject> hiddenTiles = new List<GameObject>();
     public float sightDistance, dX;
     public List<GameObject> tiles = new List<GameObject>();
-    public List<bool> flipped = new List<bool>();
+    public List<bool> flipped = new List<bool>(), alive = new List<bool>();
     public Goal goal;
     public Player player;
 
 	private float dZ = 2 / Mathf.Sqrt (3f);
+    private int[][] values =
+{
+    new int[] {1,0,0},
+    new int[] {0,1,0},
+    new int[] {0,0,1},
+    new int[] {1,1,0},
+    new int[] {1,0,1},
+    new int[] {0,1,1}
+};
 
     public void NewBoard() {
         // This defines the number of rows - might increase with difficulty.
@@ -21,15 +30,15 @@ public class BoardScript : MonoBehaviour {
         int[] tilesPerRow = new int[Preferences.Instance.difficulty + 1];
         tilesPerRow[0] = 1;
 
-        int i = 0; // row
-        int j = 0; // column
+        int row = 0; // row
+        int col = 0; // column
         int m = 0; // material index
 
         // Here we define how wide the board is for any given row
         // Test code
-        for (i = 1; i < tilesPerRow.Length; i++)
+        for (row = 1; row < tilesPerRow.Length; row++)
         {
-            tilesPerRow[i] = 2;
+            tilesPerRow[row] = 2;
         }
 
         // Creating a master colour distribution list that can be copied
@@ -37,9 +46,9 @@ public class BoardScript : MonoBehaviour {
         int[] colourDistribution = new int[6] { 3, 1, 1, 0, 0, 0 };
         List<int> colourMaster = new List<int>();
         List<int> colourCopy = new List<int>();
-        for (i = 0; i < colourDistribution.Length; i++)
+        for (int i = 0; i < colourDistribution.Length; i++)
         {
-            for (j = 0; j < colourDistribution[i]; j++)
+            for (col = 0; col < colourDistribution[i]; col++)
             {
                 colourMaster.Add(i);
             }
@@ -53,9 +62,9 @@ public class BoardScript : MonoBehaviour {
         // We don't instantiate or position any tiles here - as long as the
         // same Row/Column method is used later it's sufficient to store the
         // values to be given to the tiles in a list
-        for (i = 0; i < tilesPerRow.Length; i++) // Iterate by row
+        for (row = 0; row < tilesPerRow.Length; row++) // Iterate by row
         {
-            for (j = 0; j < tilesPerRow[i]; j++) // Iterate by column within row
+            for (col = 0; col < tilesPerRow[row]; col++) // Iterate by column within row
             {
                 // Give the tile an appropriate material at random
                 // First repopulate the colour list if all have been assigned
@@ -70,23 +79,48 @@ public class BoardScript : MonoBehaviour {
 
                 materials.Add(m);
                 flipped.Add(false);
+                alive.Add(true);
             }
         }
-        Vector3 goalLocation = new Vector3(i * dX, 0, i%2 * 0.5f);
+        Vector3 goalLocation = new Vector3(row * dX, 0, row%2 * 0.5f);
         Vector3 playerLocation = Vector3.zero;
+
+        // Set up the direction of movement instructions for the goal sphere
+        List<bool> directionList = new List<bool>();
+        int leftMax = tilesPerRow.Length/3 + 1, rightMax = 2 * tilesPerRow.Length/3 + 2;
+        bool[] temp = new bool[leftMax + rightMax];
+        for (int i = 0; i < leftMax; i++)
+            temp[i] = true;
+        for (int i = leftMax; i < temp.Length; i++)
+            temp[i] = false;
+        temp.Randomise();
+        directionList.AddRange(temp);
+
+        // Set up the starting value of the goal
+        int[] goalCost = new int[3] { 0, 0, 0 };
+
+        // Increase goalCost based on difficulty
+        for (int i = 0; i < Preferences.Instance.difficulty; i++)
+        {
+            int j = (int)Mathf.Repeat(i, 3);
+            goalCost[j]++;
+        }
 
         // Save the blueprint variables to the SaveSystem
         SaveSystem.Instance.tilesPerRow = tilesPerRow;
+        SaveSystem.Instance.goalCost = goalCost;
         SaveSystem.Instance.materials = materials;
         SaveSystem.Instance.flipped = flipped;
+        SaveSystem.Instance.alive = alive;
+        SaveSystem.Instance.directionList = directionList;
         SaveSystem.Instance.goalLocation = goalLocation;
         SaveSystem.Instance.playerLocation = playerLocation;
 
-        InstantiateBoard(true, tilesPerRow, materials, flipped, goalLocation, playerLocation);
+        InstantiateBoard(true, tilesPerRow, materials, flipped, alive, goalLocation, playerLocation);
     }
 
     public void InstantiateBoard(bool newBoard, int[] tilesPerRow, List<int> materials,
-        List<bool> flipped, Vector3 goalLocation, Vector3 playerLocation)
+        List<bool> flipped, List<bool> alive, Vector3 goalLocation, Vector3 playerLocation)
     {
         float offset = 0f;
         int i = 0;
@@ -107,9 +141,12 @@ public class BoardScript : MonoBehaviour {
                 // Give the tile a colour and flip if required
                 TileScript t = tile.GetComponentInChildren<TileScript>();
                 t.colouredMaterial = materialArray[materials[index]];
+                t.tileCost = values[materials[index]];
                 t.index = index;
                 if (flipped[index])
                     t.Flip();
+                if (!alive[index])
+                    t.KillTile(true);
 
                 index++;
             }
@@ -123,8 +160,17 @@ public class BoardScript : MonoBehaviour {
     }
 
     public void FlipTiles(Vector3 pos) {
+        for (int i = hiddenTiles.Count - 1; i >= 0; i--)
+        {
+            if ((hiddenTiles[i].transform.parent.position - pos).sqrMagnitude < sightDistance)
+                hiddenTiles[i].GetComponent<TileScript>().Flip();
+        }
+    }
+
+    public void FlipTiles(Vector3 pos, float rotationSpeed) {
         for (int i = hiddenTiles.Count - 1; i >= 0; i--) {
-            StartCoroutine(hiddenTiles[i].GetComponent<TileScript>().Flip(pos, sightDistance));
+            if((hiddenTiles[i].transform.parent.position - pos).sqrMagnitude < sightDistance)
+                StartCoroutine(hiddenTiles[i].GetComponent<TileScript>().Flip(rotationSpeed));
         }
     }
 }

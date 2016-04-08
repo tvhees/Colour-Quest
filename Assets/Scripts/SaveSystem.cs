@@ -6,9 +6,9 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
 public class SaveSystem : Singleton<SaveSystem> {
-    public int[] tilesPerRow;
+    public int[] tilesPerRow, goalCost;
     public List<int> materials;
-    public List<bool> flipped;
+    public List<bool> flipped, alive, directionList;
     public Vector3 goalLocation, playerLocation;
 
     public void LoadGame() {
@@ -24,8 +24,11 @@ public class SaveSystem : Singleton<SaveSystem> {
 
             // Load data
             tilesPerRow = data.tilesPerRow;
+            goalCost = data.goalCost;
             materials = data.materials;
             flipped = data.flipped;
+            alive = data.alive;
+            directionList = data.directionList;
             goalLocation = data.goalLocation;
             playerLocation = data.playerLocation;
             Master.Instance.StartGame(true);
@@ -40,8 +43,11 @@ public class SaveSystem : Singleton<SaveSystem> {
         // Pass objects to data
         SaveData data = new SaveData();
         data.tilesPerRow = tilesPerRow;
+        data.goalCost = goalCost;
         data.materials = materials;
         data.flipped = flipped;
+        data.alive = alive;
+        data.directionList = directionList;
         data.goalLocation = goalLocation;
         data.playerLocation = playerLocation;
 
@@ -54,8 +60,8 @@ public class SaveSystem : Singleton<SaveSystem> {
 [Serializable]
 class SaveData
 {
-    public int[] tilesPerRow;
+    public int[] tilesPerRow, goalCost;
     public List<int> materials;
-    public List<bool> flipped;
+    public List<bool> flipped, alive, directionList;
     public ExtensionMethods.SerializableVector3 goalLocation, playerLocation;
 }

@@ -101,7 +101,7 @@ public class ManaPayment : MonoBehaviour {
             if (objectiveValue.Sum() > 0)
                 yield return StartCoroutine(objectivePool.UpdateTracker(objectiveValue, target.transform.parent.GetChild(1).gameObject));
 
-            boardScript.FlipTiles(target.transform.parent.position);
+            boardScript.FlipTiles(target.transform.parent.position, -180f);
         }
 
 		yield return StartCoroutine(hand.PaySelected());

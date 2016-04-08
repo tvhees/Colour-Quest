@@ -47,6 +47,9 @@ public class ManaPool : ObjectPool {
         deck.moveTime = deck.startMoveTime;
 
 		yield return StartCoroutine(preview.RefillPreview (hand.maxHandSize));
+
+        SaveSystem.Instance.SaveGame();
+        Master.Instance.loading = false;
     }
 
     public override void SendToPool(GameObject mana)
