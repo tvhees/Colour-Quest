@@ -121,7 +121,7 @@ public class CameraScript : MonoBehaviour {
 	        }
 #endif
 
-#if UNITY_EDITOR || UNITY_STANDALONE
+#if UNITY_STANDALONE || UNITY_EDITOR
 			if (Input.GetMouseButton (1)) {
 				if (firstPan) {
 					lastPosition = Input.mousePosition;

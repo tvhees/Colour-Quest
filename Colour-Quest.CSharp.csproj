@@ -64,7 +64,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Arrow.cs" />
-    <Compile Include="Assets\Scripts\BlueObj.cs" />
     <Compile Include="Assets\Scripts\BoardScript.cs" />
     <Compile Include="Assets\Scripts\CameraScript.cs" />
     <Compile Include="Assets\Scripts\ClickableObject.cs" />
@@ -94,7 +93,7 @@
     <Compile Include="Assets\Scripts\Preferences.cs" />
     <Compile Include="Assets\Scripts\Preview.cs" />
     <Compile Include="Assets\Scripts\RotationScript.cs" />
-    <Compile Include="Assets\Scripts\SaveSystem.cs" />
+    <Compile Include="Assets\Scripts\Save.cs" />
     <Compile Include="Assets\Scripts\Singleton.cs" />
     <Compile Include="Assets\Scripts\TileScript.cs" />
     <Compile Include="Assets\Scripts\Tutorial.cs" />

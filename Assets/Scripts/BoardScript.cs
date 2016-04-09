@@ -124,22 +124,29 @@ public class BoardScript : MonoBehaviour {
         {
             deck.Add(deckandpreview[i]);
         }
-        
+
+        // In this section we define a new objective tracker.
+        // The first entry is the starting TOTAL collected
+        List<int> objectives = new List<int>();
+        objectives.AddRange(new int[3] { 0, 0, 0 });
+
+
         // Save the blueprint variables to the SaveSystem
-        SaveSystem.Instance.maxHandSize = startHandSize;
-        SaveSystem.Instance.hand = hand;
-        SaveSystem.Instance.deck = deck;
-        SaveSystem.Instance.preview = preview;
-        SaveSystem.Instance.discard = discard;
-        SaveSystem.Instance.deck = deck;
-        SaveSystem.Instance.tilesPerRow = tilesPerRow;
-        SaveSystem.Instance.goalCost = goalCost;
-        SaveSystem.Instance.materials = materials;
-        SaveSystem.Instance.flipped = flipped;
-        SaveSystem.Instance.alive = alive;
-        SaveSystem.Instance.directionList = directionList;
-        SaveSystem.Instance.goalLocation = goalLocation;
-        SaveSystem.Instance.playerLocation = playerLocation;
+        Save.Instance.maxHandSize = startHandSize;
+        Save.Instance.hand = hand;
+        Save.Instance.deck = deck;
+        Save.Instance.preview = preview;
+        Save.Instance.discard = discard;
+        Save.Instance.deck = deck;
+        Save.Instance.objectives = objectives;
+        Save.Instance.tilesPerRow = tilesPerRow;
+        Save.Instance.goalCost = goalCost;
+        Save.Instance.materials = materials;
+        Save.Instance.flipped = flipped;
+        Save.Instance.alive = alive;
+        Save.Instance.directionList = directionList;
+        Save.Instance.goalLocation = goalLocation;
+        Save.Instance.playerLocation = playerLocation;
     }
 
     public void InstantiateBoard(bool newBoard)
@@ -149,11 +156,11 @@ public class BoardScript : MonoBehaviour {
         int j = 0;
         int index = 0;
 
-        for (i = 0; i < SaveSystem.Instance.tilesPerRow.Length; i++) // Iterate by row
+        for (i = 0; i < Save.Instance.tilesPerRow.Length; i++) // Iterate by row
         {
             offset = i % 2 * -0.5f; // Odd rows need to be shifted across
 
-            for (j = 0; j < SaveSystem.Instance.tilesPerRow[i]; j++) // Iterate by column within row
+            for (j = 0; j < Save.Instance.tilesPerRow[i]; j++) // Iterate by column within row
             {
                 Vector3 position = new Vector3(i * dX, 0, (1 + offset - j) * dZ);
 
@@ -162,19 +169,19 @@ public class BoardScript : MonoBehaviour {
 
                 // Give the tile a colour and flip if required
                 TileScript t = tile.GetComponentInChildren<TileScript>();
-                t.colouredMaterial = materialArray[SaveSystem.Instance.materials[index]];
-                t.tileCost = values[SaveSystem.Instance.materials[index]];
+                t.colouredMaterial = materialArray[Save.Instance.materials[index]];
+                t.tileCost = values[Save.Instance.materials[index]];
                 t.index = index;
-                if (SaveSystem.Instance.flipped[index])
+                if (Save.Instance.flipped[index])
                     t.Flip();
-                if (!SaveSystem.Instance.alive[index])
+                if (!Save.Instance.alive[index])
                     t.KillTile(true);
 
                 index++;
             }
         }
-        goal.startLocation = SaveSystem.Instance.goalLocation;
-        player.startLocation = SaveSystem.Instance.playerLocation;
+        goal.startLocation = Save.Instance.goalLocation;
+        player.startLocation = Save.Instance.playerLocation;
 
         // Animate flipping of tiles if it's an entirely new board
         if (newBoard)

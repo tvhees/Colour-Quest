@@ -31,7 +31,7 @@ public class Discard : Collection {
             preview.Remove(mana);
             // Reset any colour change or particles
             mana.GetComponent<Mana>().Reset();
-            SaveSystem.Instance.discard.Add(mana.GetComponent<Mana>().colourIndex);
+            Save.Instance.discard.Add(mana.GetComponent<Mana>().colourIndex);
         }
         StartCoroutine(AddObj(mana));
         yield return new WaitForSeconds(moveTime/4f);
@@ -39,7 +39,7 @@ public class Discard : Collection {
 
     protected override void RemoveFromSave(int index)
     {
-        SaveSystem.Instance.discard.RemoveAt(index);
+        Save.Instance.discard.RemoveAt(index);
     }
 
     public void SendToDisplay(){

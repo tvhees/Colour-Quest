@@ -31,14 +31,14 @@ public class Hand : Collection {
             deck.Remove(mana);
             // Remove from preview
             preview.Remove(mana);
-            SaveSystem.Instance.hand.Add(mana.GetComponent<Mana>().colourIndex);
+            Save.Instance.hand.Add(mana.GetComponent<Mana>().colourIndex);
         }
         yield return StartCoroutine(AddObj(mana));
     }
 
     protected override void RemoveFromSave(int index)
     {
-        SaveSystem.Instance.hand.RemoveAt(index);
+        Save.Instance.hand.RemoveAt(index);
     }
 
     public IEnumerator PaySelected() {
@@ -77,7 +77,7 @@ public class Hand : Collection {
 				yield break;
 		}
 
-        if (blackMana.Count >= SaveSystem.Instance.maxHandSize)
+        if (blackMana.Count >= Save.Instance.maxHandSize)
         {
             game.state = Game.State.LOST;
             Preferences.Instance.UpdateDifficulty(-1);
@@ -90,7 +90,7 @@ public class Hand : Collection {
 		int i = 0;
         // Take mana from deck until hand is at current mana limit
         GameObject lastObject = null;
-        while (size < SaveSystem.Instance.maxHandSize) {
+        while (size < Save.Instance.maxHandSize) {
             lastObject = preview.contents[0];
             yield return StartCoroutine(SendToHand(lastObject));
 			i++;
@@ -114,7 +114,7 @@ public class Hand : Collection {
             }
         }
 
-		yield return StartCoroutine(preview.RefillPreview(SaveSystem.Instance.maxHandSize));
+		yield return StartCoroutine(preview.RefillPreview(Save.Instance.maxHandSize));
 
 		scrub = true;
 
@@ -122,7 +122,7 @@ public class Hand : Collection {
 
 		yield return StartCoroutine(goalScript.MoveGoal ());
 
-        SaveSystem.Instance.SaveGame();
+        Save.Instance.SaveGame();
     }
 
 	public void ScrubHand(){
@@ -153,10 +153,10 @@ public class Hand : Collection {
 	}
 
 	public IEnumerator IncreaseLimit(int increase){
-		SaveSystem.Instance.maxHandSize += increase;
-        SaveSystem.Instance.maxHandSize = SaveSystem.Instance.maxHandSize;
-        maxHandMesh.text = SaveSystem.Instance.maxHandSize.ToString();
-		yield return StartCoroutine(preview.RefillPreview (SaveSystem.Instance.maxHandSize));
+		Save.Instance.maxHandSize += increase;
+        Save.Instance.maxHandSize = Save.Instance.maxHandSize;
+        maxHandMesh.text = Save.Instance.maxHandSize.ToString();
+		yield return StartCoroutine(preview.RefillPreview (Save.Instance.maxHandSize));
         yield return new WaitForSeconds(0.5f);
 	}
 }

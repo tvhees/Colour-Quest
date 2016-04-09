@@ -22,21 +22,21 @@ public class ManaPool : ObjectPool {
 
         // Set up the deck and discard
         deck.moveTime = 0.0001f;
-        for (int i = 0; i < SaveSystem.Instance.deck.Count; i++)
+        for (int i = 0; i < Save.Instance.deck.Count; i++)
         {
             GameObject mana = GetObject();
             mana.transform.SetParent(transform);
-            SetColour(mana, SaveSystem.Instance.deck[i]);
+            SetColour(mana, Save.Instance.deck[i]);
             mana.SetActive(true);
             yield return StartCoroutine(deck.SendToDeck(mana, true));
         }
 
         discard.moveTime = 0.0001f;
-        for (int i = 0; i < SaveSystem.Instance.discard.Count; i++)
+        for (int i = 0; i < Save.Instance.discard.Count; i++)
         {
             GameObject mana = GetObject();
             mana.transform.SetParent(transform);
-            SetColour(mana, SaveSystem.Instance.discard[i]);
+            SetColour(mana, Save.Instance.discard[i]);
             mana.SetActive(true);
             yield return StartCoroutine(discard.SendToDiscard(mana, true));
         }
@@ -45,25 +45,25 @@ public class ManaPool : ObjectPool {
         discard.moveTime = discard.startMoveTime;
 
         // Set up the hand and preview
-        for (int i = 0; i < SaveSystem.Instance.hand.Count; i++)
+        for (int i = 0; i < Save.Instance.hand.Count; i++)
         {
             GameObject mana = GetObject();
             mana.transform.SetParent(transform);
-            SetColour(mana, SaveSystem.Instance.hand[i]);
+            SetColour(mana, Save.Instance.hand[i]);
             mana.SetActive(true);
             yield return StartCoroutine(hand.SendToHand(mana, true));
         }
 
-        for (int i = 0; i < SaveSystem.Instance.preview.Count; i++)
+        for (int i = 0; i < Save.Instance.preview.Count; i++)
         {
             GameObject mana = GetObject();
             mana.transform.SetParent(transform);
-            SetColour(mana, SaveSystem.Instance.preview[i]);
+            SetColour(mana, Save.Instance.preview[i]);
             mana.SetActive(true);
             yield return StartCoroutine(preview.SendToPreview(mana, true));
         }
 
-        SaveSystem.Instance.SaveGame();
+        Save.Instance.SaveGame();
         Master.Instance.loading = false;
     }
 

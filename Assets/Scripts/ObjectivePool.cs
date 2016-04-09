@@ -12,8 +12,6 @@ public class ObjectivePool : ObjectPool {
     public Camera uiCamera, gameCamera;
     public ManaPool manaPool;
 
-	private int total = 0, threshold = 1;
-
     public void Reset() {
 		homePosition = transform.position;
 
@@ -21,8 +19,6 @@ public class ObjectivePool : ObjectPool {
             CreatePool(40, objCube);
 
         objectives.Reset();
-        total = 0;
-        threshold = 1;
         StartCoroutine(NewTracker());
     }
 
@@ -32,20 +28,22 @@ public class ObjectivePool : ObjectPool {
 		ReturnObject (obj);
 	}
 
-	IEnumerator NewTracker(){
-		objectives.Clear ();
-
-		threshold++;
-		total = 0;
-
+	IEnumerator NewTracker()
+    {
         objectives.moveTime *= 4;
 
-		for (int i = 0; i < threshold; i++) {
-			GameObject obj = GetObject ();
+		for (int i = 1; i < Save.Instance.objectives.Count; i++) {
+            GameObject obj;
+            if (i < objectives.contents.Count)
+                obj = objectives.contents[i];
+            else
+                obj = GetObject ();
+
 			obj.transform.SetParent (transform);
 			obj.SetActive (true);
-			obj.GetComponent<MeshRenderer> ().material = materials [0];
-			yield return StartCoroutine(objectives.AddObj (obj));
+			obj.GetComponent<MeshRenderer> ().material = materials [Save.Instance.objectives[i]];
+            if(!objectives.contents.Contains(obj))
+    			yield return StartCoroutine(objectives.AddObj (obj));
 		}
 
         objectives.moveTime /= 4;
@@ -70,23 +68,35 @@ public class ObjectivePool : ObjectPool {
         }
 
         bool cubeExists = true;
-        Material objMaterial = objectiveCube.GetComponent<MeshRenderer>().material;
+        int colourIndex = objectiveCube.GetComponent<Objective>().colourIndex;
 
         for (int i = 0; i < sum; i++){
             if (cubeExists) {
                 objectiveCube.transform.position = worldPos;
                 objectiveCube.transform.SetParent(transform);
-                yield return StartCoroutine(objectiveCube.GetComponent<ClickableObject>().SmoothMovement(objectives.contents[total].transform.position, objectives.moveTime, new Vector3 (objectives.objScale, objectives.objScale, objectives.objScale)));
+                yield return StartCoroutine(objectiveCube.GetComponent<ClickableObject>().SmoothMovement(objectives.contents[Save.Instance.objectives[0]].transform.position, objectives.moveTime, new Vector3 (objectives.objScale, objectives.objScale, objectives.objScale)));
                 SendToPool(objectiveCube);
                 cubeExists = false;
             }
-			objectives.contents [total].GetComponent<MeshRenderer> ().material = objMaterial;
-			total++;
-			if (total == threshold) {
-				yield return StartCoroutine(hand.IncreaseLimit(1));
-				yield return NewTracker ();
+			objectives.contents [Save.Instance.objectives[0]].GetComponent<MeshRenderer> ().sharedMaterial = materials[colourIndex];
+            Save.Instance.objectives[0]++;
+			if (Save.Instance.objectives[0] + 1 == Save.Instance.objectives.Count) {
+                ObjectiveReward(Save.Instance.objectives[0]);
 			}
 		}
 	}
+
+    private IEnumerator ObjectiveReward(int total)
+    {
+        //Make a new list of empty objective slots with one more than the last
+        Save.Instance.objectives.Clear();
+        Save.Instance.objectives.Add(total);
+        for (int i = 0; i < total + 1; i++)
+            Save.Instance.objectives.Add(0);
+
+        // Increase max hand size
+        yield return StartCoroutine(hand.IncreaseLimit(1));
+        yield return NewTracker();
+    }
 
 }

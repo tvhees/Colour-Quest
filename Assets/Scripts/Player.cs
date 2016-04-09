@@ -17,6 +17,6 @@ public class Player : MovingObject {
 
     protected override void SavePosition()
     {
-        SaveSystem.Instance.playerLocation = transform.position;
+        Save.Instance.playerLocation = transform.position;
     }
 }

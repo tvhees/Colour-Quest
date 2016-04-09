@@ -78,7 +78,7 @@ public class TileScript : ClickableObject {
         if(boardScript.hiddenTiles.Contains(gameObject))
             boardScript.hiddenTiles.Remove(gameObject);
 
-        SaveSystem.Instance.flipped[index] = true;
+        Save.Instance.flipped[index] = true;
     }
 
     public IEnumerator Flip(float rotationSpeed) {
@@ -98,7 +98,7 @@ public class TileScript : ClickableObject {
 
         GetComponent<MeshRenderer>().sharedMaterial = colouredMaterial;
         boardScript.hiddenTiles.Remove(gameObject);
-        SaveSystem.Instance.flipped[index] = true;
+        Save.Instance.flipped[index] = true;
     }
 
     public override void KillTile(bool dead)
@@ -106,7 +106,7 @@ public class TileScript : ClickableObject {
         if (dead)
         {
             alive = false;
-            SaveSystem.Instance.alive[index] = false;
+            Save.Instance.alive[index] = false;
             GetComponent<MeshRenderer>().material = deadMaterial;
         }
     }

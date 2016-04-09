@@ -25,7 +25,7 @@ public class Goal : MovingObject {
         gameStarted = false;
         goalObject.goalCost = new int[3] { 0, 0, 0 };
 
-        UpdateValue(SaveSystem.Instance.goalCost);
+        UpdateValue(Save.Instance.goalCost);
 
         gameStarted = true;
 
@@ -88,10 +88,10 @@ public class Goal : MovingObject {
 		goalTarget = Vector3.zero;
 
         if(index >= 0)
-            SaveSystem.Instance.directionList.RemoveAt(index);
+            Save.Instance.directionList.RemoveAt(index);
 
-        for (int i = 0; i < SaveSystem.Instance.directionList.Count; i++) {
-			if (SaveSystem.Instance.directionList[i])
+        for (int i = 0; i < Save.Instance.directionList.Count; i++) {
+			if (Save.Instance.directionList[i])
 				goalTarget = transform.position - leftVector - raycastOffset;
 			else
 				goalTarget = transform.position - rightVector - raycastOffset;
@@ -116,7 +116,7 @@ public class Goal : MovingObject {
     public void UpdateValue(int[] value, int alpha = 1, int beta = 1) {
         goalObject.goalCost = goalObject.goalCost.Zip(value, alpha, beta);
 
-        SaveSystem.Instance.goalCost = goalObject.goalCost;
+        Save.Instance.goalCost = goalObject.goalCost;
 
         bool defeated = true;
 
@@ -138,6 +138,6 @@ public class Goal : MovingObject {
 
     protected override void SavePosition()
     {
-        SaveSystem.Instance.goalLocation = transform.position;
+        Save.Instance.goalLocation = transform.position;
     }
 }

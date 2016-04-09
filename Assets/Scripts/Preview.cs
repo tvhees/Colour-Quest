@@ -23,14 +23,14 @@ public class Preview : Collection {
             hand.Remove(mana);
             discard.Remove(mana);
             deck.Remove(mana);
-            SaveSystem.Instance.preview.Add(mana.GetComponent<Mana>().colourIndex);
+            Save.Instance.preview.Add(mana.GetComponent<Mana>().colourIndex);
         }
         yield return StartCoroutine(AddObj(mana));
     }
 
     protected override void RemoveFromSave(int index)
     {
-        SaveSystem.Instance.preview.RemoveAt(index);
+        Save.Instance.preview.RemoveAt(index);
     }
 
     public IEnumerator RefillPreview(int nextHandSize){

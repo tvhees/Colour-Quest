@@ -90,9 +90,9 @@ public abstract class Collection : MonoBehaviour
 
     public virtual void Remove(GameObject obj) {
         if (contents.Contains(obj)) {
-			float j = obj.transform.position.x;
-            contents.Remove(obj);
             RemoveFromSave(contents.IndexOf(obj));
+            float j = obj.transform.position.x;
+            contents.Remove(obj);
             size--;
 
 			if (obj.GetComponent<Mana> () != null && valueOnRemove) {

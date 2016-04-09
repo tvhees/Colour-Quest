@@ -27,14 +27,14 @@ public class Deck : Collection {
             hand.Remove(mana);
             discard.Remove(mana);
             preview.Remove(mana);
-            SaveSystem.Instance.deck.Add(mana.GetComponent<Mana>().colourIndex);
+            Save.Instance.deck.Add(mana.GetComponent<Mana>().colourIndex);
         }
         yield return StartCoroutine(AddObj(mana));
     }
 
     protected override void RemoveFromSave(int index)
     {
-        SaveSystem.Instance.deck.RemoveAt(index);
+        Save.Instance.deck.RemoveAt(index);
     }
 
     public IEnumerator RefillDeck(){
