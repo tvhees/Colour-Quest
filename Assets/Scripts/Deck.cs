@@ -21,17 +21,23 @@ public class Deck : Collection {
 		SharedSetup ();
     }
 
-    public IEnumerator SendToDeck(GameObject mana){
-		hand.Remove (mana);
+    public IEnumerator SendToDeck(GameObject mana, bool setup = false) {
+        if (!setup)
+        {
+            hand.Remove(mana);
+            discard.Remove(mana);
+            preview.Remove(mana);
+            SaveSystem.Instance.deck.Add(mana.GetComponent<Mana>().colourIndex);
+        }
+        yield return StartCoroutine(AddObj(mana));
+    }
 
-		discard.Remove (mana);
+    protected override void RemoveFromSave(int index)
+    {
+        SaveSystem.Instance.deck.RemoveAt(index);
+    }
 
-		preview.Remove (mana);
-
-		yield return StartCoroutine(AddObj(mana));
-	}
-
-	public IEnumerator RefillDeck(){
+    public IEnumerator RefillDeck(){
         int i = 0;
 		if (contents.Count < 1) {
             GameObject lastObject = null;

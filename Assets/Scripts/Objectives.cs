@@ -12,7 +12,12 @@ public class Objectives : Collection {
 		translate = new Vector3 (0.5f * objScale * gapScale, 0f, 0f);
 	}
 
-	public void Clear(){
+    protected override void RemoveFromSave(int index)
+    {
+        //SaveSystem.Instance.objectives.RemoveAt(index);
+    }
+
+    public void Clear(){
 		while (contents.Count > 0) {
 			pool.SendToPool (contents [0]);
 		}

@@ -6,8 +6,9 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
 public class SaveSystem : Singleton<SaveSystem> {
+    public int maxHandSize;
     public int[] tilesPerRow, goalCost;
-    public List<int> materials;
+    public List<int> materials, hand, deck, preview, discard;
     public List<bool> flipped, alive, directionList;
     public Vector3 goalLocation, playerLocation;
 
@@ -23,9 +24,14 @@ public class SaveSystem : Singleton<SaveSystem> {
             file.Close();
 
             // Load data
+            maxHandSize = data.maxHandSize;
             tilesPerRow = data.tilesPerRow;
             goalCost = data.goalCost;
             materials = data.materials;
+            hand = data.hand;
+            deck = data.deck;
+            preview = data.preview;
+            discard = data.discard;
             flipped = data.flipped;
             alive = data.alive;
             directionList = data.directionList;
@@ -42,9 +48,14 @@ public class SaveSystem : Singleton<SaveSystem> {
 
         // Pass objects to data
         SaveData data = new SaveData();
+        data.maxHandSize = maxHandSize;
         data.tilesPerRow = tilesPerRow;
         data.goalCost = goalCost;
         data.materials = materials;
+        data.hand = hand;
+        data.deck = deck;
+        data.preview = preview;
+        data.discard = discard;
         data.flipped = flipped;
         data.alive = alive;
         data.directionList = directionList;
@@ -60,8 +71,9 @@ public class SaveSystem : Singleton<SaveSystem> {
 [Serializable]
 class SaveData
 {
+    public int maxHandSize;
     public int[] tilesPerRow, goalCost;
-    public List<int> materials;
+    public List<int> materials, hand, deck, preview, discard;
     public List<bool> flipped, alive, directionList;
     public ExtensionMethods.SerializableVector3 goalLocation, playerLocation;
 }

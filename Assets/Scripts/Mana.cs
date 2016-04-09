@@ -7,6 +7,7 @@ public class Mana : ClickableObject {
 
     public Game game;
     public Hand hand;
+    public int colourIndex;
     public int[] value = new int[3] { 0, 0, 0 }, savedValue;
     public float menuDelay = 0.1f;
     public ParticleSystem selectFX;

@@ -4,7 +4,7 @@ using System.Collections;
 public class ObjectivePool : ObjectPool {
 
 	public GameObject objCube;
-	public Material[] baseMaterials, nullMaterials;
+	public Material[] materials;
 	public Hand hand;
 	public Discard discard;
 	public Deck deck;
@@ -44,7 +44,7 @@ public class ObjectivePool : ObjectPool {
 			GameObject obj = GetObject ();
 			obj.transform.SetParent (transform);
 			obj.SetActive (true);
-			obj.GetComponent<MeshRenderer> ().material = nullMaterials [0];
+			obj.GetComponent<MeshRenderer> ().material = materials [0];
 			yield return StartCoroutine(objectives.AddObj (obj));
 		}
 

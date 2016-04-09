@@ -4,12 +4,12 @@ using System.Collections.Generic;
 
 public class BoardScript : MonoBehaviour {
 
+    public int startHandSize;
     public Material[] materialArray;
     public GameObject tileHolder;
     public List<GameObject> hiddenTiles = new List<GameObject>();
     public float sightDistance, dX;
     public List<GameObject> tiles = new List<GameObject>();
-    public List<bool> flipped = new List<bool>(), alive = new List<bool>();
     public Goal goal;
     public Player player;
 
@@ -55,13 +55,12 @@ public class BoardScript : MonoBehaviour {
         }
         colourCopy.AddRange(colourMaster);
 
-        // This list stores which material each tile uses
-        List<int> materials = new List<int>();
-
         // Here we construct new lists used to place and colour tiles later
         // We don't instantiate or position any tiles here - as long as the
         // same Row/Column method is used later it's sufficient to store the
         // values to be given to the tiles in a list
+        List<int> materials = new List<int>();
+        List<bool> flipped = new List<bool>(), alive = new List<bool>();
         for (row = 0; row < tilesPerRow.Length; row++) // Iterate by row
         {
             for (col = 0; col < tilesPerRow[row]; col++) // Iterate by column within row
@@ -106,7 +105,33 @@ public class BoardScript : MonoBehaviour {
             goalCost[j]++;
         }
 
+        // In this section we set up the initial mana composition
+        // of the player's hand and deck
+        // The starting hand is always the same. 0 = blue, 1 = red, 2 = yellow
+        // The deck is randomised at start. Preview and discard are empty
+        List<int> hand = new List<int>(), deck = new List<int>(), 
+            preview = new List<int>(), discard = new List<int>();
+
+        hand.AddRange(new int[5] { 0, 0, 0, 1, 2 });
+        int[] deckandpreview = new int[10] { 0, 0, 0, 0, 0, 0, 1, 1, 2, 2 };
+        deckandpreview.Randomise();
+
+        for (int i = 0; i < 5; i++) {
+            preview.Add(deckandpreview[i]);
+        }
+
+        for (int i = 5; i < 10; i++)
+        {
+            deck.Add(deckandpreview[i]);
+        }
+        
         // Save the blueprint variables to the SaveSystem
+        SaveSystem.Instance.maxHandSize = startHandSize;
+        SaveSystem.Instance.hand = hand;
+        SaveSystem.Instance.deck = deck;
+        SaveSystem.Instance.preview = preview;
+        SaveSystem.Instance.discard = discard;
+        SaveSystem.Instance.deck = deck;
         SaveSystem.Instance.tilesPerRow = tilesPerRow;
         SaveSystem.Instance.goalCost = goalCost;
         SaveSystem.Instance.materials = materials;
@@ -115,23 +140,20 @@ public class BoardScript : MonoBehaviour {
         SaveSystem.Instance.directionList = directionList;
         SaveSystem.Instance.goalLocation = goalLocation;
         SaveSystem.Instance.playerLocation = playerLocation;
-
-        InstantiateBoard(true, tilesPerRow, materials, flipped, alive, goalLocation, playerLocation);
     }
 
-    public void InstantiateBoard(bool newBoard, int[] tilesPerRow, List<int> materials,
-        List<bool> flipped, List<bool> alive, Vector3 goalLocation, Vector3 playerLocation)
+    public void InstantiateBoard(bool newBoard)
     {
         float offset = 0f;
         int i = 0;
         int j = 0;
         int index = 0;
 
-        for (i = 0; i < tilesPerRow.Length; i++) // Iterate by row
+        for (i = 0; i < SaveSystem.Instance.tilesPerRow.Length; i++) // Iterate by row
         {
             offset = i % 2 * -0.5f; // Odd rows need to be shifted across
 
-            for (j = 0; j < tilesPerRow[i]; j++) // Iterate by column within row
+            for (j = 0; j < SaveSystem.Instance.tilesPerRow[i]; j++) // Iterate by column within row
             {
                 Vector3 position = new Vector3(i * dX, 0, (1 + offset - j) * dZ);
 
@@ -140,19 +162,19 @@ public class BoardScript : MonoBehaviour {
 
                 // Give the tile a colour and flip if required
                 TileScript t = tile.GetComponentInChildren<TileScript>();
-                t.colouredMaterial = materialArray[materials[index]];
-                t.tileCost = values[materials[index]];
+                t.colouredMaterial = materialArray[SaveSystem.Instance.materials[index]];
+                t.tileCost = values[SaveSystem.Instance.materials[index]];
                 t.index = index;
-                if (flipped[index])
+                if (SaveSystem.Instance.flipped[index])
                     t.Flip();
-                if (!alive[index])
+                if (!SaveSystem.Instance.alive[index])
                     t.KillTile(true);
 
                 index++;
             }
         }
-        goal.startLocation = goalLocation;
-        player.startLocation = playerLocation;
+        goal.startLocation = SaveSystem.Instance.goalLocation;
+        player.startLocation = SaveSystem.Instance.playerLocation;
 
         // Animate flipping of tiles if it's an entirely new board
         if (newBoard)

@@ -98,7 +98,7 @@ public class TileScript : ClickableObject {
 
         GetComponent<MeshRenderer>().sharedMaterial = colouredMaterial;
         boardScript.hiddenTiles.Remove(gameObject);
-        boardScript.flipped[index] = true;
+        SaveSystem.Instance.flipped[index] = true;
     }
 
     public override void KillTile(bool dead)

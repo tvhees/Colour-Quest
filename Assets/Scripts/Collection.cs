@@ -92,6 +92,7 @@ public abstract class Collection : MonoBehaviour
         if (contents.Contains(obj)) {
 			float j = obj.transform.position.x;
             contents.Remove(obj);
+            RemoveFromSave(contents.IndexOf(obj));
             size--;
 
 			if (obj.GetComponent<Mana> () != null && valueOnRemove) {
@@ -124,6 +125,8 @@ public abstract class Collection : MonoBehaviour
             blackMana.Remove(obj);
         }
     }
+
+    protected abstract void RemoveFromSave(int index);
 
 	protected virtual Vector3 FindPosition(float scalar, Vector3 pos){
 		Vector3 position = pos + scalar * translate;

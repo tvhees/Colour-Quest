@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class Hand : Collection {
 
@@ -10,7 +11,6 @@ public class Hand : Collection {
     public Discard discard;
 	public Goal goalScript;
     public List<GameObject> selectedMana;
-    public int maxHandSize, startHandSize = 5;
     public bool pause;
     public TextMesh maxHandMesh;
 
@@ -19,21 +19,26 @@ public class Hand : Collection {
     public override void Reset() {
         Master.Instance.hand = this;
         scrub = true;
-        maxHandSize = startHandSize;
         SharedSetup ();
     }
 
-    public IEnumerator SendToHand(GameObject mana) {
-        // Remove from discard pile
-        discard.Remove(mana);
+    public IEnumerator SendToHand(GameObject mana, bool setup = false) {
+        if (!setup)
+        {
+            // Remove from discard pile
+            discard.Remove(mana);
+            // Remove from deck
+            deck.Remove(mana);
+            // Remove from preview
+            preview.Remove(mana);
+            SaveSystem.Instance.hand.Add(mana.GetComponent<Mana>().colourIndex);
+        }
+        yield return StartCoroutine(AddObj(mana));
+    }
 
-        // Remove from deck
-        deck.Remove(mana);
-
-		// Remove from preview
-		preview.Remove(mana);
-
-		yield return StartCoroutine(AddObj(mana));
+    protected override void RemoveFromSave(int index)
+    {
+        SaveSystem.Instance.hand.RemoveAt(index);
     }
 
     public IEnumerator PaySelected() {
@@ -72,7 +77,7 @@ public class Hand : Collection {
 				yield break;
 		}
 
-        if (blackMana.Count >= maxHandSize)
+        if (blackMana.Count >= SaveSystem.Instance.maxHandSize)
         {
             game.state = Game.State.LOST;
             Preferences.Instance.UpdateDifficulty(-1);
@@ -85,7 +90,7 @@ public class Hand : Collection {
 		int i = 0;
         // Take mana from deck until hand is at current mana limit
         GameObject lastObject = null;
-        while (size < maxHandSize) {
+        while (size < SaveSystem.Instance.maxHandSize) {
             lastObject = preview.contents[0];
             yield return StartCoroutine(SendToHand(lastObject));
 			i++;
@@ -109,7 +114,7 @@ public class Hand : Collection {
             }
         }
 
-		yield return StartCoroutine(preview.RefillPreview(maxHandSize));
+		yield return StartCoroutine(preview.RefillPreview(SaveSystem.Instance.maxHandSize));
 
 		scrub = true;
 
@@ -148,9 +153,10 @@ public class Hand : Collection {
 	}
 
 	public IEnumerator IncreaseLimit(int increase){
-		maxHandSize += increase;
-        maxHandMesh.text = maxHandSize.ToString();
-		yield return StartCoroutine(preview.RefillPreview (maxHandSize));
+		SaveSystem.Instance.maxHandSize += increase;
+        SaveSystem.Instance.maxHandSize = SaveSystem.Instance.maxHandSize;
+        maxHandMesh.text = SaveSystem.Instance.maxHandSize.ToString();
+		yield return StartCoroutine(preview.RefillPreview (SaveSystem.Instance.maxHandSize));
         yield return new WaitForSeconds(0.5f);
 	}
 }

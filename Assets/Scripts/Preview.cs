@@ -17,17 +17,23 @@ public class Preview : Collection {
 		SharedSetup ();
     }
 
-    public IEnumerator SendToPreview(GameObject mana){
-		hand.Remove (mana);
+    public IEnumerator SendToPreview(GameObject mana, bool setup = false){
+        if (!setup)
+        {
+            hand.Remove(mana);
+            discard.Remove(mana);
+            deck.Remove(mana);
+            SaveSystem.Instance.preview.Add(mana.GetComponent<Mana>().colourIndex);
+        }
+        yield return StartCoroutine(AddObj(mana));
+    }
 
-		discard.Remove (mana);
+    protected override void RemoveFromSave(int index)
+    {
+        SaveSystem.Instance.preview.RemoveAt(index);
+    }
 
-		deck.Remove (mana);
-
-		yield return StartCoroutine(AddObj(mana));
-	}
-
-	public IEnumerator RefillPreview(int nextHandSize){
+    public IEnumerator RefillPreview(int nextHandSize){
 		int i = 0;
         GameObject lastObject = null;
 		while (size < nextHandSize) {

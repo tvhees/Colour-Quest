@@ -18,27 +18,31 @@ public class Discard : Collection {
 		SharedSetup ();
     }
 
-    public IEnumerator SendToDiscard(GameObject mana)
+    public IEnumerator SendToDiscard(GameObject mana, bool setup = false)
     {
-        // Remove from other lists
-        if (hand.selectedMana.Contains(mana))
-            hand.selectedMana.Remove(mana);
+        if (!setup)
+        {
+            // Remove from other lists
+            if (hand.selectedMana.Contains(mana))
+                hand.selectedMana.Remove(mana);
 
-        hand.Remove(mana);
-
-		deck.Remove (mana);
-
-		preview.Remove (mana);
-
-        // Reset any colour change or particles
-        mana.GetComponent<Mana>().Reset();
-
-		StartCoroutine(AddObj(mana));
-
+            hand.Remove(mana);
+            deck.Remove(mana);
+            preview.Remove(mana);
+            // Reset any colour change or particles
+            mana.GetComponent<Mana>().Reset();
+            SaveSystem.Instance.discard.Add(mana.GetComponent<Mana>().colourIndex);
+        }
+        StartCoroutine(AddObj(mana));
         yield return new WaitForSeconds(moveTime/4f);
     }
 
-	public void SendToDisplay(){
+    protected override void RemoveFromSave(int index)
+    {
+        SaveSystem.Instance.discard.RemoveAt(index);
+    }
+
+    public void SendToDisplay(){
 		display.UpdateDisplay (manaList);
 	}
 }
