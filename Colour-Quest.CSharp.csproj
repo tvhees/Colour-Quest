@@ -74,6 +74,7 @@
     <Compile Include="Assets\Scripts\Deck.cs" />
     <Compile Include="Assets\Scripts\Discard.cs" />
     <Compile Include="Assets\Scripts\DisplayPanel.cs" />
+    <Compile Include="Assets\Scripts\EndPanel.cs" />
     <Compile Include="Assets\Scripts\ExtensionMethods.cs" />
     <Compile Include="Assets\Scripts\Game.cs" />
     <Compile Include="Assets\Scripts\Goal.cs" />

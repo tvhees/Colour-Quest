@@ -56,8 +56,8 @@ public class Goal : MovingObject {
             if ((transform.position - player.transform.position).sqrMagnitude < 0.1f)
             {
                 game.state = Game.State.LOST;
-                Preferences.Instance.UpdateDifficulty(-1);
-                player.GetComponent<Player>().childRenderer.enabled = false;
+                Master.Instance.GameEnd(false);
+                //player.GetComponent<Player>().childRenderer.enabled = false;
             }
             else
             {
@@ -77,7 +77,7 @@ public class Goal : MovingObject {
         }
         else {
             game.state = Game.State.LOST;
-            Preferences.Instance.UpdateDifficulty(-1);
+            Master.Instance.GameEnd(false);
         }
 
 		yield return null;
@@ -132,7 +132,7 @@ public class Goal : MovingObject {
         if (defeated && gameStarted)
         {
             game.state = Game.State.WON;
-            Preferences.Instance.UpdateDifficulty(2);
+            Master.Instance.GameEnd(true);
         }
     }
 

@@ -64,8 +64,6 @@ public class TileScript : ClickableObject {
                     }
                     break;
                 case Game.State.GOAL:
-                case Game.State.WON:
-                case Game.State.LOST:
                     break;
             }
         }

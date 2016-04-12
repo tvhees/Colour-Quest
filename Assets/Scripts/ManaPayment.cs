@@ -105,17 +105,16 @@ public class ManaPayment : MonoBehaviour {
         }
 
 		yield return StartCoroutine(hand.PaySelected());
-
-        if(game.state != Game.State.WON && game.state != Game.State.LOST)        
-            Reset();
+        
+        Reset();
     }
 
     private IEnumerator RemainderToBlackMana(int[] remainder)
     {
         int[] nullValue = new int[3] { 0, 0, 0 };
 
-        if (game.state != Game.State.WON)
-        {
+        //if (game.state != Game.State.WON)
+        //{
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < remainder[i]; j++)
@@ -124,6 +123,6 @@ public class ManaPayment : MonoBehaviour {
                     yield return StartCoroutine(hand.SendToHand(mana));
                 }
             }
-        }
+        //}
     }
 }

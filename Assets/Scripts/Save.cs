@@ -8,7 +8,7 @@ using System.IO;
 public class Save : Singleton<Save> {
     public int maxHandSize;
     public int[] tilesPerRow, goalCost;
-    public List<int> materials, hand, deck, preview, discard, objectives;
+    public List<int> materials, hand, deck, preview, discard, objectiveTracker, objectives;
     public List<bool> flipped, alive, directionList;
     public Vector3 goalLocation, playerLocation;
 
@@ -32,6 +32,7 @@ public class Save : Singleton<Save> {
             deck = data.deck;
             preview = data.preview;
             discard = data.discard;
+            objectiveTracker = data.objectiveTracker;
             objectives = data.objectives;
             flipped = data.flipped;
             alive = data.alive;
@@ -57,6 +58,7 @@ public class Save : Singleton<Save> {
         data.deck = deck;
         data.preview = preview;
         data.discard = discard;
+        data.objectiveTracker = objectiveTracker;
         data.objectives = objectives;
         data.flipped = flipped;
         data.alive = alive;
@@ -75,7 +77,7 @@ class SaveData
 {
     public int maxHandSize;
     public int[] tilesPerRow, goalCost;
-    public List<int> materials, hand, deck, preview, discard, objectives;
+    public List<int> materials, hand, deck, preview, discard, objectiveTracker, objectives;
     public List<bool> flipped, alive, directionList;
     public ExtensionMethods.SerializableVector3 goalLocation, playerLocation;
 }

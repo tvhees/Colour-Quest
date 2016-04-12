@@ -15,7 +15,7 @@ public class Preferences : Singleton<Preferences> {
 		cameraSpeed = PlayerPrefs.GetFloat ("cameraSpeed", 5.0f);
 		tutorial = ExtensionMethods.GetBool ("tutorial", true);
 		watchGoal = ExtensionMethods.GetBool ("watchGoal", true);
-        difficulty = PlayerPrefs.GetInt("difficulty", 4);
+        difficulty = PlayerPrefs.GetInt("difficulty", 0);
 
         UpdateDifficulty(0);
 
@@ -39,6 +39,7 @@ public class Preferences : Singleton<Preferences> {
 
     public void UpdateDifficulty(int adjustment) {
         difficulty = Mathf.Max(difficulty + adjustment, 0);
+        PlayerPrefs.SetInt("difficulty", difficulty);
         PlayerPrefs.Save();
     }
 

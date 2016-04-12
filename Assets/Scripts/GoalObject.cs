@@ -50,10 +50,6 @@ public class GoalObject : ClickableObject {
                         selectionMarker.SetActive(false);
                     }
                     break;
-                case Game.State.GOAL:
-                case Game.State.WON:
-                case Game.State.LOST:
-                    break;
             }
         }
     }

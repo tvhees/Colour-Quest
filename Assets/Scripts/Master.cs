@@ -11,7 +11,8 @@ public class Master : Singleton<Master>
         MENU,
         PREFS,
         GAME,
-        LOADING
+        GAMEND,
+        LOADING // Loading should be last as it doesn't have an associated panel
     }
 
     public State state, savedState;
@@ -28,7 +29,7 @@ public class Master : Singleton<Master>
         if (SceneManager.GetSceneByName("Game").isLoaded)
             SceneManager.UnloadScene("Game");
         Preferences.Instance.Load();
-        state = State.TITLE;
+        ChangeState((int)State.TITLE);
     }
 
     public void StartGame(bool continuing)
@@ -75,6 +76,12 @@ public class Master : Singleton<Master>
         // For "Game" state we turn on the backgroundDampener panel
         for (int i = 0; i < menuPanels.Length; i++)
             menuPanels[i].SetActive(menuPanels[i] == menu);
+    }
+
+    public void GameEnd(bool victory) {
+        ChangeState((int)State.GAMEND);
+
+        StartCoroutine(menuPanels[(int)State.GAMEND].GetComponent<EndPanel>().GameEnd(victory));
     }
 
     void Update() {

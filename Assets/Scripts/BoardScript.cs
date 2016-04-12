@@ -27,7 +27,8 @@ public class BoardScript : MonoBehaviour {
     public void NewBoard() {
         // This defines the number of rows - might increase with difficulty.
         // Row zero will always have just 1 tile
-        int[] tilesPerRow = new int[Preferences.Instance.difficulty + 1];
+        int boardLength = Preferences.Instance.difficulty > 10 ? 10 : 5;
+        int[] tilesPerRow = new int[boardLength];
         tilesPerRow[0] = 1;
 
         int row = 0; // row
@@ -38,21 +39,15 @@ public class BoardScript : MonoBehaviour {
         // Test code
         for (row = 1; row < tilesPerRow.Length; row++)
         {
-            tilesPerRow[row] = 2;
+            tilesPerRow[row] = Mathf.Min(Preferences.Instance.difficulty + 1, 6);
         }
 
         // Creating a master colour distribution list that can be copied
         // For random selection without replacement
-        int[] colourDistribution = new int[6] { 3, 1, 1, 0, 0, 0 };
-        List<int> colourMaster = new List<int>();
+        int[] colourDistribution = GetColourDistribution(false);
+
+        List<int> colourMaster = GetColourList(colourDistribution);
         List<int> colourCopy = new List<int>();
-        for (int i = 0; i < colourDistribution.Length; i++)
-        {
-            for (col = 0; col < colourDistribution[i]; col++)
-            {
-                colourMaster.Add(i);
-            }
-        }
         colourCopy.AddRange(colourMaster);
 
         // Here we construct new lists used to place and colour tiles later
@@ -60,9 +55,17 @@ public class BoardScript : MonoBehaviour {
         // same Row/Column method is used later it's sufficient to store the
         // values to be given to the tiles in a list
         List<int> materials = new List<int>();
+        List<int> objectives = new List<int>();
         List<bool> flipped = new List<bool>(), alive = new List<bool>();
         for (row = 0; row < tilesPerRow.Length; row++) // Iterate by row
         {
+            if (row > 9)
+            {
+                colourDistribution = GetColourDistribution(true);
+                colourMaster = GetColourList(colourDistribution);
+                colourCopy.Clear();
+                colourCopy.AddRange(colourMaster);
+            }
             for (col = 0; col < tilesPerRow[row]; col++) // Iterate by column within row
             {
                 // Give the tile an appropriate material at random
@@ -81,7 +84,9 @@ public class BoardScript : MonoBehaviour {
                 alive.Add(true);
             }
         }
-        Vector3 goalLocation = new Vector3(row * dX, 0, row%2 * 0.5f);
+        float offset = row % 2 * - 0.5f;
+        Debug.Log("row: " + row + ", col: " + col + ", offset: " + offset);
+        Vector3 goalLocation = new Vector3(row * dX, 0, (2 + offset - (col-1)/2) * dZ);
         Vector3 playerLocation = Vector3.zero;
 
         // Set up the direction of movement instructions for the goal sphere
@@ -127,8 +132,8 @@ public class BoardScript : MonoBehaviour {
 
         // In this section we define a new objective tracker.
         // The first entry is the starting TOTAL collected
-        List<int> objectives = new List<int>();
-        objectives.AddRange(new int[3] { 0, 0, 0 });
+        List<int> objectiveTracker = new List<int>();
+        objectiveTracker.AddRange(new int[3] { 0, 0, 0 });
 
 
         // Save the blueprint variables to the SaveSystem
@@ -138,7 +143,7 @@ public class BoardScript : MonoBehaviour {
         Save.Instance.preview = preview;
         Save.Instance.discard = discard;
         Save.Instance.deck = deck;
-        Save.Instance.objectives = objectives;
+        Save.Instance.objectiveTracker = objectiveTracker;
         Save.Instance.tilesPerRow = tilesPerRow;
         Save.Instance.goalCost = goalCost;
         Save.Instance.materials = materials;
@@ -152,17 +157,17 @@ public class BoardScript : MonoBehaviour {
     public void InstantiateBoard(bool newBoard)
     {
         float offset = 0f;
-        int i = 0;
-        int j = 0;
+        int row = 0;
+        int col = 0;
         int index = 0;
 
-        for (i = 0; i < Save.Instance.tilesPerRow.Length; i++) // Iterate by row
+        for (row = 0; row < Save.Instance.tilesPerRow.Length; row++) // Iterate by row
         {
-            offset = i % 2 * -0.5f; // Odd rows need to be shifted across
+            offset = row % 2 * -0.5f; // Odd rows need to be shifted across
 
-            for (j = 0; j < Save.Instance.tilesPerRow[i]; j++) // Iterate by column within row
+            for (col = 0; col < Save.Instance.tilesPerRow[row]; col++) // Iterate by column within row
             {
-                Vector3 position = new Vector3(i * dX, 0, (1 + offset - j) * dZ);
+                Vector3 position = new Vector3(row * dX, 0, ((Save.Instance.tilesPerRow[row])/2 + 1 + offset - col) * dZ);
 
                 // Create a new tile as child of the board object
                 GameObject tile = transform.InstantiateChild(tileHolder, position);
@@ -186,6 +191,66 @@ public class BoardScript : MonoBehaviour {
         // Animate flipping of tiles if it's an entirely new board
         if (newBoard)
             FlipTiles(Vector3.zero);
+    }
+
+    public int[] GetColourDistribution(bool advanced) {
+        // Creating a master colour distribution list that can be copied
+        // For random selection without replacement
+        int d = Preferences.Instance.difficulty;
+        int[] colourDistribution = new int[6] { 20, 0, 0, 0, 0, 0 };
+        if (!advanced)
+        {
+            switch (Preferences.Instance.difficulty)
+            {
+                case 0:
+                case 1:
+                    break;
+                case 2:
+                    colourDistribution = new int[6] { 14, 6, 0, 0, 0, 0 };
+                    break;
+                case 3:
+                    colourDistribution = new int[6] { 12, 6, 2, 0, 0, 0 };
+                    break;
+                case 4:
+                    colourDistribution = new int[6] { 12, 6, 2, 0, 0, 0 };
+                    break;
+                default:
+                    colourDistribution[0] = Mathf.FloorToInt(11 - (d - 5) / 4);
+                    colourDistribution[1] = Mathf.FloorToInt(6 - (d - 6) / 5);
+                    colourDistribution[2] = Mathf.FloorToInt(2 + (d - 3) / 6);
+                    colourDistribution[3] = Mathf.FloorToInt(1 + (d - 5) / 7);
+                    colourDistribution[4] = Mathf.FloorToInt(1 + (d - 6) / 12);
+                    colourDistribution[5] = Mathf.FloorToInt(1 + (d - 7) / 16);
+                    break;
+            }
+        }
+        else
+        {
+            // Advanced areas from difficulty 10 onwards
+            // Consider using animation curves for this
+            colourDistribution[0] = Mathf.FloorToInt(5 - (d - 11) / 3);
+            colourDistribution[1] = Mathf.FloorToInt(4 - (d - 10) / 5);
+            colourDistribution[2] = Mathf.FloorToInt(4);
+            colourDistribution[3] = Mathf.FloorToInt(3 + (d - 7) / 7);
+            colourDistribution[4] = Mathf.FloorToInt(2 + (d - 9) / 4);
+            colourDistribution[5] = Mathf.FloorToInt(1 + (d - 7) / 4);
+        }
+
+        return colourDistribution;
+    }
+
+    public List<int> GetColourList(int[] colourDistribution) {
+        List<int> colourMaster = new List<int>();
+
+        for (int i = 0; i < colourDistribution.Length; i++)
+        {
+            for (int j = 0; j < colourDistribution[i]; j++)
+            {
+                colourMaster.Add(i);
+            }
+        }
+
+        return colourMaster;
     }
 
     public void FlipTiles(Vector3 pos) {

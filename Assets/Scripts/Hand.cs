@@ -80,7 +80,7 @@ public class Hand : Collection {
         if (blackMana.Count >= Save.Instance.maxHandSize)
         {
             game.state = Game.State.LOST;
-            Preferences.Instance.UpdateDifficulty(-1);
+            Master.Instance.GameEnd(false);
         }
         else
             yield return StartCoroutine(RefillHand());
