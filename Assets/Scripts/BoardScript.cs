@@ -29,7 +29,7 @@ public class BoardScript : MonoBehaviour {
     public void NewBoard() {
         // This defines the number of rows - might increase with difficulty.
         // Row zero will always have just 1 tile
-        int boardLength = Preferences.Instance.difficulty > 10 ? 10 : 5;
+        int boardLength = Mathf.Max(Preferences.Instance.difficulty, 5);
         int[] tilesPerRow = new int[boardLength];
         tilesPerRow[0] = 1;
 
@@ -55,8 +55,7 @@ public class BoardScript : MonoBehaviour {
         int[] objMaster = new int[3] { 1, 2, 3 };
         List<int> objCopy = new List<int>();
         objCopy.AddRange(objMaster);
-        int objCounter = 0;
-        int objMax = 3;
+        int objCounter = 0, objMax = 3, objL = 0, objH = 2; // Counter and limits for adding an objective to tiles
 
         // Here we construct new lists used to place and colour tiles later
         // We don't instantiate or position any tiles here - as long as the
@@ -67,7 +66,7 @@ public class BoardScript : MonoBehaviour {
         List<bool> flipped = new List<bool>(), alive = new List<bool>();
         for (row = 0; row < tilesPerRow.Length; row++) // Iterate by row
         {
-            if (row > 9)
+            if (row == 7) // Switch to creating 'advanced' tileset
             {
                 colourDistribution = GetColourDistribution(true);
                 colourMaster = GetColourList(colourDistribution);
@@ -76,6 +75,9 @@ public class BoardScript : MonoBehaviour {
                 objMaster = new int[3] { 4, 5, 6 };
                 objCopy.Clear();
                 objCopy.AddRange(objMaster);
+                Debug.Log("Using master list:" + objCopy.ToString());
+                objL = 3;
+                objH = 5;
             }
             for (col = 0; col < tilesPerRow[row]; col++) // Iterate by column within row
             {
@@ -91,21 +93,32 @@ public class BoardScript : MonoBehaviour {
                 colourCopy.RemoveAt(n);
 
                 materials.Add(m);
-                if (objCounter == objMax)
+                if (m >= objL && m <= objH) // Early on we only want objectives on BRY tiles
+                                            // Later we only want objectives on PGO tiles
                 {
-                    int o = Random.Range(0, objCopy.Count);
-                    objectives.Add(objCopy[o]);
-                    objCopy.RemoveAt(o);
-                    objCounter = 0;
-                    if (objCopy.Count < 1)
+                    if (objCounter == objMax)
                     {
-                        objCopy.AddRange(objMaster);
+
+                        int o = Random.Range(0, objCopy.Count);
+                        objectives.Add(objCopy[o]);
+                        Debug.Log(objCopy[o]);
+                        objCopy.RemoveAt(o);
+                        objCounter = 0;
+                        objMax = Random.Range(2, 4);
+                        if (objCopy.Count < 1)
+                        {
+                            objCopy.AddRange(objMaster);
+                        }
+                    }
+                    else
+                    {
+                        objectives.Add(-1);
+                        objCounter++;
                     }
                 }
                 else
                 {
-                    objectives.Add(-1);
-                    objCounter++;
+                    objectives.Add(-1); // Don't increment the counter if it's an ineligible tile
                 }
 
                 flipped.Add(false);
@@ -210,7 +223,7 @@ public class BoardScript : MonoBehaviour {
                 if (!Save.Instance.alive[index])
                     t.KillTile(true);
 
-                if (Preferences.Instance.difficulty > 4 && Save.Instance.objectives[index] > 0)
+                if (Preferences.Instance.difficulty > 3 && Save.Instance.objectives[index] > 0)
                 {
                     GameObject obj = objectivePool.boardObjective(Save.Instance.objectives[index]);
                     obj.transform.SetParent(tile.transform);

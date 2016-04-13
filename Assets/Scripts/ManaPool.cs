@@ -119,24 +119,25 @@ public class ManaPool : ObjectPool {
 
     private void SpecificColour(GameObject mana, int[] value) {
         mana.GetComponent<Mana>().value = value;
-
-        Material material;
+        int index = 6; // Black mana default
 
         if (value[0] == 1)
             if (value[1] == 1)
-                material = materials[3];
+                index = 3;
             else if (value[2] == 1)
-                material = materials[4];
-            else material = materials[0];
+                index = 4;
+            else
+                index = 0;
         else if (value[1] == 1)
             if (value[2] == 1)
-                material = materials[5];
-            else material = materials[1];
+                index = 5;
+            else
+                index = 1;
         else if (value[2] == 1)
-            material = materials[2];
-        else material = materials[6];
+            index = 2;
 
-        mana.GetComponent<MeshRenderer>().sharedMaterial = material;
+        mana.GetComponent<MeshRenderer>().sharedMaterial = materials[index];
+        mana.GetComponent<Mana>().colourIndex = index;
     }
 
     public GameObject GetManaOption(int[] value, int blackMana) {

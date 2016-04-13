@@ -101,6 +101,7 @@ public class TileScript : ClickableObject {
 
     public override void KillTile(bool dead)
     {
+        Save.Instance.objectives[index] = -1;
         if (dead)
         {
             alive = false;

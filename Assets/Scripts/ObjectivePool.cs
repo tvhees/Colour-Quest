@@ -72,7 +72,6 @@ public class ObjectivePool : ObjectPool {
 
         bool cubeExists = true;
         int colourIndex = objectiveCube.GetComponent<Objective>().colourIndex;
-        Debug.Log(colourIndex);
 
         for (int i = 0; i < sum; i++){
             if (cubeExists) {
