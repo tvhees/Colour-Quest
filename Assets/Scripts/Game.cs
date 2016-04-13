@@ -45,13 +45,14 @@ public class Game : MonoBehaviour {
 
         if (Master.Instance.newGame)
             boardScript.NewBoard();
-        
+
+        objectivePool.Reset();
+
         boardScript.InstantiateBoard(Master.Instance.newGame);
 
         player.Reset();
         goal.Reset();
 		manaPayment.Reset();
-        objectivePool.Reset();
         hand.Reset();
         deck.Reset();
         discard.Reset();

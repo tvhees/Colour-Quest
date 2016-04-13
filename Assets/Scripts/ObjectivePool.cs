@@ -19,7 +19,7 @@ public class ObjectivePool : ObjectPool {
             CreatePool(40, objCube);
 
         objectives.Reset();
-        StartCoroutine(NewTracker());
+        StartCoroutine(NewTracker(false));
     }
 
 	public override void SendToPool (GameObject obj){
@@ -28,11 +28,14 @@ public class ObjectivePool : ObjectPool {
 		ReturnObject (obj);
 	}
 
-	IEnumerator NewTracker()
+	private IEnumerator NewTracker(bool resetTotal = true)
     {
         objectives.moveTime *= 4;
 
-		for (int i = 1; i < Save.Instance.objectiveTracker.Count; i++) {
+        if(resetTotal)
+            Save.Instance.objectiveTracker[0] = 0;
+
+		for (int i = 0; i < Save.Instance.objectiveTracker.Count - 1; i++) {
             GameObject obj;
             if (i < objectives.contents.Count)
                 obj = objectives.contents[i];
@@ -41,7 +44,7 @@ public class ObjectivePool : ObjectPool {
 
 			obj.transform.SetParent (transform);
 			obj.SetActive (true);
-			obj.GetComponent<MeshRenderer> ().material = materials [Save.Instance.objectiveTracker[i]];
+			obj.GetComponent<MeshRenderer> ().material = materials [Save.Instance.objectiveTracker[i+1]];
             if(!objectives.contents.Contains(obj))
     			yield return StartCoroutine(objectives.AddObj (obj));
 		}
@@ -69,19 +72,22 @@ public class ObjectivePool : ObjectPool {
 
         bool cubeExists = true;
         int colourIndex = objectiveCube.GetComponent<Objective>().colourIndex;
+        Debug.Log(colourIndex);
 
         for (int i = 0; i < sum; i++){
             if (cubeExists) {
                 objectiveCube.transform.position = worldPos;
                 objectiveCube.transform.SetParent(transform);
+                Debug.Log(objectives.contents[Save.Instance.objectiveTracker[0]].ToString());
                 yield return StartCoroutine(objectiveCube.GetComponent<ClickableObject>().SmoothMovement(objectives.contents[Save.Instance.objectiveTracker[0]].transform.position, objectives.moveTime, new Vector3 (objectives.objScale, objectives.objScale, objectives.objScale)));
                 SendToPool(objectiveCube);
                 cubeExists = false;
             }
 			objectives.contents [Save.Instance.objectiveTracker[0]].GetComponent<MeshRenderer> ().sharedMaterial = materials[colourIndex];
             Save.Instance.objectiveTracker[0]++;
-			if (Save.Instance.objectiveTracker[0] + 1 == Save.Instance.objectiveTracker.Count) {
-                ObjectiveReward(Save.Instance.objectiveTracker[0]);
+            Save.Instance.objectiveTracker[Save.Instance.objectiveTracker[0]] = colourIndex;
+            if (Save.Instance.objectiveTracker[0] + 1 == Save.Instance.objectiveTracker.Count) {
+                yield return StartCoroutine(ObjectiveReward(Save.Instance.objectiveTracker[0]));
 			}
 		}
 	}
@@ -97,6 +103,40 @@ public class ObjectivePool : ObjectPool {
         // Increase max hand size
         yield return StartCoroutine(hand.IncreaseLimit(1));
         yield return NewTracker();
+    }
+
+    public GameObject boardObjective(int colourIndex) {
+        GameObject obj = GetObject();
+        obj.GetComponent<Objective>().colourIndex = colourIndex;
+        obj.GetComponent<MeshRenderer>().sharedMaterial = materials[colourIndex];
+
+        Objective o = obj.GetComponent<Objective>();
+
+        switch (colourIndex)
+        {
+            case 1:
+                o.cost = new int[3] { 1, 0, 0 };
+                break;
+            case 2:
+                o.cost = new int[3] { 0, 1, 0 };
+                break;
+            case 3:
+                o.cost = new int[3] { 0, 0, 1 };
+                break;
+            case 4:
+                o.cost = new int[3] { 1, 1, 0 };
+                break;
+            case 5:
+                o.cost = new int[3] { 1, 0, 1 };
+                break;
+            case 6:
+                o.cost = new int[3] { 0, 1, 1 };
+                break;
+        }
+
+        obj.SetActive(true);
+
+        return obj;
     }
 
 }

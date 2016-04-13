@@ -14,7 +14,7 @@ public class Objectives : Collection {
 
     protected override void RemoveFromSave(int index)
     {
-        //SaveSystem.Instance.objectives.RemoveAt(index);
+        Save.Instance.objectives[index] = -1;
     }
 
     public void Clear(){

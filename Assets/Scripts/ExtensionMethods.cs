@@ -16,6 +16,7 @@ public static class ExtensionMethods {
 	public static GameObject InstantiateChild(this Transform parent, GameObject obj, Vector3 position = default(Vector3), Quaternion rotation = default(Quaternion)){
 		GameObject instance = (GameObject)Object.Instantiate (obj, position, rotation);
 		instance.transform.SetParent (parent);
+        instance.transform.localPosition = position;
         return instance;
 	}
 

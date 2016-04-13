@@ -158,26 +158,38 @@ public class ManaPool : ObjectPool {
 
     public GameObject GetObjectiveReward(int[] value) {
         GameObject mana = GetObject();
-        int[] newValue = new int[3];
-
+        int[] newValue = new int[3] { 0, 0, 0 };
+        int colourIndex;
         if (value[0] == 1)
             if (value[1] == 1)
+            {
                 newValue = new int[3] { 0, 0, 1 };
+                colourIndex = 2;
+            }
             else if (value[2] == 1)
+            {
                 newValue = new int[3] { 1, 1, 0 };
+                colourIndex = 3;
+            }
             else {
                 ReturnObject(mana);
                 return null;
-                }
+            }
         else if (value[1] == 1)
             if (value[2] == 1)
+            {
                 newValue = new int[3] { 1, 0, 1 };
+                colourIndex = 4;
+            }
             else {
                 ReturnObject(mana);
                 return null;
             }
         else if (value[2] == 1)
+        {
             newValue = new int[3] { 0, 1, 0 };
+            colourIndex = 1;
+        }
         else {
             ReturnObject(mana);
             return null;
@@ -186,6 +198,7 @@ public class ManaPool : ObjectPool {
         SpecificColour(mana, newValue);
 
         mana.SetActive(true);
+        mana.GetComponent<Mana>().colourIndex = colourIndex;
         mana.GetComponent<Mana>().SaveState();
 
         return mana;

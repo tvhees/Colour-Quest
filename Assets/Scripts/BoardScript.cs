@@ -6,10 +6,12 @@ public class BoardScript : MonoBehaviour {
 
     public int startHandSize;
     public Material[] materialArray;
+    public GameObject[] objectiveArray;
     public GameObject tileHolder;
     public List<GameObject> hiddenTiles = new List<GameObject>();
     public float sightDistance, dX;
     public List<GameObject> tiles = new List<GameObject>();
+    public ObjectivePool objectivePool;
     public Goal goal;
     public Player player;
 
@@ -45,10 +47,16 @@ public class BoardScript : MonoBehaviour {
         // Creating a master colour distribution list that can be copied
         // For random selection without replacement
         int[] colourDistribution = GetColourDistribution(false);
-
         List<int> colourMaster = GetColourList(colourDistribution);
         List<int> colourCopy = new List<int>();
         colourCopy.AddRange(colourMaster);
+
+        // Creating a master objective list as above
+        int[] objMaster = new int[3] { 1, 2, 3 };
+        List<int> objCopy = new List<int>();
+        objCopy.AddRange(objMaster);
+        int objCounter = 0;
+        int objMax = 3;
 
         // Here we construct new lists used to place and colour tiles later
         // We don't instantiate or position any tiles here - as long as the
@@ -65,6 +73,9 @@ public class BoardScript : MonoBehaviour {
                 colourMaster = GetColourList(colourDistribution);
                 colourCopy.Clear();
                 colourCopy.AddRange(colourMaster);
+                objMaster = new int[3] { 4, 5, 6 };
+                objCopy.Clear();
+                objCopy.AddRange(objMaster);
             }
             for (col = 0; col < tilesPerRow[row]; col++) // Iterate by column within row
             {
@@ -80,13 +91,29 @@ public class BoardScript : MonoBehaviour {
                 colourCopy.RemoveAt(n);
 
                 materials.Add(m);
+                if (objCounter == objMax)
+                {
+                    int o = Random.Range(0, objCopy.Count);
+                    objectives.Add(objCopy[o]);
+                    objCopy.RemoveAt(o);
+                    objCounter = 0;
+                    if (objCopy.Count < 1)
+                    {
+                        objCopy.AddRange(objMaster);
+                    }
+                }
+                else
+                {
+                    objectives.Add(-1);
+                    objCounter++;
+                }
+
                 flipped.Add(false);
                 alive.Add(true);
             }
         }
         float offset = row % 2 * - 0.5f;
-        Debug.Log("row: " + row + ", col: " + col + ", offset: " + offset);
-        Vector3 goalLocation = new Vector3(row * dX, 0, (2 + offset - (col-1)/2) * dZ);
+        Vector3 goalLocation = new Vector3(row * dX, 0, offset + (row)/2 * dZ);
         Vector3 playerLocation = Vector3.zero;
 
         // Set up the direction of movement instructions for the goal sphere
@@ -147,6 +174,7 @@ public class BoardScript : MonoBehaviour {
         Save.Instance.tilesPerRow = tilesPerRow;
         Save.Instance.goalCost = goalCost;
         Save.Instance.materials = materials;
+        Save.Instance.objectives = objectives;
         Save.Instance.flipped = flipped;
         Save.Instance.alive = alive;
         Save.Instance.directionList = directionList;
@@ -181,6 +209,16 @@ public class BoardScript : MonoBehaviour {
                     t.Flip();
                 if (!Save.Instance.alive[index])
                     t.KillTile(true);
+
+                if (Preferences.Instance.difficulty > 4 && Save.Instance.objectives[index] > 0)
+                {
+                    GameObject obj = objectivePool.boardObjective(Save.Instance.objectives[index]);
+                    obj.transform.SetParent(tile.transform);
+                    obj.transform.localPosition = new Vector3(0f, 0.2f, 0f);
+                    obj.transform.localScale = 0.2f * Vector3.one;
+                    obj.GetComponent<RotationScript>().angularSpeed = -90f;
+                }
+
 
                 index++;
             }
