@@ -5,6 +5,9 @@ using System.Collections.Generic;
 
 public class Mana : ClickableObject {
 
+    public Game game;
+    public Hand hand;
+    public int colourIndex;
     public int[] value = new int[3] { 0, 0, 0 }, savedValue;
     public float menuDelay = 0.1f;
     public ParticleSystem selectFX;
@@ -20,6 +23,8 @@ public class Mana : ClickableObject {
     private Camera uiCamera;
 
 	void Awake(){
+        game = Master.Instance.game;
+        hand = Master.Instance.hand;
 		manaHand = GameObject.Find ("Hand");
         wedge = GameObject.Find("Wedge");
         uiCamera = GameObject.Find("UICamera").GetComponent<Camera>();
@@ -31,13 +36,13 @@ public class Mana : ClickableObject {
 
 	public override void ClickAction ()
 	{
-        switch (Game.Instance.state) {
+        switch (game.state) {
             case Game.State.IDLE:
             case Game.State.GOAL:
                 break;
 			case Game.State.PAYING:
-				if(Hand.Instance.contents.Contains(gameObject)){
-					if (!Hand.Instance.blackMana.Contains (gameObject)) {
+				if(hand.contents.Contains(gameObject)){
+					if (!hand.blackMana.Contains (gameObject)) {
 						clickTime = Time.time;
 						menu = true;
 					}
@@ -67,12 +72,12 @@ public class Mana : ClickableObject {
         wedge.SetActive(false);
 
         if (hit.collider == GetComponent<Collider>())
-            Select(Hand.Instance.selectedMana.Contains(gameObject));
+            Select(hand.selectedMana.Contains(gameObject));
 
         if (hit.collider == wedgeLower.GetComponent<Collider>() || hit.collider == wedgeUpper.GetComponent<Collider>())
         {
             yield return StartCoroutine(UseOption(hit.collider.gameObject));
-            Select(Hand.Instance.selectedMana.Contains(gameObject));
+            Select(hand.selectedMana.Contains(gameObject));
         }
 
         // Remove any UI mana globes and put the object back in line with the rest.
@@ -91,11 +96,11 @@ public class Mana : ClickableObject {
 
 	public void Select(bool selected){
 		if (!selected) { // Newly selected mana - recalculate mana payment and show particles
-			Hand.Instance.selectedMana.Add (gameObject);
+			hand.selectedMana.Add (gameObject);
 			selectFX.Play ();
 			StartCoroutine(manaPayment.CheckPayment (value, true));
 		} else { // Deselected mana - recalculate mana payment, remove any added black mana, reset colour/particles
-			Hand.Instance.selectedMana.Remove (gameObject);
+			hand.selectedMana.Remove (gameObject);
 			StartCoroutine(manaPayment.CheckPayment (value, false));
             while (blackMana.Count > 0) {
 				manaPool.SendToPool(blackMana[0]);
@@ -118,7 +123,7 @@ public class Mana : ClickableObject {
         //transform.Rotate(rotation, 80 * Time.deltaTime);
         
 		if (options.Count == 0){
-			if (menu && (Time.time - clickTime) > menuDelay && !Hand.Instance.selectedMana.Contains(gameObject)) 
+			if (menu && (Time.time - clickTime) > menuDelay && !hand.selectedMana.Contains(gameObject)) 
             {
                 transform.position = transform.position - Vector3.forward;
                 SpawnOptions();
@@ -163,7 +168,7 @@ public class Mana : ClickableObject {
 		// Get any black mana required for this option and add it to player's hand
 		while(wedgeHalf.transform.childCount > 1){
 			newMana = wedgeHalf.transform.GetChild (1).gameObject;
-			yield return StartCoroutine(Hand.Instance.SendToHand (newMana));
+			yield return StartCoroutine(hand.SendToHand (newMana));
 			options.Remove (newMana);
 			blackMana.Add (newMana);
 		}

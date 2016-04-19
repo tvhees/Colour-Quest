@@ -2,7 +2,7 @@
 using System.Collections;
 using System;
 
-public class Player : MovingObject<Player> {
+public class Player : MovingObject {
 	public float moveDistance;
     public MeshRenderer childRenderer;
     public CameraScript cameraScript;
@@ -13,5 +13,10 @@ public class Player : MovingObject<Player> {
         moveDistance = 2.5f;
         childRenderer.enabled = true;
         cameraScript.Reset(transform);
+    }
+
+    protected override void SavePosition()
+    {
+        Save.Instance.playerLocation = transform.position;
     }
 }

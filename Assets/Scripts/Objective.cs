@@ -1,11 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public abstract class Objective : ClickableObject {
+public class Objective : ClickableObject {
 
+    public int colourIndex;
     public int[] cost;
-
-    protected abstract void Bonus();
 
 	public override void ClickAction ()
 	{

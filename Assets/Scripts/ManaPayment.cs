@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class ManaPayment : MonoBehaviour {
 
+    public Game game;
     public Player playerScript;
     public Goal goal;
     public Hand hand;
@@ -19,7 +20,7 @@ public class ManaPayment : MonoBehaviour {
 
     public void Reset()
     {
-        Game.Instance.state = Game.State.IDLE;
+        game.state = Game.State.IDLE;
 
         selectionMarker.transform.position = new Vector3(-10f, 10f, -10f);
         selectionMarker.SetActive(true);
@@ -40,7 +41,7 @@ public class ManaPayment : MonoBehaviour {
     }
 
     public void SetCost(int[] tileColour, int[] objectiveColour, GameObject tile){
-        Game.Instance.state = Game.State.PAYING;
+        game.state = Game.State.PAYING;
 
         if (target != null)
             target.GetComponent<TileScript>().currentTile = false;
@@ -100,21 +101,20 @@ public class ManaPayment : MonoBehaviour {
             if (objectiveValue.Sum() > 0)
                 yield return StartCoroutine(objectivePool.UpdateTracker(objectiveValue, target.transform.parent.GetChild(1).gameObject));
 
-            boardScript.FlipTiles(target.transform.parent.position);
+            boardScript.FlipTiles(target.transform.parent.position, -180f);
         }
 
 		yield return StartCoroutine(hand.PaySelected());
-
-        if(Game.Instance.state != Game.State.WON && Game.Instance.state != Game.State.LOST)        
-            Reset();
+        
+        Reset();
     }
 
     private IEnumerator RemainderToBlackMana(int[] remainder)
     {
         int[] nullValue = new int[3] { 0, 0, 0 };
 
-        if (Game.Instance.state != Game.State.WON)
-        {
+        //if (game.state != Game.State.WON)
+        //{
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < remainder[i]; j++)
@@ -123,6 +123,6 @@ public class ManaPayment : MonoBehaviour {
                     yield return StartCoroutine(hand.SendToHand(mana));
                 }
             }
-        }
+        //}
     }
 }

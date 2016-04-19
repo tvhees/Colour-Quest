@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Deck : Collection<Deck> {
+public class Deck : Collection {
     
 	public Hand hand;
 	public Preview preview;
@@ -21,17 +21,23 @@ public class Deck : Collection<Deck> {
 		SharedSetup ();
     }
 
-    public IEnumerator SendToDeck(GameObject mana){
-		hand.Remove (mana);
+    public IEnumerator SendToDeck(GameObject mana, bool setup = false) {
+        if (!setup)
+        {
+            hand.Remove(mana);
+            discard.Remove(mana);
+            preview.Remove(mana);
+            Save.Instance.deck.Add(mana.GetComponent<Mana>().colourIndex);
+        }
+        yield return StartCoroutine(AddObj(mana));
+    }
 
-		discard.Remove (mana);
+    protected override void RemoveFromSave(int index)
+    {
+        Save.Instance.deck.RemoveAt(index);
+    }
 
-		preview.Remove (mana);
-
-		yield return StartCoroutine(AddObj(mana));
-	}
-
-	public IEnumerator RefillDeck(){
+    public IEnumerator RefillDeck(){
         int i = 0;
 		if (contents.Count < 1) {
             GameObject lastObject = null;

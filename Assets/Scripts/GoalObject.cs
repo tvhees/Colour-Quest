@@ -3,6 +3,8 @@ using System.Collections;
 
 public class GoalObject : ClickableObject {
 
+    public Game game;
+    public Player player;
     public int[] goalCost;
     public bool currentTarget = false;
     public Material material;
@@ -25,13 +27,13 @@ public class GoalObject : ClickableObject {
 
         if (alive)
         {
-            switch (Game.Instance.state)
+            switch (game.state)
             {
                 case Game.State.IDLE:
                     // Check if adjacent to player
-                    if ((Player.Instance.transform.position - transform.parent.position).sqrMagnitude < Player.Instance.moveDistance)
+                    if ((player.transform.position - transform.parent.position).sqrMagnitude < player.moveDistance)
                     {
-                        Game.Instance.state = Game.State.PAYING;
+                        game.state = Game.State.PAYING;
                         selectionMarker.transform.position = transform.position;
                         selectionMarker.SetActive(true);
 
@@ -42,16 +44,11 @@ public class GoalObject : ClickableObject {
                 case Game.State.PAYING:
                     if (currentTarget)
                     {
-                        Game.Instance.state = Game.State.IDLE;
+                        game.state = Game.State.IDLE;
                         currentTarget = false;
                         manaPayment.Reset();
                         selectionMarker.SetActive(false);
                     }
-                    break;
-                case Game.State.GOAL:
-                case Game.State.MENU:
-                case Game.State.WON:
-                case Game.State.LOST:
                     break;
             }
         }

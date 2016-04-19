@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public abstract class Collection<T> : Singleton<T> where T : MonoBehaviour
+public abstract class Collection : MonoBehaviour
 {
     public float objScale, gapScale, moveTime, startMoveTime;
     public List<GameObject> contents, blackMana;
@@ -90,7 +90,8 @@ public abstract class Collection<T> : Singleton<T> where T : MonoBehaviour
 
     public virtual void Remove(GameObject obj) {
         if (contents.Contains(obj)) {
-			float j = obj.transform.position.x;
+            RemoveFromSave(contents.IndexOf(obj));
+            float j = obj.transform.position.x;
             contents.Remove(obj);
             size--;
 
@@ -124,6 +125,8 @@ public abstract class Collection<T> : Singleton<T> where T : MonoBehaviour
             blackMana.Remove(obj);
         }
     }
+
+    protected abstract void RemoveFromSave(int index);
 
 	protected virtual Vector3 FindPosition(float scalar, Vector3 pos){
 		Vector3 position = pos + scalar * translate;

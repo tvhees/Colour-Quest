@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public abstract class MovingObject<T>: Singleton<T> where T : MonoBehaviour {
+public abstract class MovingObject : MonoBehaviour {
 
+    public Game game;
+    public BoardScript boardScript;
     public bool killsTiles;
 	public float moveTime;
     public Vector3 startLocation;
@@ -12,9 +14,11 @@ public abstract class MovingObject<T>: Singleton<T> where T : MonoBehaviour {
 	public IEnumerator SmoothMovement(Vector3 target, GameObject newTile){
 		float sqrDistance = (transform.position - target).sqrMagnitude;
 
-		while (sqrDistance > Mathf.Epsilon) {
+        if(boardScript.hiddenTiles.Contains(newTile.transform.GetChild(0).gameObject))
+            yield return StartCoroutine(newTile.GetComponentInChildren<TileScript>().Flip(180f));
 
-            while (Game.Instance.state == Game.State.MENU)
+		while (sqrDistance > Mathf.Epsilon) {
+            while (Master.Instance.state == Master.State.MENU)
                 yield return new WaitForSeconds(0.1f);
 
 			Vector3 newPosition = Vector3.MoveTowards (transform.position, target, Time.deltaTime / moveTime);
@@ -25,6 +29,9 @@ public abstract class MovingObject<T>: Singleton<T> where T : MonoBehaviour {
 
 			yield return null;
 		}
+
+        SavePosition();
+
         newTile.GetComponentInChildren<ClickableObject>().KillTile(killsTiles);
 	}
 
@@ -33,4 +40,6 @@ public abstract class MovingObject<T>: Singleton<T> where T : MonoBehaviour {
 
 		newTile.GetComponentInChildren<ClickableObject>().KillTile(killsTiles);
 	}
+
+    protected abstract void SavePosition();
 }

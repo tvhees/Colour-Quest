@@ -1,38 +1,44 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
-public class Hand : Collection<Hand> {
+public class Hand : Collection {
 
+    public Game game;
     public Deck deck;
 	public Preview preview;
     public Discard discard;
 	public Goal goalScript;
-    public Files files;
     public List<GameObject> selectedMana;
-    public int maxHandSize, startHandSize = 5;
     public bool pause;
     public TextMesh maxHandMesh;
 
 	private bool scrub;
 
     public override void Reset() {
+        Master.Instance.hand = this;
         scrub = true;
-        maxHandSize = startHandSize;
         SharedSetup ();
     }
 
-    public IEnumerator SendToHand(GameObject mana) {
-        // Remove from discard pile
-        discard.Remove(mana);
+    public IEnumerator SendToHand(GameObject mana, bool setup = false) {
+        if (!setup)
+        {
+            // Remove from discard pile
+            discard.Remove(mana);
+            // Remove from deck
+            deck.Remove(mana);
+            // Remove from preview
+            preview.Remove(mana);
+            Save.Instance.hand.Add(mana.GetComponent<Mana>().colourIndex);
+        }
+        yield return StartCoroutine(AddObj(mana));
+    }
 
-        // Remove from deck
-        deck.Remove(mana);
-
-		// Remove from preview
-		preview.Remove(mana);
-
-		yield return StartCoroutine(AddObj(mana));
+    protected override void RemoveFromSave(int index)
+    {
+        Save.Instance.hand.RemoveAt(index);
     }
 
     public IEnumerator PaySelected() {
@@ -71,10 +77,10 @@ public class Hand : Collection<Hand> {
 				yield break;
 		}
 
-        if (blackMana.Count >= maxHandSize)
+        if (blackMana.Count >= Save.Instance.maxHandSize)
         {
-            Game.Instance.state = Game.State.LOST;
-            Preferences.Instance.UpdateDifficulty(-1);
+            game.state = Game.State.LOST;
+            Master.Instance.GameEnd(false);
         }
         else
             yield return StartCoroutine(RefillHand());
@@ -84,7 +90,7 @@ public class Hand : Collection<Hand> {
 		int i = 0;
         // Take mana from deck until hand is at current mana limit
         GameObject lastObject = null;
-        while (size < maxHandSize) {
+        while (size < Save.Instance.maxHandSize) {
             lastObject = preview.contents[0];
             yield return StartCoroutine(SendToHand(lastObject));
 			i++;
@@ -108,20 +114,20 @@ public class Hand : Collection<Hand> {
             }
         }
 
-		yield return StartCoroutine(preview.RefillPreview(maxHandSize));
+		yield return StartCoroutine(preview.RefillPreview(Save.Instance.maxHandSize));
 
 		scrub = true;
 
-        Game.Instance.state = Game.State.GOAL;
+        game.state = Game.State.GOAL;
 
 		yield return StartCoroutine(goalScript.MoveGoal ());
 
-        files.SaveFile();
+        Save.Instance.SaveGame();
     }
 
 	public void ScrubHand(){
         // Gets rid of an entire hand, triggering refill from deck.
-        if (Game.Instance.state == Game.State.IDLE || Game.Instance.state == Game.State.PAYING)
+        if (game.state == Game.State.IDLE || game.state == Game.State.PAYING)
         {
             // Clear any current selections or unnecessary black mana additions
             while (selectedMana.Count > 0)
@@ -147,9 +153,10 @@ public class Hand : Collection<Hand> {
 	}
 
 	public IEnumerator IncreaseLimit(int increase){
-		maxHandSize += increase;
-        maxHandMesh.text = maxHandSize.ToString();
-		yield return StartCoroutine(preview.RefillPreview (maxHandSize));
+		Save.Instance.maxHandSize += increase;
+        Save.Instance.maxHandSize = Save.Instance.maxHandSize;
+        maxHandMesh.text = Save.Instance.maxHandSize.ToString();
+		yield return StartCoroutine(preview.RefillPreview (Save.Instance.maxHandSize));
         yield return new WaitForSeconds(0.5f);
 	}
 }

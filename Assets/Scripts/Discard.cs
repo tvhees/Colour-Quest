@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Discard : Collection<Discard> {
+public class Discard : Collection {
 
     public Hand hand;
 	public Preview preview;
@@ -18,27 +18,31 @@ public class Discard : Collection<Discard> {
 		SharedSetup ();
     }
 
-    public IEnumerator SendToDiscard(GameObject mana)
+    public IEnumerator SendToDiscard(GameObject mana, bool setup = false)
     {
-        // Remove from other lists
-        if (hand.selectedMana.Contains(mana))
-            hand.selectedMana.Remove(mana);
+        if (!setup)
+        {
+            // Remove from other lists
+            if (hand.selectedMana.Contains(mana))
+                hand.selectedMana.Remove(mana);
 
-        hand.Remove(mana);
-
-		deck.Remove (mana);
-
-		preview.Remove (mana);
-
-        // Reset any colour change or particles
-        mana.GetComponent<Mana>().Reset();
-
-		StartCoroutine(AddObj(mana));
-
+            hand.Remove(mana);
+            deck.Remove(mana);
+            preview.Remove(mana);
+            // Reset any colour change or particles
+            mana.GetComponent<Mana>().Reset();
+            Save.Instance.discard.Add(mana.GetComponent<Mana>().colourIndex);
+        }
+        StartCoroutine(AddObj(mana));
         yield return new WaitForSeconds(moveTime/4f);
     }
 
-	public void SendToDisplay(){
+    protected override void RemoveFromSave(int index)
+    {
+        Save.Instance.discard.RemoveAt(index);
+    }
+
+    public void SendToDisplay(){
 		display.UpdateDisplay (manaList);
 	}
 }

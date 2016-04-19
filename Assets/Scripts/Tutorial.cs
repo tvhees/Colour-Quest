@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 public class Tutorial : MonoBehaviour {
 
+    public Game game;
 	public float[] guiBox;
 	public GameObject player, tutorialPanel, twoDPanel;
     public Text tutorialText;
@@ -72,12 +73,12 @@ public class Tutorial : MonoBehaviour {
 	}
 
 	void Update(){
-		if (Preferences.Instance.tutorial && Game.Instance.state != Game.State.SPLASH) {
+		if (Preferences.Instance.tutorial && Master.Instance.state == Master.State.GAME) {
 			clickAll = false;
             release = false;
             scrubButton.interactable = false;
             scrubIncrement = false;
-			switch (Game.Instance.state) {
+			switch (game.state) {
 			    case Game.State.IDLE: // The idle state covers situations where no tile has been clicked, player input is expected and so on
 				    switch(tutStep){
 				        case 0:	// Introducing the game, player sphere and goal sphere

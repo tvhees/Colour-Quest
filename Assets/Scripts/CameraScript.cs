@@ -4,6 +4,7 @@ using System.Collections;
 
 public class CameraScript : MonoBehaviour {
 
+    public Game game;
     public Camera thisCamera;
     public Camera uiCamera;
 	public Vector3 cameraOffset, lastPosition;
@@ -28,13 +29,13 @@ public class CameraScript : MonoBehaviour {
 
 		float sqrDistance = (transform.position - target).sqrMagnitude;
 
-		savedState = Game.Instance.state;
+		savedState = game.state;
 
-		Game.Instance.state = Game.State.CAMERA;
+		game.state = Game.State.CAMERA;
 
 		while (sqrDistance > Mathf.Epsilon) {
 
-            while (Game.Instance.state == Game.State.MENU)
+            while (Master.Instance.state != Master.State.GAME)
                 yield return new WaitForSeconds(0.1f);
 
 			Vector3 newPosition = Vector3.MoveTowards (transform.position, target, 2 * Time.deltaTime * Preferences.Instance.cameraSpeed);
@@ -46,7 +47,7 @@ public class CameraScript : MonoBehaviour {
 			yield return null;
 		}
 
-		Game.Instance.state = savedState;
+		game.state = savedState;
 	}
 
     public void Reset(Transform player) {
@@ -60,7 +61,7 @@ public class CameraScript : MonoBehaviour {
 
     void Update() {
 
-		if (Game.Instance.state == Game.State.IDLE || Game.Instance.state == Game.State.PAYING) {
+		if (game.state == Game.State.IDLE || game.state == Game.State.PAYING) {
 			// Camera pan controlling code
 #if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
 			if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began && CheckTouchZone(Input.GetTouch(0).position)){
@@ -120,7 +121,7 @@ public class CameraScript : MonoBehaviour {
 	        }
 #endif
 
-#if UNITY_EDITOR || UNITY_STANDALONE
+#if UNITY_STANDALONE || UNITY_EDITOR
 			if (Input.GetMouseButton (1)) {
 				if (firstPan) {
 					lastPosition = Input.mousePosition;
